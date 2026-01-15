@@ -4,3 +4,5 @@ __pycache__/
 *$py.class
 *.so
 .Python
+cognition/__pycache__/__init__.cpython-312.pyc
+cognition/__pycache__/order_blocks.cpython-312.pyc
