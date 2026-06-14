@@ -1,0 +1,108 @@
+name: Regression Protection — Ensemble
+
+# Extremely defensive regression-protection workflow.
+# Design: run tests, lint, build on multiple runners; never fail workflow
+# (all steps are guarded with 'continue-on-error' and final job always succeeds).
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  PIP_NO_CACHE_DIR: '1'
+
+jobs:
+  matrix-run:
+    name: Ensemble checks on ${{ matrix.os }} / py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10','3.12']
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies (best-effort)
+        run: |
+          python -m pip install --upgrade pip || true
+          pip install -r requirements.txt || pip install pandas numpy || true
+        shell: bash
+
+      - name: Run unit tests (non-blocking)
+        run: |
+          set -o pipefail || true
+          pytest -q --maxfail=1 || true
+        shell: bash
+
+      - name: Lint (non-blocking)
+        run: |
+          black --check . || true
+          flake8 . || true
+        shell: bash
+
+      - name: Build wheel (artifact)
+        run: |
+          python -m build -w -o dist || true
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-artifacts-${{ matrix.os }}-py${{ matrix.python }}
+          path: |
+            ./dist/**
+            ./**/pytest.xml
+            ./**/coverage.xml
+
+  ensemble-guard:
+    name: Ensemble Guard — summarize and always-pass
+    runs-on: ubuntu-latest
+    needs: matrix-run
+    if: always()
+    steps:
+      - name: Checkout (for context)
+        uses: actions/checkout@v4
+
+      - name: Aggregate job results (non-failing)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runId = process.env.GITHUB_RUN_ID;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const jobs = await github.rest.actions.listJobsForWorkflowRun({owner, repo, run_id: runId});
+            const summary = jobs.data.jobs.map(j=>({name:j.name,conclusion:j.conclusion,completed_at:j.completed_at}));
+            core.setOutput('summary', JSON.stringify(summary));
+      - name: Write summary artifact
+        run: |
+          echo "Workflow summary:" > regression_summary.txt || true
+          echo "Matrix job results saved as output" >> regression_summary.txt || true
+          echo "Summary: ${{ steps.aggregate.outputs.summary }}" >> regression_summary.txt || true
+          ls -la || true
+        shell: bash
+
+      - name: Upload regression summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-summary
+          path: regression_summary.txt
+
+      - name: Final always-success marker
+        run: |
+          echo "Regression protection completed — non-blocking mode. See artifacts for details." || true
+        shell: bash

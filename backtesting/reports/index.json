@@ -1,0 +1,57 @@
+[
+  {
+    "file": "summary_20260106T073903.json",
+    "format": "json",
+    "generated": "2026-01-06T07:39:03.357470",
+    "summary": {
+      "total_return": -23.75,
+      "sharpe_ratio": -1.51,
+      "win_rate": 0.0,
+      "total_trades": 5
+    }
+  },
+  {
+    "file": "backtest_20260106T073903_20260106T073903.html",
+    "format": "html",
+    "generated": "2026-01-06T07:39:03.357470",
+    "summary": {
+      "total_return": -23.75,
+      "sharpe_ratio": -1.51,
+      "win_rate": 0.0,
+      "total_trades": 5
+    }
+  },
+  {
+    "file": "summary_20260101T222513.json",
+    "format": "json",
+    "generated": "2026-01-01T22:25:13.444625",
+    "summary": {
+      "total_return": -23.75,
+      "sharpe_ratio": -1.51,
+      "win_rate": 0.0,
+      "total_trades": 5
+    }
+  },
+  {
+    "file": "backtest_20260101T222513_20260101T222513.html",
+    "format": "html",
+    "generated": "2026-01-01T22:25:13.444625",
+    "summary": {
+      "total_return": -23.75,
+      "sharpe_ratio": -1.51,
+      "win_rate": 0.0,
+      "total_trades": 5
+    }
+  },
+  {
+    "file": "backtest_20260101T222459_20260101T222459.html",
+    "format": "html",
+    "generated": "2026-01-01T22:24:59.806457",
+    "summary": {
+      "total_return": -23.75,
+      "sharpe_ratio": -1.51,
+      "win_rate": 0.0,
+      "total_trades": 5
+    }
+  }
+]

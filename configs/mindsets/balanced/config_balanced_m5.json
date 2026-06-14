@@ -1,0 +1,50 @@
+{
+  "_comment": "Balanced profile, M5 timeframe",
+  "mt5": {
+    "login": 0,
+    "password": "CHANGE_ME",
+    "server": "FROM_ENV",
+    "timeout": 60000,
+    "path": "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+  },
+  "risk": {
+    "max_position_size": 0.5,
+    "default_position_size": 0.02,
+    "max_daily_loss": 50.0,
+    "max_positions_per_symbol": 1,
+    "max_total_positions": 3,
+    "position_size_pct": 2.0,
+    "use_kelly_sizing": false,
+    "emergency_stop_loss_pct": 5.0,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 3.0
+  },
+  "trading": {
+    "symbol": "EURUSD",
+    "timeframe": "TIMEFRAME_M5",
+    "poll_interval": 30,
+    "lookback_bars": 400
+  },
+  "strategy": {
+    "type": "sma_crossover",
+    "params": {
+      "fast_period": 10,
+      "slow_period": 30,
+      "symbol": "EURUSD"
+    }
+  },
+  "confidence_threshold": 0.6,
+  "orphan_trades": {
+    "enabled": true,
+    "adopt_symbols": [],
+    "ignore_symbols": [],
+    "apply_exit_strategies": true,
+    "max_adoption_age_hours": 0,
+    "log_only": false
+  },
+  "exit_strategies": [],
+  "indicators": [],
+  "database": {
+    "path": "cthulu.db"
+  }
+}

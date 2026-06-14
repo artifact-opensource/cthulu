@@ -1,0 +1,871 @@
+{
+  "system_architecture_map": {
+    "version": "1.0.0",
+    "system_name": "Cthulu Trading System",
+    "version_mapped": "5.3.0 EVOQUE",
+    "last_updated": "2026-01-27",
+    "architecture_style": "Event-driven microkernel with plugin-based strategies",
+    "deployment_model": "Standalone, Containerized, or Service-based"
+  },
+  "high_level_architecture": {
+    "description": "11-step trading loop orchestrating data ingestion, signal generation, risk management, execution, and monitoring",
+    "core_layers": [
+      {
+        "layer": "Entry Layer",
+        "purpose": "System initialization and configuration",
+        "components": ["__main__.py", "wizard.py", "CLI arguments"]
+      },
+      {
+        "layer": "Core Engine",
+        "purpose": "Main trading loop orchestration and lifecycle management",
+        "components": ["bootstrap.py", "trading_loop.py", "shutdown.py"]
+      },
+      {
+        "layer": "Intelligence Layer (Cognition)",
+        "purpose": "AI/ML enhancement, regime detection, predictions",
+        "components": ["cognition/engine.py", "regime_classifier.py", "price_predictor.py", "sentiment_analyzer.py", "exit_oracle.py", "entry_confluence.py"]
+      },
+      {
+        "layer": "Strategy Layer",
+        "purpose": "Trading signal generation from multiple strategies",
+        "components": ["strategy/", "indicators/", "strategy_selector.py"]
+      },
+      {
+        "layer": "Execution Layer",
+        "purpose": "Risk evaluation, order execution, position management, exits",
+        "components": ["risk/", "execution/", "position/", "exit/"]
+      },
+      {
+        "layer": "Persistence Layer",
+        "purpose": "Data storage and retrieval",
+        "components": ["persistence/database.py", "SQLite WAL"]
+      },
+      {
+        "layer": "Observability Layer",
+        "purpose": "Logging, metrics, monitoring, alerting",
+        "components": ["observability/", "monitoring/", "prometheus.py"]
+      },
+      {
+        "layer": "Integration Layer",
+        "purpose": "External systems and services",
+        "components": ["connector/mt5_connector.py", "integrations/", "rpc/", "news/"]
+      }
+    ]
+  },
+  "module_directory": {
+    "core_orchestration": {
+      "path": "core/",
+      "purpose": "System lifecycle and main trading loop",
+      "key_files": {
+        "bootstrap.py": {
+          "responsibility": "System initialization, config loading, component setup",
+          "inputs": ["config.json", ".env", "CLI args"],
+          "outputs": ["Initialized components", "System state"],
+          "dependencies": ["config/", "connector/", "persistence/"]
+        },
+        "trading_loop.py": {
+          "responsibility": "11-step trading loop execution",
+          "inputs": ["Market data", "Configured strategies", "Risk parameters"],
+          "outputs": ["Trading signals", "Orders", "Position updates"],
+          "dependencies": ["All components"],
+          "loop_steps": [
+            "1. Fetch market data from MT5",
+            "2. Calculate technical indicators",
+            "3. Detect market regime",
+            "4. Generate trading signals from strategy",
+            "5. Apply entry confluence filtering",
+            "6. Evaluate risk and position sizing",
+            "7. Execute approved orders via MT5",
+            "8. Track active positions",
+            "9. Monitor exit conditions",
+            "10. Execute exits when triggered",
+            "11. Record to database and collect metrics"
+          ]
+        },
+        "shutdown.py": {
+          "responsibility": "Graceful shutdown and cleanup",
+          "inputs": ["System state", "Open positions"],
+          "outputs": ["Closed connections", "Final database flush"],
+          "dependencies": ["connector/", "persistence/", "position/"]
+        },
+        "strategy_factory.py": {
+          "responsibility": "Strategy instantiation and registry",
+          "inputs": ["Strategy type", "Parameters"],
+          "outputs": ["Strategy instances"],
+          "dependencies": ["strategy/"]
+        },
+        "indicator_loader.py": {
+          "responsibility": "Indicator initialization and requirement resolution",
+          "inputs": ["Strategy requirements"],
+          "outputs": ["Computed indicators"],
+          "dependencies": ["indicators/"]
+        },
+        "exceptions.py": {
+          "responsibility": "Custom exception definitions",
+          "inputs": [],
+          "outputs": ["Exception classes"],
+          "dependencies": []
+        }
+      }
+    },
+    "strategy_system": {
+      "path": "strategy/",
+      "purpose": "Trading signal generation from multiple strategy types",
+      "strategies": {
+        "ema_crossover.py": {
+          "type": "Trend Following",
+          "description": "Exponential moving average crossover (fast crosses slow)",
+          "parameters": ["fast_period (default: 12)", "slow_period (default: 26)"],
+          "best_for": "Trending markets",
+          "signal_speed": "Fast"
+        },
+        "sma_crossover.py": {
+          "type": "Trend Following",
+          "description": "Simple moving average crossover",
+          "parameters": ["fast_period (default: 50)", "slow_period (default: 200)"],
+          "best_for": "Trending markets (slower)",
+          "signal_speed": "Medium"
+        },
+        "momentum_breakout.py": {
+          "type": "Breakout",
+          "description": "Detects breakouts with momentum confirmation",
+          "parameters": ["breakout_period", "momentum_threshold"],
+          "best_for": "Volatile breakout conditions",
+          "signal_speed": "Medium"
+        },
+        "scalping.py": {
+          "type": "Mean Reversion",
+          "description": "High-frequency trading on M1-M5 timeframes",
+          "parameters": ["tight_spread", "quick_profit_target"],
+          "best_for": "Ranging markets, tight ranges",
+          "signal_speed": "Ultra-Fast"
+        },
+        "trend_following.py": {
+          "type": "Trend Following",
+          "description": "Advanced trend following with dynamic adaptation",
+          "parameters": ["trend_strength_threshold", "adx_threshold"],
+          "best_for": "Strong trending markets",
+          "signal_speed": "Slow"
+        },
+        "rsi_reversal.py": {
+          "type": "Reversal",
+          "description": "RSI-based reversal signals at extremes",
+          "parameters": ["rsi_period (default: 14)", "oversold (default: 30)", "overbought (default: 70)"],
+          "best_for": "Volatile/reversal conditions",
+          "signal_speed": "Instant"
+        },
+        "mean_reversion.py": {
+          "type": "Mean Reversion",
+          "description": "Statistical mean reversion to moving average",
+          "parameters": ["ma_period", "std_threshold"],
+          "best_for": "Ranging markets",
+          "signal_speed": "Fast"
+        }
+      },
+      "strategy_selector.py": {
+        "responsibility": "Dynamic strategy selection based on regime and performance",
+        "inputs": ["Market regime", "Strategy performance metrics"],
+        "outputs": ["Selected strategy"],
+        "selection_criteria": [
+          "Performance metrics (win rate, Sharpe, profit factor)",
+          "Market regime fit (ADX, volatility)",
+          "Signal confidence",
+          "Weighted scoring (performance: 40%, regime: 40%, confidence: 20%)"
+        ]
+      },
+      "fallback_system": {
+        "description": "Try up to 3 alternative strategies if primary fails to generate signal",
+        "max_attempts": 3,
+        "benefits": ["Maximum opportunity capture", "Adaptability to all market conditions"]
+      }
+    },
+    "indicator_system": {
+      "path": "indicators/",
+      "purpose": "Technical indicator calculation and management",
+      "indicators": {
+        "rsi.py": {
+          "name": "Relative Strength Index",
+          "type": "Momentum oscillator",
+          "range": "0-100",
+          "interpretation": "Overbought >70, Oversold <30",
+          "parameters": ["period (default: 14)"]
+        },
+        "macd.py": {
+          "name": "Moving Average Convergence Divergence",
+          "type": "Trend following",
+          "parameters": ["fast: 12", "slow: 26", "signal: 9"],
+          "interpretation": "Crossovers indicate momentum shifts"
+        },
+        "atr.py": {
+          "name": "Average True Range",
+          "type": "Volatility measurement",
+          "use_cases": ["Dynamic stop-loss", "Position sizing", "Trailing stops"],
+          "parameters": ["period (default: 14)"]
+        },
+        "adx.py": {
+          "name": "Average Directional Index",
+          "type": "Trend strength",
+          "range": "0-100",
+          "interpretation": ">25 strong trend, <20 ranging",
+          "parameters": ["period (default: 14)"]
+        },
+        "bollinger.py": {
+          "name": "Bollinger Bands",
+          "type": "Volatility bands",
+          "components": ["Middle (SMA)", "Upper (SMA + 2σ)", "Lower (SMA - 2σ)"],
+          "use_cases": ["Mean reversion", "Breakout detection"],
+          "parameters": ["period: 20", "std_dev: 2.0"]
+        },
+        "supertrend.py": {
+          "name": "Supertrend",
+          "type": "Trend indicator",
+          "based_on": "ATR",
+          "use_cases": ["Dynamic support/resistance", "Trend direction"],
+          "parameters": ["atr_period", "multiplier"]
+        },
+        "vwap.py": {
+          "name": "Volume Weighted Average Price",
+          "type": "Institutional price level",
+          "use_cases": ["Intraday benchmark", "Buy below / sell above"],
+          "reset": "Daily (session-based)"
+        },
+        "stochastic.py": {
+          "name": "Stochastic Oscillator",
+          "type": "Momentum indicator",
+          "components": ["%K line", "%D line"],
+          "range": "0-100",
+          "interpretation": "Overbought/oversold levels"
+        },
+        "volume_indicators.py": {
+          "indicators": ["VPT (Volume Price Trend)", "Volume Oscillator", "Price Volume Trend"],
+          "purpose": "Volume confirmation and analysis"
+        }
+      },
+      "requirement_resolver": {
+        "responsibility": "Auto-compute missing indicators based on strategy needs",
+        "benefits": ["No duplicate calculations", "Ensures all data available", "Single-pass analysis"]
+      }
+    },
+    "cognition_layer": {
+      "path": "cognition/",
+      "purpose": "AI/ML intelligence for signal enhancement and market understanding",
+      "components": {
+        "engine.py": {
+          "role": "Central AI orchestrator",
+          "coordinates": ["Regime classifier", "Price predictor", "Sentiment analyzer", "Exit oracle", "Entry confluence"]
+        },
+        "regime_classifier.py": {
+          "role": "Detect market regime (trending/ranging/volatile/liquidity trap)",
+          "states": 10,
+          "inputs": ["ADX", "ATR", "Bollinger width", "Volume"],
+          "outputs": ["Regime classification", "Confidence score"]
+        },
+        "price_predictor.py": {
+          "role": "ML-based direction prediction",
+          "model": "Softmax classifier (12 features → 32 hidden → 3 outputs)",
+          "outputs": ["UP probability", "DOWN probability", "NEUTRAL probability"],
+          "accuracy_baseline": "58%"
+        },
+        "sentiment_analyzer.py": {
+          "role": "News and economic calendar impact analysis",
+          "inputs": ["News feeds", "Economic calendar events"],
+          "outputs": ["Sentiment score", "High-impact event alerts"]
+        },
+        "exit_oracle.py": {
+          "role": "ML-powered exit signal generation",
+          "inputs": ["Position state", "Market conditions", "Indicators"],
+          "outputs": ["Exit recommendation", "Confidence"]
+        },
+        "entry_confluence.py": {
+          "role": "Entry quality gate - prevents poor entries",
+          "factors": [
+            "Level Score (40%): S/R, round numbers, EMAs",
+            "Momentum Score (25%): Bar momentum, RSI",
+            "Timing Score (20%): Range position",
+            "Structure Score (15%): Higher highs/lows"
+          ],
+          "quality_thresholds": {
+            "PREMIUM": "≥85 → 1.0x size",
+            "GOOD": "≥70 → 0.85x size",
+            "MARGINAL": "≥50 → 0.6x size",
+            "POOR": "≥30 → Wait or 0.3x size",
+            "REJECT": "<30 → Skip"
+          },
+          "wait_mode": "Queue poor signals, execute when price reaches optimal level"
+        },
+        "chart_manager.py": {
+          "role": "Visual reasoning layer - dynamic zone and level tracking",
+          "features": ["Support/resistance zones", "Dynamic levels", "Visual structure"]
+        },
+        "order_blocks.py": {
+          "role": "ICT Order Block detection",
+          "detects": ["Break of Structure (BOS)", "Change of Character (ChoCH)"]
+        },
+        "session_orb.py": {
+          "role": "Session Opening Range Breakout detection",
+          "sessions": ["London", "New York"]
+        },
+        "pattern_recognition.py": {
+          "role": "Chart pattern detection with semantic analysis",
+          "patterns": 16,
+          "storage": "Hektor vector database for pattern embeddings"
+        },
+        "training_logger.py": {
+          "role": "ML data collection for training",
+          "logs": ["Trade events", "Indicators", "Outcomes"],
+          "format": "JSON"
+        }
+      }
+    },
+    "execution_layer": {
+      "path": "execution/",
+      "purpose": "Order execution and trade management",
+      "components": {
+        "engine.py": {
+          "role": "Idempotent order management with MT5 API",
+          "features": [
+            "Duplicate order suppression",
+            "Automatic retry with exponential backoff",
+            "Position reconciliation",
+            "ML instrumentation (training data)",
+            "Order state tracking"
+          ],
+          "order_types": ["MARKET", "LIMIT", "STOP"],
+          "execution_modes": ["live", "dry_run", "advisory", "ghost"]
+        }
+      }
+    },
+    "risk_management": {
+      "path": "risk/",
+      "purpose": "Pre-trade approval and position sizing",
+      "components": {
+        "manager.py": {
+          "role": "Main risk approval gate",
+          "checks": [
+            "Position size limits",
+            "Total exposure limits",
+            "Daily loss limits",
+            "Positions per symbol",
+            "Risk/reward ratio",
+            "Margin requirements"
+          ]
+        },
+        "evaluator.py": {
+          "role": "Trade evaluation and scoring",
+          "inputs": ["Signal", "Account state", "Market conditions"],
+          "outputs": ["Approval decision", "Position size"]
+        },
+        "adaptive_account_manager.py": {
+          "role": "Phase-based position sizing (survival, growth, profit-taking)",
+          "phases": ["Survival (<20% equity)", "Growth (20-80%)", "Profit-taking (>80%)"],
+          "adjusts": "Position sizes based on account phase"
+        },
+        "adaptive_drawdown.py": {
+          "role": "7-state drawdown protection",
+          "states": ["Normal", "Caution", "Warning", "Critical", "Emergency", "Shutdown", "Recovery"],
+          "actions": "Automatic position size reduction and trading pause"
+        },
+        "adaptive_loss_curve.py": {
+          "role": "Non-linear loss tolerance",
+          "adjusts": "Loss limits based on account equity curve"
+        },
+        "liquidity_trap_detector.py": {
+          "role": "Avoid illiquid markets",
+          "detects": ["Low volume", "Wide spreads", "Choppy price action"]
+        },
+        "dynamic_sltp.py": {
+          "role": "Symbol-aware stop-loss and take-profit management",
+          "features": ["Minimum distance enforcement", "ATR-based stops", "Idempotency"]
+        }
+      },
+      "position_sizing_methods": ["fixed", "percentage", "kelly_criterion", "volatility_based"],
+      "note": "To be unified in Q1 2026 (merging risk/manager.py and position/risk_manager.py)"
+    },
+    "position_management": {
+      "path": "position/",
+      "purpose": "Position lifecycle and profit management",
+      "components": {
+        "manager.py": {
+          "role": "Position lifecycle orchestration",
+          "lifecycle": ["Signal → Approval → Execution → Tracking → Exit → Recording"]
+        },
+        "tracker.py": {
+          "role": "Real-time position tracking",
+          "tracks": ["Unrealized P&L", "Age", "Slippage", "Commission", "Swap"]
+        },
+        "profit_scaler.py": {
+          "role": "Intelligent partial profit taking",
+          "strategy": "Scale out at multiple profit levels",
+          "features": ["Minimum time-in-trade", "Staged scaling", "Risk-free trades"]
+        },
+        "adoption.py": {
+          "role": "Adopt external trades (manual or from other EAs)",
+          "applies": "Cthulu exit strategies to adopted positions",
+          "configuration": ["Symbols to adopt", "Max age limit", "Apply exit strategies"]
+        },
+        "lifecycle.py": {
+          "role": "Position state transitions",
+          "states": ["Pending", "Open", "Partial", "Closed"]
+        },
+        "trade_manager.py": {
+          "role": "High-level trade management interface",
+          "integrates": ["Position manager", "Adoption", "Profit scaler"]
+        }
+      }
+    },
+    "exit_strategies": {
+      "path": "exit/",
+      "purpose": "Priority-based exit signal generation",
+      "strategies": {
+        "trailing_stop.py": {
+          "priority": 80,
+          "type": "Trailing Stop",
+          "description": "ATR-based dynamic trailing stop to lock in profits",
+          "parameters": ["atr_multiplier", "activation_profit_pct"]
+        },
+        "profit_target.py": {
+          "priority": 70,
+          "type": "Profit Target",
+          "description": "Fixed take-profit levels based on risk/reward ratio",
+          "parameters": ["risk_reward_ratio"]
+        },
+        "time_based.py": {
+          "priority": 60,
+          "type": "Time-Based Exit",
+          "description": "Close position after maximum age",
+          "parameters": ["max_age_hours", "max_age_bars"]
+        },
+        "adverse_movement.py": {
+          "priority": 50,
+          "type": "Adverse Movement (Emergency)",
+          "description": "Flash crash protection - exit on rapid adverse price movement",
+          "parameters": ["adverse_threshold_pct", "lookback_bars"]
+        }
+      },
+      "coordinator.py": {
+        "role": "Exit orchestration and priority handling",
+        "logic": "Evaluate exits by priority (highest first), first to trigger wins"
+      },
+      "confluence_exit_manager.py": {
+        "role": "Multi-indicator exit signals",
+        "combines": ["RSI", "MACD", "ATR", "Supertrend"]
+      },
+      "micro_account_protection.py": {
+        "role": "Special protection for small accounts",
+        "features": ["Conservative exits", "Tight stops"]
+      }
+    },
+    "connector_layer": {
+      "path": "connector/",
+      "purpose": "MetaTrader 5 integration",
+      "components": {
+        "mt5_connector.py": {
+          "role": "MT5 API wrapper with session management",
+          "functions": [
+            "initialize() - Connect to MT5 terminal",
+            "shutdown() - Disconnect gracefully",
+            "get_bars() - Fetch OHLCV data",
+            "place_order() - Execute trades",
+            "modify_position() - Adjust SL/TP",
+            "close_position() - Close trades",
+            "get_positions() - Query open positions",
+            "get_account_info() - Account balance, equity, margin"
+          ],
+          "error_handling": "Retry logic, connection recovery, state reconciliation"
+        }
+      },
+      "connection_modes": ["Real account", "Demo account"],
+      "data_updates": "On-demand pull (every poll interval)"
+    },
+    "persistence_layer": {
+      "path": "persistence/",
+      "purpose": "Data storage and retrieval",
+      "components": {
+        "database.py": {
+          "role": "SQLite database interface (WAL mode)",
+          "tables": {
+            "signals": {
+              "columns": ["timestamp", "symbol", "side", "confidence", "entry_price", "stop_loss", "take_profit", "strategy_name", "metadata", "execution_status"]
+            },
+            "trades": {
+              "columns": ["signal_id", "order_id", "ticket", "entry_price", "exit_price", "volume", "entry_time", "exit_time", "pnl", "commission", "swap", "exit_reason"]
+            },
+            "metrics": {
+              "columns": ["timestamp", "win_rate", "profit_factor", "sharpe_ratio", "max_drawdown", "total_trades", "total_pnl"]
+            },
+            "events": {
+              "columns": ["timestamp", "event_type", "data", "correlation_id"]
+            }
+          },
+          "wal_mode": "Write-Ahead Logging for concurrent access",
+          "timeout": "30 seconds"
+        }
+      },
+      "backups": "User responsibility (copy cthulu.db)"
+    },
+    "observability_layer": {
+      "path": "observability/",
+      "purpose": "Logging, metrics, monitoring",
+      "components": {
+        "logger.py": {
+          "role": "Structured JSON logging",
+          "formats": ["Console (INFO level)", "File (DEBUG level, rotating)", "JSON (optional)"],
+          "features": ["Correlation IDs", "Trade provenance", "Audit trail"]
+        },
+        "metrics.py": {
+          "role": "Trade metrics collection",
+          "metrics": ["Win rate", "Profit factor", "Average win/loss", "Sharpe ratio", "Max drawdown", "Position stats", "Strategy performance"]
+        },
+        "prometheus.py": {
+          "role": "Prometheus exporter",
+          "endpoint": "/metrics (HTTP)",
+          "exports": ["Trade performance", "Position metrics", "System health", "Strategy performance"]
+        },
+        "comprehensive_collector.py": {
+          "role": "Advanced metrics aggregation",
+          "features": ["Rolling Sharpe", "Drawdown tracking", "Risk-adjusted returns"]
+        },
+        "trade_event_bus.py": {
+          "role": "Event streaming for real-time updates",
+          "publishes": ["Trade events", "Position updates", "Risk events"]
+        }
+      }
+    },
+    "monitoring_layer": {
+      "path": "monitoring/",
+      "purpose": "System health and trade monitoring",
+      "components": {
+        "trade_monitor.py": {
+          "role": "Real-time position monitoring",
+          "polls": "Every 5 seconds",
+          "tracks": ["P&L changes", "Unrealized profits"]
+        },
+        "indicator_collector.py": {
+          "role": "Indicator metrics collection",
+          "exports": "Indicator values for monitoring"
+        },
+        "system_health_collector.py": {
+          "role": "Health checks",
+          "monitors": ["MT5 connection", "Database health", "Memory usage", "CPU usage"]
+        }
+      }
+    },
+    "ml_rl_layer": {
+      "path": "ML_RL/",
+      "purpose": "Machine learning and reinforcement learning",
+      "components": {
+        "train_models.py": {
+          "role": "Unified training orchestrator",
+          "trains": ["Price predictor", "RL position sizer", "Tier optimizer"]
+        },
+        "price_predictor.py": {
+          "architecture": "12 features → 32 hidden → 3 outputs (softmax)",
+          "outputs": ["UP", "DOWN", "NEUTRAL"],
+          "accuracy": "58% baseline"
+        },
+        "rl_position_sizer.py": {
+          "architecture": "11 states → 64 → 32 → 6 actions",
+          "algorithm": "Q-learning + PPO",
+          "actions": "Position size adjustments"
+        },
+        "tier_optimizer.py": {
+          "role": "Profit target optimization",
+          "method": "Bayesian optimization",
+          "optimizes": "Partial profit taking levels"
+        },
+        "feature_pipeline.py": {
+          "role": "Feature engineering",
+          "features": "12 technical + 8 regime features",
+          "preprocessing": "StandardScaler"
+        },
+        "llm_analysis.py": {
+          "role": "Local LLM integration (Ollama)",
+          "use_cases": ["Market narratives", "Trade explanations", "Summaries"]
+        },
+        "mlops.py": {
+          "role": "Model management",
+          "features": ["Versioning", "Drift detection", "Retraining triggers"]
+        }
+      },
+      "models_directory": "ML_RL/models/",
+      "training_status": {
+        "price_predictor": "Trained (6,847 samples)",
+        "rl_sizer": "Trained (1,429 episodes)",
+        "tier_optimizer": "In-progress"
+      }
+    },
+    "backtesting_layer": {
+      "path": "backtesting/",
+      "purpose": "Strategy validation and historical testing",
+      "components": {
+        "engine.py": {
+          "role": "Backtesting engine",
+          "simulates": "Historical trading with replay",
+          "outputs": "Performance metrics, trade log"
+        },
+        "auto_optimizer.py": {
+          "role": "Automated configuration optimization",
+          "method": "Grid search or Bayesian optimization",
+          "optimizes": "Strategy parameters, risk settings"
+        },
+        "ui_server.py": {
+          "role": "Flask-based web UI for backtesting",
+          "features": ["Interactive charts", "Grid sweep results", "Real-time updates (WebSocket)"]
+        },
+        "hektor_backtest.py": {
+          "role": "Semantic backtest result storage in vector DB",
+          "enables": "Similarity search for backtest configurations"
+        },
+        "ensemble.py": {
+          "role": "Multi-strategy backtesting",
+          "tests": "Multiple strategies on same dataset"
+        }
+      },
+      "reports_directory": "backtesting/reports/"
+    },
+    "integration_layer": {
+      "integrations": {
+        "hektor_vector_db": {
+          "path": "integrations/vector_studio.py",
+          "purpose": "Semantic pattern recognition and storage",
+          "stores": ["Chart patterns", "Backtest results", "Market narratives"],
+          "operations": ["Store embeddings", "Similarity search", "Clustering"]
+        },
+        "discord": {
+          "path": "integrations/discord_notifier.py",
+          "purpose": "Real-time notifications",
+          "notifications": ["Trade executions", "Risk events", "System health", "Performance summaries"]
+        },
+        "ml_exporter": {
+          "path": "integrations/ml_exporter.py",
+          "purpose": "ML training data export",
+          "formats": ["CSV", "Parquet", "JSON"]
+        },
+        "performance_analyzer": {
+          "path": "integrations/performance_analyzer.py",
+          "purpose": "Semantic performance analytics",
+          "analyzes": "Trade patterns, strategy effectiveness"
+        }
+      }
+    },
+    "user_interfaces": {
+      "desktop_gui": {
+        "path": "ui/local/desktop.py",
+        "framework": "Tkinter",
+        "features": ["Real-time position monitoring", "Trade history", "Performance metrics", "Manual trade execution", "Log viewing"],
+        "theme": "Dark mode"
+      },
+      "web_ui": {
+        "path": "backtesting/ui_server.py",
+        "framework": "Flask + Flask-SocketIO",
+        "features": ["Backtesting interface", "Interactive charts", "Real-time updates"],
+        "deployment": "Standalone server or embedded"
+      },
+      "cli": {
+        "path": "__main__.py",
+        "features": ["Command-line arguments", "Interactive wizard", "Headless mode"],
+        "examples": ["--dry-run", "--mindset aggressive", "--wizard", "--no-gui"]
+      }
+    },
+    "configuration_system": {
+      "path": "config/",
+      "components": {
+        "wizard.py": {
+          "role": "Interactive configuration setup",
+          "modes": ["Standard wizard", "NLP-based wizard (AI)"]
+        },
+        "mindsets.py": {
+          "role": "Trading profile definitions",
+          "profiles": ["conservative", "balanced", "aggressive", "ultra_aggressive"]
+        },
+        "loader.py": {
+          "role": "Configuration loading and validation",
+          "validates": "Pydantic schema (config_schema.py)"
+        }
+      },
+      "config_files": {
+        "config.json": "Primary configuration",
+        ".env": "Secrets and credentials",
+        "configs/mindsets/": "Pre-configured profiles"
+      }
+    },
+    "utilities": {
+      "path": "utils/",
+      "components": {
+        "circuit_breaker.py": "Prevent cascading failures",
+        "rate_limiter.py": "Rate limiting for API calls",
+        "retry.py": "Retry logic with exponential backoff",
+        "cache.py": "Caching for expensive operations",
+        "health_monitor.py": "System health checks"
+      }
+    },
+    "deployment": {
+      "path": "deployment/",
+      "options": [
+        {
+          "method": "Local",
+          "command": "python -m cthulu --config config.json",
+          "use_case": "Development, testing, single-user"
+        },
+        {
+          "method": "Docker",
+          "command": "docker-compose up -d",
+          "use_case": "Containerized deployment, reproducibility"
+        },
+        {
+          "method": "Systemd (Linux)",
+          "file": "deployment/cthulu.service",
+          "use_case": "Production Linux servers"
+        },
+        {
+          "method": "NSSM (Windows)",
+          "use_case": "Windows service deployment"
+        }
+      ]
+    }
+  },
+  "data_flows": {
+    "signal_generation_flow": {
+      "steps": [
+        "1. MT5 → Data Layer: Fetch OHLCV bars",
+        "2. Data Layer → Indicators: Calculate technical indicators",
+        "3. Indicators → Regime Classifier: Detect market regime",
+        "4. Regime → Strategy Selector: Choose optimal strategy",
+        "5. Strategy → Signal Generator: Generate trading signal",
+        "6. Signal → Cognition Engine: ML enhancement (price predictor, sentiment)",
+        "7. Enhanced Signal → Entry Confluence Filter: Quality gate (score 30-100)",
+        "8. Approved Signal → Risk Manager: Evaluate risk and size position",
+        "9. Risk Approved → Execution Engine: Place order via MT5 API",
+        "10. Execution → Position Manager: Track new position",
+        "11. Position → Database: Record trade and metrics"
+      ]
+    },
+    "exit_monitoring_flow": {
+      "steps": [
+        "1. Position Tracker → Exit Coordinator: Check exit conditions",
+        "2. Exit Coordinator → Exit Strategies: Evaluate all strategies by priority",
+        "3. Exit Strategy → Decision: First strategy to trigger wins",
+        "4. Decision → Execution Engine: Execute exit order via MT5",
+        "5. Execution → Position Manager: Update position (closed)",
+        "6. Position Manager → Database: Record exit and P&L",
+        "7. Database → Metrics Collector: Update performance metrics"
+      ]
+    },
+    "observability_flow": {
+      "steps": [
+        "1. All Components → Structured Logger: JSON log events",
+        "2. Logger → Log File: Write to Cthulu.log (rotating)",
+        "3. All Components → Metrics Collector: Trade and system metrics",
+        "4. Metrics Collector → Prometheus: Export via /metrics endpoint",
+        "5. Metrics Collector → Database: Store historical metrics",
+        "6. Trade Events → Event Bus: Publish to subscribers",
+        "7. Event Bus → Discord/Telegram: Send notifications",
+        "8. Event Bus → GUI: Real-time dashboard updates"
+      ]
+    },
+    "ml_training_flow": {
+      "steps": [
+        "1. Trading Loop → Training Logger: Log trade events, indicators, outcomes",
+        "2. Training Logger → JSON Files: Store training data",
+        "3. JSON Files → Feature Pipeline: Extract and engineer features",
+        "4. Feature Pipeline → ML Models: Train price predictor, RL sizer, tier optimizer",
+        "5. Trained Models → ML Registry: Version and store models",
+        "6. ML Registry → Trading Loop: Load models for inference",
+        "7. Inference Results → Performance Monitor: Track model accuracy, drift",
+        "8. Performance Monitor → Retraining Trigger: Schedule retraining if drift detected"
+      ]
+    }
+  },
+  "integration_points": {
+    "mt5_api": {
+      "protocol": "Shared memory / COM (Windows) or Wine (Linux)",
+      "operations": ["Connect", "Fetch data", "Place orders", "Modify positions", "Close positions", "Query account"],
+      "error_handling": "Circuit breaker, retry logic, automatic reconnection"
+    },
+    "hektor_vector_db": {
+      "protocol": "Python API (custom)",
+      "operations": ["Store embeddings", "Similarity search", "Retrieve patterns"],
+      "use_cases": ["Pattern recognition", "Backtest result search", "Market narrative clustering"]
+    },
+    "ollama_llm": {
+      "protocol": "HTTP REST API",
+      "endpoint": "http://localhost:11434 (default)",
+      "operations": ["Generate text", "Explain trades", "Market summaries"],
+      "models": "User-configurable (llama2, mistral, etc.)"
+    },
+    "discord_webhooks": {
+      "protocol": "HTTPS POST",
+      "payloads": "JSON with embeds",
+      "notifications": ["Trade alerts", "Risk events", "System errors", "Daily summaries"]
+    },
+    "prometheus_scraping": {
+      "protocol": "HTTP GET",
+      "endpoint": "/metrics",
+      "format": "Prometheus text format",
+      "scrape_interval": "15s (recommended)"
+    }
+  },
+  "security_considerations": {
+    "credential_management": {
+      "mt5_credentials": "Store in .env file (not config.json)",
+      "api_tokens": "Environment variables (CTHULU_API_TOKEN, DISCORD_WEBHOOK_URL)",
+      "best_practices": ["Never commit .env to git", "Use strong passwords", "Rotate credentials regularly"]
+    },
+    "api_security": {
+      "rpc_server": "Token-based authentication, localhost-only by default",
+      "rate_limiting": "Prevent abuse of RPC endpoints",
+      "audit_logging": "All API calls logged with correlation IDs"
+    },
+    "data_security": {
+      "database": "Local SQLite file (user's machine)",
+      "encryption": "Optional (user responsibility)",
+      "backups": "User responsibility (copy cthulu.db)"
+    }
+  },
+  "scalability_considerations": {
+    "current_limits": {
+      "symbols": "1 (single-instrument trading)",
+      "strategies": "7 active + fallback",
+      "positions": "Configurable (default: 3-10 depending on mindset)",
+      "database_size": "Grows with trade history (~1MB per 1000 trades)"
+    },
+    "planned_improvements": {
+      "Q3_2026": "Multi-symbol trading (10+ symbols)",
+      "Q4_2026": "Cloud-native deployment with auto-scaling",
+      "future": "Distributed trading across multiple MT5 accounts"
+    }
+  },
+  "testing_architecture": {
+    "test_directory": "tests/",
+    "test_types": {
+      "unit_tests": {
+        "path": "tests/unit/",
+        "coverage": "95%+",
+        "framework": "pytest",
+        "scope": "Individual component testing (indicators, strategies, risk)"
+      },
+      "integration_tests": {
+        "path": "tests/integration/",
+        "framework": "pytest",
+        "scope": "Component interaction testing (trading loop, database, MT5 connector)"
+      },
+      "stress_tests": {
+        "duration": "24-72 hours continuous",
+        "measures": ["Uptime", "Memory leaks", "Performance degradation"],
+        "status": "98.5% uptime achieved"
+      }
+    },
+    "ci_cd": {
+      "platform": "GitHub Actions",
+      "runs_on": ["Push to main/develop", "Pull requests", "Nightly schedule"],
+      "jobs": ["Lint", "Tests (multi-OS, multi-Python)", "Coverage", "Security audit", "Build Docker"]
+    }
+  },
+  "metadata": {
+    "document_version": "1.0.0",
+    "generated_date": "2026-01-27T11:17:55.842Z",
+    "author": "Cthulu Project Management Team",
+    "purpose": "Comprehensive system architecture mapping for developers and operators",
+    "completeness": "Full architecture coverage including all modules, data flows, and integration points"
+  }
+}

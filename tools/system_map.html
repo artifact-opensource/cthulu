@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cthulu System Map - Interactive Architecture Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #1a1f2e 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-bottom: 2px solid #4B0082;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #header h1 {
+            font-size: 24px;
+            color: #00ff88;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background: #4B0082;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        #controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            background: #4B0082;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #6A00FF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 0, 130, 0.4);
+        }
+
+        .btn.active {
+            background: #00ff88;
+            color: #0D1117;
+        }
+
+        #search {
+            padding: 8px 16px;
+            border: 1px solid #4B0082;
+            border-radius: 6px;
+            background: rgba(26, 31, 46, 0.8);
+            color: white;
+            font-size: 14px;
+            width: 250px;
+        }
+
+        #container {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .node:hover {
+            filter: brightness(1.3);
+        }
+
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+
+        .node text {
+            font-size: 12px;
+            pointer-events: none;
+            text-anchor: middle;
+            fill: white;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .link {
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+            transition: all 0.3s;
+        }
+
+        .link:hover {
+            stroke-opacity: 1;
+            stroke-width: 4px;
+        }
+
+        .link.flow-high {
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes flow {
+            0% {
+                stroke-dashoffset: 0;
+            }
+
+            100% {
+                stroke-dashoffset: -20;
+            }
+        }
+
+        #tooltip {
+            position: fixed;
+            padding: 15px;
+            background: rgba(13, 17, 23, 0.98);
+            border: 2px solid #4B0082;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 400px;
+            z-index: 2000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        #tooltip.show {
+            opacity: 1;
+        }
+
+        #tooltip h3 {
+            color: #00ff88;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        #tooltip .info {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        #tooltip .metrics {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        #tooltip .metric {
+            background: rgba(75, 0, 130, 0.3);
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        #tooltip .metric-label {
+            color: #888;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        #tooltip .metric-value {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid #4B0082;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .legend h4 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        #stats {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid #4B0082;
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            z-index: 1000;
+        }
+
+        #stats h4 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        #stats .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 12px;
+        }
+
+        #stats .stat-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .issue-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .suggestions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 350px;
+            z-index: 1000;
+        }
+
+        .suggestions h4 {
+            color: #ff9800;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .suggestion-item {
+            background: rgba(255, 152, 0, 0.1);
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border-left: 3px solid #ff9800;
+            font-size: 11px;
+        }
+
+        .suggestion-severity {
+            color: #ff9800;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        #view-toggle {
+            display: flex;
+            gap: 5px;
+            background: rgba(26, 31, 46, 0.8);
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        #view-toggle button {
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        #view-toggle button.active {
+            background: #4B0082;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <h1>
+            <span>🐙 Cthulu System Map</span>
+            <span class="badge">v5.2.33</span>
+        </h1>
+        <div id="controls">
+            <input type="text" id="search" placeholder="Search components...">
+            <div id="view-toggle">
+                <button class="active" data-view="force">Force</button>
+                <button data-view="tree">Tree</button>
+                <button data-view="radial">Radial</button>
+            </div>
+            <button class="btn" id="resetBtn">Reset View</button>
+            <button class="btn" id="expandBtn">Expand All</button>
+            <button class="btn" id="exportBtn">Export</button>
+        </div>
+    </div>
+
+    <div id="container"></div>
+
+    <div id="tooltip"></div>
+
+    <div class="legend">
+        <h4>Component Types</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00ff88;"></div>
+            <span>Core Engine</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00aaff;"></div>
+            <span>Strategy/Indicators</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff6b6b;"></div>
+            <span>Risk/Position</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffaa00;"></div>
+            <span>Execution/Exit</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #9b59b6;"></div>
+            <span>AI/ML (Cognition)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #3498db;"></div>
+            <span>Data/Persistence</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #2ecc71;"></div>
+            <span>Monitoring/UI</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>External/MT5</span>
+        </div>
+    </div>
+
+    <div id="stats">
+        <h4>System Statistics</h4>
+        <div class="stat">
+            <span>Total Components:</span>
+            <span class="stat-value" id="totalComponents">0</span>
+        </div>
+        <div class="stat">
+            <span>Total Connections:</span>
+            <span class="stat-value" id="totalConnections">0</span>
+        </div>
+        <div class="stat">
+            <span>Lines of Code:</span>
+            <span class="stat-value">69,512</span>
+        </div>
+        <div class="stat">
+            <span>Functions:</span>
+            <span class="stat-value">2,118</span>
+        </div>
+        <div class="stat">
+            <span>Critical Issues:</span>
+            <span class="stat-value" style="color: #ff4444;">3</span>
+        </div>
+    </div>
+
+    <div class="suggestions">
+        <h4>⚠️ Smart Suggestions</h4>
+        <div class="suggestion-item">
+            <div class="suggestion-severity">CRITICAL</div>
+            <div>trading_loop.py (2,214 lines) - Refactor needed. Too complex for single module.</div>
+        </div>
+        <div class="suggestion-item">
+            <div class="suggestion-severity">HIGH</div>
+            <div>MT5 Connector - Add circuit breaker pattern. Single point of failure detected.</div>
+        </div>
+        <div class="suggestion-item">
+            <div class="suggestion-severity">MEDIUM</div>
+            <div>Test Coverage - Expand to 85%+ for critical trading paths.</div>
+        </div>
+    </div>
+
+    <script>
+        // System data structure
+        const systemData = {
+            nodes: [
+                // Core Engine
+                {
+                    id: "bootstrap", name: "Bootstrap", group: "core", type: "Core Engine", lines: 895, functions: 42, issues: 0,
+                    description: "System initialization, component setup, MT5 connection management",
+                    dependencies: ["mt5_connector", "config", "database", "logger"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "trading_loop", name: "Trading Loop", group: "core", type: "Core Engine", lines: 2214, functions: 89, issues: 2,
+                    description: "Main trading loop orchestration - CRITICAL: Needs refactoring (too large)",
+                    dependencies: ["strategy_engine", "execution", "position_manager", "exit_coordinator", "cognition"],
+                    complexity: "Very High", criticalPath: true
+                },
+                {
+                    id: "shutdown", name: "Shutdown", group: "core", type: "Core Engine", lines: 366, functions: 18, issues: 0,
+                    description: "Graceful shutdown handling, cleanup operations",
+                    dependencies: ["execution", "position_manager", "database"],
+                    complexity: "Low", criticalPath: false
+                },
+
+                // Strategy System
+                {
+                    id: "strategy_engine", name: "Strategy Engine", group: "strategy", type: "Strategy/Indicators", lines: 519, functions: 31, issues: 0,
+                    description: "Dynamic strategy selection based on regime and performance",
+                    dependencies: ["indicators", "regime_classifier", "cognition"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "ema_crossover", name: "EMA Crossover", group: "strategy", type: "Strategy/Indicators", lines: 246, functions: 12, issues: 0,
+                    description: "Exponential moving average crossover strategy",
+                    dependencies: ["indicators"],
+                    complexity: "Low", criticalPath: false
+                },
+                {
+                    id: "rsi_reversal", name: "RSI Reversal", group: "strategy", type: "Strategy/Indicators", lines: 165, functions: 8, issues: 0,
+                    description: "RSI-based reversal strategy",
+                    dependencies: ["indicators"],
+                    complexity: "Low", criticalPath: false
+                },
+                {
+                    id: "scalping", name: "Scalping", group: "strategy", type: "Strategy/Indicators", lines: 243, functions: 14, issues: 0,
+                    description: "High-frequency scalping strategy",
+                    dependencies: ["indicators"],
+                    complexity: "Medium", criticalPath: false
+                },
+
+                // Indicators
+                {
+                    id: "indicators", name: "Indicator Library", group: "indicators", type: "Strategy/Indicators", lines: 1450, functions: 87, issues: 0,
+                    description: "12 technical indicators: RSI, MACD, ATR, ADX, Bollinger, etc.",
+                    dependencies: ["data_layer"],
+                    complexity: "Medium", criticalPath: true
+                },
+
+                // Cognition/AI
+                {
+                    id: "cognition", name: "Cognition Engine", group: "cognition", type: "AI/ML (Cognition)", lines: 786, functions: 45, issues: 0,
+                    description: "Central AI/ML orchestrator for intelligent trading decisions",
+                    dependencies: ["regime_classifier", "price_predictor", "sentiment", "exit_oracle"],
+                    complexity: "High", criticalPath: true
+                },
+                {
+                    id: "regime_classifier", name: "Regime Classifier", group: "cognition", type: "AI/ML (Cognition)", lines: 415, functions: 23, issues: 0,
+                    description: "Market regime detection (trending, ranging, volatile)",
+                    dependencies: ["indicators"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "entry_confluence", name: "Entry Confluence", group: "cognition", type: "AI/ML (Cognition)", lines: 1466, functions: 68, issues: 1,
+                    description: "Entry quality assessment - WARNING: Large file, needs splitting",
+                    dependencies: ["indicators", "chart_manager"],
+                    complexity: "Very High", criticalPath: true
+                },
+                {
+                    id: "price_predictor", name: "Price Predictor", group: "cognition", type: "AI/ML (Cognition)", lines: 478, functions: 26, issues: 0,
+                    description: "ML-based price direction prediction",
+                    dependencies: ["indicators"],
+                    complexity: "Medium", criticalPath: false
+                },
+                {
+                    id: "sentiment", name: "Sentiment Analyzer", group: "cognition", type: "AI/ML (Cognition)", lines: 416, functions: 22, issues: 0,
+                    description: "News and market sentiment analysis",
+                    dependencies: ["news_feed"],
+                    complexity: "Medium", criticalPath: false
+                },
+                {
+                    id: "exit_oracle", name: "Exit Oracle", group: "cognition", type: "AI/ML (Cognition)", lines: 482, functions: 27, issues: 0,
+                    description: "ML-powered exit signal generation",
+                    dependencies: ["indicators", "position_manager"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "chart_manager", name: "Chart Manager", group: "cognition", type: "AI/ML (Cognition)", lines: 1500, functions: 72, issues: 1,
+                    description: "Visual reasoning layer - WARNING: Large file, needs splitting",
+                    dependencies: ["indicators"],
+                    complexity: "Very High", criticalPath: false
+                },
+
+                // Risk Management
+                {
+                    id: "risk_evaluator", name: "Risk Evaluator", group: "risk", type: "Risk/Position", lines: 724, functions: 38, issues: 0,
+                    description: "Pre-trade approval and position sizing",
+                    dependencies: ["account_manager", "drawdown_manager"],
+                    complexity: "High", criticalPath: true
+                },
+                {
+                    id: "account_manager", name: "Account Manager", group: "risk", type: "Risk/Position", lines: 662, functions: 34, issues: 0,
+                    description: "Phase-based position sizing and account management",
+                    dependencies: [],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "drawdown_manager", name: "Drawdown Manager", group: "risk", type: "Risk/Position", lines: 521, functions: 28, issues: 0,
+                    description: "Adaptive drawdown protection",
+                    dependencies: ["account_manager"],
+                    complexity: "Medium", criticalPath: true
+                },
+
+                // Execution
+                {
+                    id: "execution", name: "Execution Engine", group: "execution", type: "Execution/Exit", lines: 971, functions: 52, issues: 1,
+                    description: "Order execution, MT5 integration, reconciliation - Needs error handling improvements",
+                    dependencies: ["mt5_connector", "database"],
+                    complexity: "High", criticalPath: true
+                },
+
+                // Position Management
+                {
+                    id: "position_manager", name: "Position Manager", group: "position", type: "Risk/Position", lines: 339, functions: 21, issues: 0,
+                    description: "Position tracking and lifecycle management",
+                    dependencies: ["database", "mt5_connector"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "position_lifecycle", name: "Position Lifecycle", group: "position", type: "Risk/Position", lines: 507, functions: 29, issues: 0,
+                    description: "Position state management and transitions",
+                    dependencies: ["position_manager"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "trade_adoption", name: "Trade Adoption", group: "position", type: "Risk/Position", lines: 277, functions: 16, issues: 0,
+                    description: "External trade adoption and management",
+                    dependencies: ["position_manager"],
+                    complexity: "Low", criticalPath: false
+                },
+
+                // Exit Strategies
+                {
+                    id: "exit_coordinator", name: "Exit Coordinator", group: "exit", type: "Execution/Exit", lines: 308, functions: 19, issues: 0,
+                    description: "Priority-based exit strategy coordination",
+                    dependencies: ["trailing_stop", "profit_target", "time_exit"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "trailing_stop", name: "Trailing Stop", group: "exit", type: "Execution/Exit", lines: 222, functions: 13, issues: 0,
+                    description: "ATR-based trailing stop implementation",
+                    dependencies: ["indicators"],
+                    complexity: "Low", criticalPath: true
+                },
+                {
+                    id: "profit_target", name: "Profit Target", group: "exit", type: "Execution/Exit", lines: 208, functions: 12, issues: 0,
+                    description: "Fixed and dynamic profit target exits",
+                    dependencies: [],
+                    complexity: "Low", criticalPath: true
+                },
+                {
+                    id: "time_exit", name: "Time Exit", group: "exit", type: "Execution/Exit", lines: 219, functions: 11, issues: 0,
+                    description: "Time-based position exit strategy",
+                    dependencies: [],
+                    complexity: "Low", criticalPath: false
+                },
+                {
+                    id: "profit_scaler", name: "Profit Scaler", group: "exit", type: "Execution/Exit", lines: 450, functions: 25, issues: 0,
+                    description: "Intelligent partial profit taking system",
+                    dependencies: ["position_manager"],
+                    complexity: "Medium", criticalPath: false
+                },
+
+                // Data Layer
+                {
+                    id: "mt5_connector", name: "MT5 Connector", group: "data", type: "External/MT5", lines: 875, functions: 47, issues: 1,
+                    description: "MetaTrader 5 API integration - CRITICAL: Needs circuit breaker",
+                    dependencies: [],
+                    complexity: "High", criticalPath: true
+                },
+                {
+                    id: "data_layer", name: "Data Layer", group: "data", type: "Data/Persistence", lines: 542, functions: 31, issues: 0,
+                    description: "OHLCV data normalization and caching",
+                    dependencies: ["mt5_connector"],
+                    complexity: "Medium", criticalPath: true
+                },
+                {
+                    id: "database", name: "Database", group: "data", type: "Data/Persistence", lines: 687, functions: 39, issues: 0,
+                    description: "SQLite persistence layer with WAL mode",
+                    dependencies: [],
+                    complexity: "Medium", criticalPath: true
+                },
+
+                // Monitoring & UI
+                {
+                    id: "logger", name: "Logger", group: "monitoring", type: "Monitoring/UI", lines: 234, functions: 14, issues: 0,
+                    description: "Structured logging system",
+                    dependencies: [],
+                    complexity: "Low", criticalPath: false
+                },
+                {
+                    id: "metrics", name: "Metrics Collector", group: "monitoring", type: "Monitoring/UI", lines: 423, functions: 26, issues: 0,
+                    description: "Performance metrics and Prometheus integration",
+                    dependencies: ["database"],
+                    complexity: "Medium", criticalPath: false
+                },
+                {
+                    id: "gui", name: "Desktop GUI", group: "monitoring", type: "Monitoring/UI", lines: 891, functions: 48, issues: 0,
+                    description: "Tkinter-based desktop dashboard",
+                    dependencies: ["database", "rpc"],
+                    complexity: "Medium", criticalPath: false
+                },
+                {
+                    id: "rpc", name: "RPC Server", group: "monitoring", type: "Monitoring/UI", lines: 567, functions: 32, issues: 0,
+                    description: "HTTP API for external integrations",
+                    dependencies: ["database", "execution"],
+                    complexity: "Medium", criticalPath: false
+                },
+
+                // Config & Utils
+                {
+                    id: "config", name: "Configuration", group: "config", type: "Core Engine", lines: 456, functions: 28, issues: 0,
+                    description: "Configuration management and validation",
+                    dependencies: [],
+                    complexity: "Low", criticalPath: true
+                },
+                {
+                    id: "news_feed", name: "News Feed", group: "external", type: "External/MT5", lines: 312, functions: 19, issues: 0,
+                    description: "Economic calendar and news integration",
+                    dependencies: [],
+                    complexity: "Low", criticalPath: false
+                },
+            ],
+            links: [
+                // Core flows
+                { source: "bootstrap", target: "mt5_connector", type: "initialization", flow: "high" },
+                { source: "bootstrap", target: "config", type: "initialization", flow: "high" },
+                { source: "bootstrap", target: "database", type: "initialization", flow: "high" },
+                { source: "bootstrap", target: "trading_loop", type: "initialization", flow: "high" },
+
+                // Trading loop connections
+                { source: "trading_loop", target: "data_layer", type: "data_request", flow: "high" },
+                { source: "trading_loop", target: "indicators", type: "calculation", flow: "high" },
+                { source: "trading_loop", target: "cognition", type: "analysis", flow: "high" },
+                { source: "trading_loop", target: "strategy_engine", type: "signal_generation", flow: "high" },
+                { source: "trading_loop", target: "risk_evaluator", type: "approval", flow: "high" },
+                { source: "trading_loop", target: "execution", type: "order_submission", flow: "high" },
+                { source: "trading_loop", target: "position_manager", type: "tracking", flow: "high" },
+                { source: "trading_loop", target: "exit_coordinator", type: "exit_check", flow: "high" },
+
+                // Data flows
+                { source: "mt5_connector", target: "data_layer", type: "market_data", flow: "high" },
+                { source: "data_layer", target: "indicators", type: "ohlcv_data", flow: "high" },
+
+                // Strategy flows
+                { source: "indicators", target: "strategy_engine", type: "indicator_values", flow: "high" },
+                { source: "strategy_engine", target: "ema_crossover", type: "strategy_request", flow: "medium" },
+                { source: "strategy_engine", target: "rsi_reversal", type: "strategy_request", flow: "medium" },
+                { source: "strategy_engine", target: "scalping", type: "strategy_request", flow: "medium" },
+                { source: "indicators", target: "ema_crossover", type: "indicator_values", flow: "medium" },
+                { source: "indicators", target: "rsi_reversal", type: "indicator_values", flow: "medium" },
+                { source: "indicators", target: "scalping", type: "indicator_values", flow: "medium" },
+
+                // Cognition flows
+                { source: "cognition", target: "regime_classifier", type: "regime_request", flow: "high" },
+                { source: "cognition", target: "price_predictor", type: "prediction_request", flow: "medium" },
+                { source: "cognition", target: "sentiment", type: "sentiment_request", flow: "low" },
+                { source: "cognition", target: "exit_oracle", type: "exit_signal_request", flow: "high" },
+                { source: "indicators", target: "regime_classifier", type: "indicator_values", flow: "high" },
+                { source: "indicators", target: "price_predictor", type: "indicator_values", flow: "medium" },
+                { source: "indicators", target: "entry_confluence", type: "indicator_values", flow: "high" },
+                { source: "indicators", target: "chart_manager", type: "indicator_values", flow: "medium" },
+                { source: "chart_manager", target: "entry_confluence", type: "visual_analysis", flow: "medium" },
+                { source: "news_feed", target: "sentiment", type: "news_data", flow: "low" },
+
+                // Risk flows
+                { source: "risk_evaluator", target: "account_manager", type: "sizing_request", flow: "high" },
+                { source: "risk_evaluator", target: "drawdown_manager", type: "protection_check", flow: "high" },
+                { source: "account_manager", target: "drawdown_manager", type: "account_info", flow: "medium" },
+
+                // Execution flows
+                { source: "execution", target: "mt5_connector", type: "order_request", flow: "high" },
+                { source: "execution", target: "database", type: "trade_log", flow: "high" },
+                { source: "execution", target: "position_manager", type: "position_update", flow: "high" },
+
+                // Position flows
+                { source: "position_manager", target: "position_lifecycle", type: "lifecycle_mgmt", flow: "high" },
+                { source: "position_manager", target: "trade_adoption", type: "adoption_check", flow: "low" },
+                { source: "position_manager", target: "database", type: "position_log", flow: "medium" },
+                { source: "mt5_connector", target: "position_manager", type: "position_sync", flow: "medium" },
+
+                // Exit flows
+                { source: "exit_coordinator", target: "trailing_stop", type: "exit_check", flow: "high" },
+                { source: "exit_coordinator", target: "profit_target", type: "exit_check", flow: "high" },
+                { source: "exit_coordinator", target: "time_exit", type: "exit_check", flow: "medium" },
+                { source: "exit_coordinator", target: "profit_scaler", type: "scaling_check", flow: "medium" },
+                { source: "indicators", target: "trailing_stop", type: "atr_data", flow: "high" },
+                { source: "exit_oracle", target: "exit_coordinator", type: "ml_exit_signal", flow: "medium" },
+                { source: "position_manager", target: "exit_oracle", type: "position_data", flow: "medium" },
+                { source: "position_manager", target: "profit_scaler", type: "position_data", flow: "medium" },
+
+                // Monitoring flows
+                { source: "database", target: "metrics", type: "query", flow: "medium" },
+                { source: "database", target: "gui", type: "query", flow: "medium" },
+                { source: "database", target: "rpc", type: "query", flow: "low" },
+                { source: "execution", target: "rpc", type: "status_update", flow: "low" },
+
+                // Shutdown flows
+                { source: "shutdown", target: "execution", type: "cleanup", flow: "low" },
+                { source: "shutdown", target: "position_manager", type: "cleanup", flow: "low" },
+                { source: "shutdown", target: "database", type: "cleanup", flow: "low" },
+            ]
+        };
+
+        // Color mapping for node groups
+        const colorMap = {
+            "core": "#00ff88",
+            "strategy": "#00aaff",
+            "indicators": "#00aaff",
+            "cognition": "#9b59b6",
+            "risk": "#ff6b6b",
+            "position": "#ff6b6b",
+            "execution": "#ffaa00",
+            "exit": "#ffaa00",
+            "data": "#3498db",
+            "monitoring": "#2ecc71",
+            "config": "#00ff88",
+            "external": "#e74c3c"
+        };
+
+        // Flow intensity colors
+        const flowColorMap = {
+            "high": "#ff0055",
+            "medium": "#ffaa00",
+            "low": "#00aaff"
+        };
+
+        // Setup SVG
+        const width = window.innerWidth;
+        const height = window.innerHeight - 70;
+
+        const svg = d3.select("#container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Add zoom behavior
+        const g = svg.append("g");
+
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            });
+
+        svg.call(zoom);
+
+        // Create force simulation
+        let simulation = d3.forceSimulation(systemData.nodes)
+            .force("link", d3.forceLink(systemData.links)
+                .id(d => d.id)
+                .distance(d => {
+                    if (d.type === "initialization") return 150;
+                    if (d.flow === "high") return 100;
+                    if (d.flow === "medium") return 120;
+                    return 150;
+                }))
+            .force("charge", d3.forceManyBody().strength(-800))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(50));
+
+        // Create links
+        const link = g.append("g")
+            .selectAll("line")
+            .data(systemData.links)
+            .join("line")
+            .attr("class", d => `link flow-${d.flow}`)
+            .attr("stroke", d => flowColorMap[d.flow])
+            .attr("stroke-dasharray", d => d.flow === "high" ? "5,5" : "0");
+
+        // Create nodes
+        const node = g.append("g")
+            .selectAll("g")
+            .data(systemData.nodes)
+            .join("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Add circles to nodes
+        node.append("circle")
+            .attr("r", d => {
+                if (d.criticalPath) return 25;
+                if (d.lines > 1000) return 22;
+                if (d.lines > 500) return 18;
+                return 15;
+            })
+            .attr("fill", d => colorMap[d.group])
+            .attr("opacity", 0.9);
+
+        // Add text labels
+        node.append("text")
+            .attr("dy", 35)
+            .text(d => d.name)
+            .style("font-size", d => d.criticalPath ? "13px" : "11px")
+            .style("font-weight", d => d.criticalPath ? "bold" : "normal");
+
+        // Add issue badges
+        node.filter(d => d.issues > 0)
+            .append("circle")
+            .attr("class", "issue-badge")
+            .attr("cx", 18)
+            .attr("cy", -18)
+            .attr("r", 10)
+            .attr("fill", "#ff4444")
+            .attr("stroke", "white")
+            .attr("stroke-width", 2);
+
+        node.filter(d => d.issues > 0)
+            .append("text")
+            .attr("x", 18)
+            .attr("y", -14)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "10px")
+            .attr("font-weight", "bold")
+            .attr("fill", "white")
+            .text(d => d.issues);
+
+        // Tooltip
+        const tooltip = d3.select("#tooltip");
+
+        node.on("mouseover", function (event, d) {
+            const deps = d.dependencies ? d.dependencies.join(", ") : "None";
+            const issueText = d.issues > 0 ? `<div style="color: #ff4444; margin-top: 8px;">⚠️ ${d.issues} issue(s) detected</div>` : "";
+
+            tooltip.html(`
+                <h3>${d.name}</h3>
+                <div class="info">${d.description}</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Lines</div>
+                        <div class="metric-value">${d.lines}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Functions</div>
+                        <div class="metric-value">${d.functions}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Complexity</div>
+                        <div class="metric-value">${d.complexity}</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Critical</div>
+                        <div class="metric-value">${d.criticalPath ? "Yes" : "No"}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 11px; color: #888;">
+                    <strong>Dependencies:</strong> ${deps}
+                </div>
+                ${issueText}
+            `)
+                .classed("show", true)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY + 15) + "px");
+        })
+            .on("mouseout", function () {
+                tooltip.classed("show", false);
+            })
+            .on("click", function (event, d) {
+                console.log("Clicked node:", d);
+                // Could expand to show more details or navigate
+            });
+
+        // Update positions on simulation tick
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Update stats
+        document.getElementById("totalComponents").textContent = systemData.nodes.length;
+        document.getElementById("totalConnections").textContent = systemData.links.length;
+
+        // Reset button
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        });
+
+        // Expand button
+        document.getElementById("expandBtn").addEventListener("click", () => {
+            simulation.force("charge").strength(-1500);
+            simulation.alpha(1).restart();
+        });
+
+        // Export button
+        document.getElementById("exportBtn").addEventListener("click", () => {
+            const svgData = document.querySelector("svg").outerHTML;
+            const blob = new Blob([svgData], { type: "image/svg+xml" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "cthulu-system-map.svg";
+            a.click();
+        });
+
+        // Search functionality
+        document.getElementById("search").addEventListener("input", (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            node.style("opacity", d => {
+                if (!searchTerm) return 1;
+                return d.name.toLowerCase().includes(searchTerm) ? 1 : 0.2;
+            });
+            link.style("opacity", d => {
+                if (!searchTerm) return 0.6;
+                const sourceMatch = d.source.name.toLowerCase().includes(searchTerm);
+                const targetMatch = d.target.name.toLowerCase().includes(searchTerm);
+                return (sourceMatch || targetMatch) ? 0.6 : 0.1;
+            });
+        });
+
+        // View toggle (basic implementation - force view is default)
+        document.querySelectorAll("#view-toggle button").forEach(btn => {
+            btn.addEventListener("click", function () {
+                document.querySelectorAll("#view-toggle button").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+
+                const view = this.dataset.view;
+                if (view === "tree") {
+                    simulation.force("charge").strength(-300);
+                    simulation.force("link").distance(80);
+                    simulation.alpha(1).restart();
+                } else if (view === "radial") {
+                    simulation.force("charge").strength(-600);
+                    simulation.force("link").distance(120);
+                    simulation.alpha(1).restart();
+                } else {
+                    simulation.force("charge").strength(-800);
+                    simulation.force("link").distance(d => {
+                        if (d.type === "initialization") return 150;
+                        if (d.flow === "high") return 100;
+                        if (d.flow === "medium") return 120;
+                        return 150;
+                    });
+                    simulation.alpha(1).restart();
+                }
+            });
+        });
+
+        console.log("🐙 Cthulu System Map loaded successfully!");
+        console.log(`Total components: ${systemData.nodes.length}`);
+        console.log(`Total connections: ${systemData.links.length}`);
+        console.log("Hover over nodes for detailed information");
+    </script>
+</body>
+
+</html>

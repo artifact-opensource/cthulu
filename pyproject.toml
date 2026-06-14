@@ -1,0 +1,102 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cthulu"
+version = "5.3.0"
+description = "Adaptive Trading Intelligence for MetaTrader 5"
+readme = "README.md"
+license = {text = "AGPL-3.0-or-later"}
+authors = [
+    {name = "Cthulu Project"}
+]
+keywords = ["trading", "metatrader5", "mt5", "algorithmic-trading", "forex", "crypto"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "MetaTrader5>=5.0.45",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "pydantic>=2.5.0",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.4.0",
+    "detect-secrets>=1.4.0",
+]
+
+[project.scripts]
+cthulu = "cthulu.__main__:main"
+cthulu-trade = "cthulu.scripts.trade_cli:main"
+
+[project.urls]
+Homepage = "https://github.com/amuzetnoM/herald"
+Documentation = "https://github.com/amuzetnoM/herald#readme"
+Repository = "https://github.com/amuzetnoM/herald.git"
+Issues = "https://github.com/amuzetnoM/herald/issues"
+
+[tool.setuptools]
+packages = ["cthulu"]
+package-dir = {"cthulu" = "cthulu"}
+
+[tool.setuptools.package-data]
+cthulu = ["config/*.json", "config/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.black]
+line-length = 120
+target-version = ['py310', 'py311', 'py312', 'py313']
+exclude = '''
+/(
+    \.git
+    | \.venv
+    | venv
+    | __pycache__
+    | build
+    | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["venv", ".venv", "tests"]
+
+[tool.flake8]
+max-line-length = 120
+exclude = [".git", "__pycache__", "venv", ".venv", "build", "dist"]
+ignore = ["E501", "W503"]
+
+
+
+

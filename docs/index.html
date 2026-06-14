@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cthulu v5.1.0 - Multi-strategy Autonomous Trading System for MetaTrader 5">
+    <title>Cthulu v5.1.0 | Autonomous Trading System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --void: #000000;
+            --deep: #050508;
+            --surface: #0a0a0f;
+            --elevated: #12121a;
+            --border: #1a1a25;
+            --muted: #4a4a5a;
+            --text: #e0e0e8;
+            --bright: #ffffff;
+            --accent: #00ff88;
+            --accent-dim: #00cc6a;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+            --info: #00aaff;
+            --glow: rgba(0, 255, 136, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--void);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scanline overlay effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 136, 0.01) 2px,
+                    rgba(0, 255, 136, 0.01) 4px);
+            z-index: 9999;
+        }
+
+        /* Grid background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.3;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Navigation - Minimal top bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+        }
+
+        .header-logo {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            display: inline-block;
+            margin-right: 0.5rem;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+        }
+
+        .version-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--accent);
+            color: var(--void);
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section - Terminal style */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .terminal-window {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.1);
+        }
+
+        .terminal-header {
+            background: var(--elevated);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red {
+            background: #ff5f56;
+        }
+
+        .terminal-dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .terminal-dot.green {
+            background: #27ca40;
+        }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-left: 1rem;
+        }
+
+        .terminal-body {
+            padding: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Summary widget styles */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .summary-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .summary-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            color: var(--accent);
+            font-weight: 600
+        }
+
+        .summary-sparkline {
+            margin-top: 1rem;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.06), transparent);
+            border: 1px solid var(--border)
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: typeIn 0.45s ease forwards;
+        }
+
+        @keyframes typeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .prompt {
+            color: var(--accent);
+        }
+
+        .command {
+            color: var(--bright);
+        }
+
+        .output {
+            color: var(--muted);
+            padding-left: 1rem;
+        }
+
+        .output.success {
+            color: var(--accent);
+        }
+
+        .output.warning {
+            color: var(--warning);
+        }
+
+        .output.info {
+            color: var(--info);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--bright);
+            margin: 2rem 0 1rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 600px;
+        }
+
+        /* New Parallax Hero visual */
+        .hero-visual {
+            position: relative;
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            margin-bottom: 1rem;
+        }
+
+        .hero-parallax {
+            position: relative;
+            text-align: center;
+            perspective: 900px;
+            transform-style: preserve-3d;
+        }
+
+        .hero-main {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--bright);
+            margin: 0;
+            letter-spacing: 6px;
+            transform: translateZ(0);
+            transition: transform 120ms linear;
+            pointer-events: none;
+        }
+
+        .hero-sub {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0;
+            margin-top: 0.5rem;
+            transform: translateZ(0);
+            transition: transform 140ms linear;
+            pointer-events: none;
+        }
+
+        @media (max-width: 900px) {
+            .hero-main {
+                font-size: 3rem;
+            }
+
+            .hero-sub {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Live Metrics Dashboard */
+        .metrics-dashboard {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(0, 255, 136, 0.08), inset 0 0 60px rgba(0, 0, 0, 0.4);
+            margin-top: 2rem;
+        }
+
+        .metrics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metrics-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metrics-icon {
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .metrics-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+        }
+
+        .metrics-status .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--muted);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .metrics-status.live .status-dot {
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .metrics-status.live {
+            color: var(--accent);
+        }
+
+        .metrics-status.stale .status-dot {
+            background: var(--warning);
+            box-shadow: 0 0 8px var(--warning);
+        }
+
+        .metrics-status.stale {
+            color: var(--warning);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+        }
+
+        @media (max-width: 900px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-cell {
+            background: var(--surface);
+            padding: 1.25rem 1.5rem;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .metric-cell:hover {
+            background: var(--elevated);
+        }
+
+        .metric-cell::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1.5rem;
+            right: 1.5rem;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .metric-cell:hover::after {
+            opacity: 0.3;
+        }
+
+        .metric-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--bright);
+            line-height: 1.2;
+            transition: color 0.3s;
+        }
+
+        .metric-value.positive {
+            color: var(--accent);
+        }
+
+        .metric-value.negative {
+            color: var(--danger);
+        }
+
+        .metric-value.warning {
+            color: var(--warning);
+        }
+
+        .metric-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        .metrics-footer {
+            padding: 0.75rem 1.5rem;
+            background: var(--elevated);
+            border-top: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section styling */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-tag::before {
+            content: '//';
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--bright);
+            letter-spacing: -1px;
+        }
+
+        /* Architecture - Data Flow Visualization */
+        .flow-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            position: relative;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .flow-step:last-child {
+            border-bottom: none;
+        }
+
+        .flow-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            width: 30px;
+            flex-shrink: 0;
+        }
+
+        .flow-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--elevated);
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .flow-content {
+            flex: 1;
+        }
+
+        .flow-title {
+            font-weight: 600;
+            color: var(--bright);
+            margin-bottom: 0.25rem;
+        }
+
+        .flow-desc {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .flow-connector {
+            position: absolute;
+            left: 49px;
+            top: 100%;
+            width: 2px;
+            height: 1.5rem;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+        }
+
+        /* Mermaid Diagram Styles */
+        .diagram-section {
+            margin-top: 4rem;
+        }
+
+        .diagrams-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 1200px) {
+            .diagrams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .diagram-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .diagram-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 1rem 1.5rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .diagram-card .mermaid {
+            padding: 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diagram-card .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Mermaid overrides for dark theme */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            fill: var(--surface) !important;
+            stroke: var(--accent) !important;
+        }
+
+        .mermaid .label {
+            color: var(--text) !important;
+        }
+
+        .mermaid .edgePath .path {
+            stroke: var(--accent) !important;
+        }
+
+        .mermaid .cluster rect {
+            fill: var(--elevated) !important;
+            stroke: var(--border) !important;
+        }
+
+        .mermaid .cluster text {
+            fill: var(--muted) !important;
+        }
+
+        /* Modules Grid - Hexagonal inspired */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 900px) {
+            .modules-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            background: var(--surface);
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .module-card:hover {
+            background: var(--elevated);
+        }
+
+        .module-card:hover .module-icon {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--muted);
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .module-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--bright);
+            margin-bottom: 0.75rem;
+        }
+
+        .module-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* Features - Minimal list style */
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid var(--border);
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            gap: 2rem;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .feature-row:last-child {
+            border-bottom: none;
+        }
+
+        .feature-row:hover {
+            background: var(--surface);
+        }
+
+        @media (max-width: 768px) {
+            .feature-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+
+        .feature-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+
+        .feature-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .feature-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 2px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .feature-status.active {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent);
+        }
+
+        .feature-status.ready {
+            background: rgba(0, 170, 255, 0.1);
+            color: var(--info);
+        }
+
+        /* Code blocks - Clean terminal style */
+        .code-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 900px) {
+            .code-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: var(--elevated);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-filename {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .code-lang {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .code-body {
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            color: var(--text);
+            overflow-x: auto;
+        }
+
+        .code-body .comment {
+            color: var(--muted);
+        }
+
+        .code-body .keyword {
+            color: var(--info);
+        }
+
+        .code-body .string {
+            color: var(--warning);
+        }
+
+        .code-body .function {
+            color: var(--accent);
+        }
+
+        /* Roadmap - Vertical timeline */
+        .roadmap-container {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .roadmap-container::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--border));
+        }
+
+        .roadmap-item {
+            position: relative;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .roadmap-item:last-child {
+            border-bottom: none;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 2.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--void);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+        }
+
+        .roadmap-item.complete::before {
+            background: var(--accent);
+        }
+
+        .roadmap-phase {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .roadmap-status.complete {
+            background: var(--accent);
+            color: var(--void);
+        }
+
+        .roadmap-status.current {
+            background: var(--warning);
+            color: var(--void);
+        }
+
+        .roadmap-status.planned {
+            background: var(--border);
+            color: var(--muted);
+        }
+
+        .roadmap-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* Expandable Roadmap Items */
+        .roadmap-item.expandable {
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .roadmap-item.expandable:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .roadmap-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .roadmap-toggle {
+            font-size: 0.8rem;
+            color: var(--accent);
+            transition: transform 0.3s ease;
+            margin-left: auto;
+        }
+
+        .roadmap-item.expandable.expanded .roadmap-toggle {
+            transform: rotate(180deg);
+        }
+
+        .roadmap-details {
+            margin-top: 1.5rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--accent);
+            display: none;
+            flex-direction: column;
+            gap: 0.7rem;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .roadmap-item.expandable.expanded .roadmap-details {
+            display: flex;
+            opacity: 1;
+            animation: slideDown 0.3s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                margin-top: 0;
+            }
+
+            to {
+                opacity: 1;
+                margin-top: 1.5rem;
+            }
+        }
+
+        .detail-item {
+            color: var(--text);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-item::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 8rem 2rem;
+            background: linear-gradient(to bottom, var(--void), var(--surface));
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--bright);
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            color: var(--muted);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--void);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--bright);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: var(--void);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-left {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .footer-left strong {
+            color: var(--accent);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Live indicator */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .terminal-body {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00ff88',
+                primaryTextColor: '#e0e0e8',
+                primaryBorderColor: '#1a1a25',
+                lineColor: '#00ff88',
+                secondaryColor: '#0a0a0f',
+                tertiaryColor: '#12121a',
+                background: '#000000',
+                mainBkg: '#0a0a0f',
+                nodeBkg: '#0a0a0f',
+                nodeBorder: '#00ff88',
+                clusterBkg: '#12121a',
+                clusterBorder: '#1a1a25',
+                titleColor: '#00ff88',
+                edgeLabelBackground: '#0a0a0f'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">
+            <img class="header-logo" src="../assets/cthulu-white.png" alt="Cthulu logo">
+            <span class="logo">Cthulu</span>
+            <span class="version-tag">v5.1.0</span>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span></span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="architecture.html">Architecture</a></li>
+            <li><a href="16_HECKTOR.md">Integration</a></li>
+            <li><a href="https://artifact-virtual.gitbook.io/cthulu/" target="_blank" rel="noopener">Documentation</a>
+            </li>
+            <li><a href="roadmap.html">Roadmap</a></li>
+            <li><a href="https://github.com/amuzetnoM/cthulu" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-visual">
+                <div class="hero-parallax" id="heroParallax">
+                    <h1 class="hero-main">CTHULU</h1>
+                    <h2 class="hero-sub">APEX</h2>
+                </div>
+            </div>
+
+            <!-- Live Metrics Dashboard -->
+            <div class="metrics-dashboard" id="metricsDashboard">
+                <div class="metrics-header">
+                    <div class="metrics-title">
+                        <span class="metrics-icon">◈</span>
+                        <span>LIVE METRICS</span>
+                    </div>
+                    <div class="metrics-status" id="metricsStatus">
+                        <span class="status-dot"></span>
+                        <span id="statusText">CONNECTING</span>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-cell">
+                        <div class="metric-label">EQUITY</div>
+                        <div class="metric-value" id="metricEquity">—</div>
+                        <div class="metric-sub" id="metricSymbol">—</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">BALANCE</div>
+                        <div class="metric-value" id="metricBalance">—</div>
+                        <div class="metric-sub">USD</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">MARGIN LEVEL</div>
+                        <div class="metric-value" id="metricMarginLevel">—</div>
+                        <div class="metric-sub">%</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">UPTIME</div>
+                        <div class="metric-value" id="metricUptime">—</div>
+                        <div class="metric-sub">seconds</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">TOTAL TRADES</div>
+                        <div class="metric-value" id="metricTrades">—</div>
+                        <div class="metric-sub" id="metricWinRate">—</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">MAX DRAWDOWN</div>
+                        <div class="metric-value" id="metricDrawdown">—</div>
+                        <div class="metric-sub">%</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">PEAK EQUITY</div>
+                        <div class="metric-value" id="metricPeak">—</div>
+                        <div class="metric-sub">USD</div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-label">SYSTEM STATE</div>
+                        <div class="metric-value" id="metricState">—</div>
+                        <div class="metric-sub" id="metricMemory">—</div>
+                    </div>
+                </div>
+                <div class="metrics-footer">
+                    <span id="metricsTimestamp">Last update: —</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture">
+        <div class="section-header">
+            <div class="section-tag">System Architecture</div>
+            <h2 class="section-title">11-Step Trading Pipeline</h2>
+        </div>
+
+        <div class="flow-container">
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <span class="flow-number">01</span>
+                    <div class="flow-icon">◈</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Market Data Ingestion</div>
+                        <div class="flow-desc">Pull OHLCV data from MT5 terminal with configurable timeframes</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">02</span>
+                    <div class="flow-icon">◇</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Data Normalization</div>
+                        <div class="flow-desc">Transform to pandas DataFrame with timestamp indexing</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">03</span>
+                    <div class="flow-icon">△</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Indicator Calculation</div>
+                        <div class="flow-desc">SMA, ATR, RSI, MACD, Bollinger Bands, Stochastic, ADX</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">04</span>
+                    <div class="flow-icon">▽</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Signal Generation</div>
+                        <div class="flow-desc">Strategy evaluates indicators for entry conditions</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">05</span>
+                    <div class="flow-icon">◎</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Risk Approval</div>
+                        <div class="flow-desc">Position sizing, exposure limits, daily loss checks</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">06</span>
+                    <div class="flow-icon">⬡</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Order Execution</div>
+                        <div class="flow-desc">Idempotent order placement with MT5 terminal</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">07</span>
+                    <div class="flow-icon">◈</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Position Tracking</div>
+                        <div class="flow-desc">Real-time P&L monitoring and position age tracking</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">08</span>
+                    <div class="flow-icon">⬢</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Exit Detection</div>
+                        <div class="flow-desc">Priority-based evaluation of 4 exit strategies</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">09</span>
+                    <div class="flow-icon">◇</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Position Close</div>
+                        <div class="flow-desc">Execute exit orders and record to database</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-number">10</span>
+                    <div class="flow-icon">✦</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Strategy Orchestrator</div>
+                        <div class="flow-desc">Dynamic strategy selection, multi-strategy arbitration, and live tuning
+                            with safeties.</div>
+                    </div>
+                    <div class="flow-connector"></div>
+                </div>
+
+                <div class="flow-step">
+                    <span class="flow-number">11</span>
+                    <div class="flow-icon">○</div>
+                    <div class="flow-content">
+                        <div class="flow-title">Health Monitoring</div>
+                        <div class="flow-desc">Connection recovery, reconciliation, metrics collection</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mermaid System Flow Diagrams -->
+        <div class="diagram-section">
+            <div class="section-header" style="margin-top: 4rem;">
+                <div class="section-tag">System Flow Diagrams</div>
+                <h2 class="section-title">Visual Architecture</h2>
+            </div>
+
+            <div class="diagrams-grid">
+                <div class="diagram-card">
+                    <div class="diagram-title">Core Trading Loop</div>
+                    <div class="mermaid">
+                        flowchart TB
+                        subgraph Input["📥 Data Layer"]
+                        MT5[MT5 Terminal] --> Fetch[Data Fetcher]
+                        Fetch --> Norm[Normalizer]
+                        end
+
+                        subgraph Analysis["🧠 Analysis Engine"]
+                        Norm --> Ind[Indicator Engine]
+                        Ind --> Reg[Regime Detector]
+                        Reg --> Sig[Signal Generator]
+                        end
+
+                        subgraph Decision["⚡ Decision Layer"]
+                        Sig --> Strat[Strategy Selector]
+                        Strat --> Risk[Risk Manager]
+                        Risk -->|Approved| Exec[Executor]
+                        Risk -->|Rejected| Log[Audit Log]
+                        end
+
+                        subgraph Execution["🎯 Execution Layer"]
+                        Exec --> Order[Order Placement]
+                        Order --> Track[Position Tracker]
+                        Track --> Exit[Exit Manager]
+                        Exit --> Close[Position Close]
+                        end
+
+                        Close --> MT5
+
+                        style MT5 fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style Exec fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style Risk fill:#0a0a0f,stroke:#ffaa00,color:#fff
+                    </div>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="diagram-title">Strategy Selection Flow</div>
+                    <div class="mermaid">
+                        flowchart LR
+                        subgraph Regime["Market Regime"]
+                        MR{Regime?}
+                        MR -->|Trending| T[Trend Strategies]
+                        MR -->|Ranging| R[Mean Reversion]
+                        MR -->|Volatile| V[Momentum Breakout]
+                        MR -->|Unknown| D[Default Strategy]
+                        end
+
+                        subgraph Strategies["Strategy Pool"]
+                        T --> EMA[EMA Crossover]
+                        T --> SMA[SMA Crossover]
+                        R --> MR2[Mean Reversion]
+                        V --> MB[Momentum Breakout]
+                        V --> SC[Scalping]
+                        D --> DEF[Conservative]
+                        end
+
+                        subgraph Output["Signal"]
+                        EMA --> SIG[Signal Bus]
+                        SMA --> SIG
+                        MR2 --> SIG
+                        MB --> SIG
+                        SC --> SIG
+                        DEF --> SIG
+                        end
+
+                        style MR fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style SIG fill:#0a0a0f,stroke:#00ff88,color:#fff
+                    </div>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="diagram-title">Risk Management Pipeline</div>
+                    <div class="mermaid">
+                        flowchart TB
+                        Signal[Trade Signal] --> Check1{Position<br />Limits?}
+                        Check1 -->|Pass| Check2{Exposure<br />Check?}
+                        Check1 -->|Fail| Reject1[❌ Reject]
+
+                        Check2 -->|Pass| Check3{Daily Loss<br />Limit?}
+                        Check2 -->|Fail| Reject2[❌ Reject]
+
+                        Check3 -->|Pass| Check4{Drawdown<br />State?}
+                        Check3 -->|Fail| Reject3[❌ Reject]
+
+                        Check4 -->|Healthy| Size[Position Sizing]
+                        Check4 -->|Warning| Reduce[Reduce Size]
+                        Check4 -->|Critical| Reject4[❌ Reject]
+
+                        Size --> Approve[✅ Execute]
+                        Reduce --> Approve
+
+                        style Signal fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style Approve fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style Reject1 fill:#0a0a0f,stroke:#ff4444,color:#fff
+                        style Reject2 fill:#0a0a0f,stroke:#ff4444,color:#fff
+                        style Reject3 fill:#0a0a0f,stroke:#ff4444,color:#fff
+                        style Reject4 fill:#0a0a0f,stroke:#ff4444,color:#fff
+                    </div>
+                </div>
+
+                <div class="diagram-card">
+                    <div class="diagram-title">Exit Strategy Hierarchy</div>
+                    <div class="mermaid">
+                        flowchart TB
+                        Pos[Open Position] --> P1{Emergency<br />Stop?}
+                        P1 -->|Yes| E1[🚨 Immediate Exit]
+                        P1 -->|No| P2{Stop Loss<br />Hit?}
+
+                        P2 -->|Yes| E2[🛑 Stop Loss Exit]
+                        P2 -->|No| P3{Take Profit<br />Hit?}
+
+                        P3 -->|Yes| E3[💰 Take Profit Exit]
+                        P3 -->|No| P4{Trailing<br />Stop?}
+
+                        P4 -->|Yes| E4[📈 Trailing Exit]
+                        P4 -->|No| P5{Time<br />Decay?}
+
+                        P5 -->|Yes| E5[⏰ Time-based Exit]
+                        P5 -->|No| Hold[📊 Hold Position]
+
+                        E1 --> Close[Close Position]
+                        E2 --> Close
+                        E3 --> Close
+                        E4 --> Close
+                        E5 --> Close
+
+                        style Pos fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style Close fill:#0a0a0f,stroke:#00ff88,color:#fff
+                        style E1 fill:#0a0a0f,stroke:#ff4444,color:#fff
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modules Section -->
+    <section id="modules">
+        <div class="section-header">
+            <div class="section-tag">Core Modules</div>
+            <h2 class="section-title">Modular Architecture</h2>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module-card">
+                <div class="module-icon">⬡</div>
+                <div class="module-name">connector/</div>
+                <div class="module-title">MT5 Connector</div>
+                <div class="module-desc">Thread-safe MT5 session management with automatic reconnection, rate limiting,
+                    and health monitoring.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">◈</div>
+                <div class="module-name">data/</div>
+                <div class="module-title">Data Layer</div>
+                <div class="module-desc">OHLCV normalization pipeline with pandas DataFrame output and multi-timeframe
+                    support.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">△</div>
+                <div class="module-name">indicators/</div>
+                <div class="module-title">Technical Indicators</div>
+                <div class="module-desc">RSI, MACD, Bollinger Bands, Stochastic Oscillator, ADX with validation and
+                    state management.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">▽</div>
+                <div class="module-name">strategy/</div>
+                <div class="module-title">Strategy Engine</div>
+                <div class="module-desc">Pluggable strategy architecture with SMA crossover implementation and signal
+                    dataclass.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">◎</div>
+                <div class="module-name">risk/</div>
+                <div class="module-title">Risk Manager</div>
+                <div class="module-desc">Position sizing, exposure limits, daily loss thresholds, and emergency shutdown
+                    capability.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">⬢</div>
+                <div class="module-name">execution/</div>
+                <div class="module-title">Execution Engine</div>
+                <div class="module-desc">Idempotent order submission with client tag tracking and partial fill handling.
+                </div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">◇</div>
+                <div class="module-name">position/</div>
+                <div class="module-title">Position Manager</div>
+                <div class="module-desc">Real-time position tracking with P&L monitoring, age tracking, and MT5
+                    reconciliation.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">○</div>
+                <div class="module-name">exit/</div>
+                <div class="module-title">Exit Strategies</div>
+                <div class="module-desc">Trailing stop, time-based, profit target, and adverse movement protection with
+                    priority system.</div>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">□</div>
+                <div class="module-name">persistence/</div>
+                <div class="module-title">Database Layer</div>
+                <div class="module-desc">SQLite persistence for trades, signals, and performance metrics with indexed
+                    queries.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart">
+        <div class="section-header">
+            <div class="section-tag">Getting Started</div>
+            <h2 class="section-title">Quick Start</h2>
+        </div>
+
+        <div class="code-section">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-filename">setup.ps1</span>
+                    <span class="code-lang">PowerShell</span>
+                </div>
+                <div class="code-body">
+                    <pre><span class="comment"># Clone and setup</span>
+<span class="keyword">cd</span> C:\workspace\Cthulu
+
+<span class="comment"># Create virtual environment</span>
+<span class="function">python</span> -m venv venv
+.\venv\Scripts\<span class="function">Activate</span>.ps1
+
+<span class="comment"># Install dependencies</span>
+<span class="function">pip</span> install -r requirements.txt</pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-filename">.env</span>
+                    <span class="code-lang">Environment</span>
+                </div>
+                <div class="code-body">
+                    <pre><span class="comment"># MT5 Credentials</span>
+MT5_LOGIN=<span class="string">your_account_number</span>
+MT5_PASSWORD=<span class="string">your_password</span>
+MT5_SERVER=<span class="string">YourBroker-MT5</span>
+
+<span class="comment"># Risk Settings</span>
+RISK_PER_TRADE=<span class="string">0.02</span>
+MAX_DAILY_LOSS=<span class="string">0.05</span></pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-filename">run.sh</span>
+                    <span class="code-lang">Shell</span>
+                </div>
+                <div class="code-body">
+                    <pre><span class="comment"># Start autonomous trading</span>
+<span class="function">python</span> __main__.py \
+  --config config.example.json
+
+<span class="comment"># Or dry-run mode</span>
+<span class="function">python</span> __main__.py \
+  --config config.example.json \
+  --dry-run</pre>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-filename">MT5 Setup</span>
+                    <span class="code-lang">Required</span>
+                </div>
+                <div class="code-body">
+                    <pre><span class="comment"># Enable algo trading in MT5:</span>
+<span class="string">1.</span> Open MetaTrader 5
+<span class="string">2.</span> Tools → Options → Expert Advisors
+<span class="string">3.</span> Check "Allow automated trading"
+<span class="string">4.</span> Check "Allow DLL imports"
+<span class="string">5.</span> Click OK</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap">
+        <div class="section-header">
+            <div class="section-tag">Development</div>
+            <h2 class="section-title">Roadmap</h2>
+        </div>
+
+        <div class="roadmap-container">
+            <div class="roadmap-item complete expandable" data-phase="1">
+                <div class="roadmap-header">
+                    <div class="roadmap-phase">Phase 01</div>
+                    <div class="roadmap-title">Foundation</div>
+                    <span class="roadmap-status complete">Complete</span>
+                    <span class="roadmap-toggle">▼</span>
+                </div>
+                <div class="roadmap-desc">MT5 connector, data layer, technical indicators, risk management, execution
+                    engine, database persistence, structured logging.</div>
+                <div class="roadmap-details">
+                    <div class="detail-item">✓ MT5 Connector with live data streaming</div>
+                    <div class="detail-item">✓ Technical Indicators: RSI, MACD, Bollinger Bands, Stochastic, ADX</div>
+                    <div class="detail-item">✓ Risk Management & Position Sizing</div>
+                    <div class="detail-item">✓ Execution Engine with order management</div>
+                    <div class="detail-item">✓ Database Persistence Layer</div>
+                    <div class="detail-item">✓ Structured Logging & Observability</div>
+                </div>
+            </div>
+
+            <div class="roadmap-item complete expandable" data-phase="2">
+                <div class="roadmap-header">
+                    <div class="roadmap-phase">Phase 02</div>
+                    <div class="roadmap-title">Adaptive Trading</div>
+                    <span class="roadmap-status complete">Complete</span>
+                    <span class="roadmap-toggle">▼</span>
+                </div>
+                <div class="roadmap-desc">6 technical indicators, position manager, 4 exit strategies, autonomous
+                    orchestrator loop, environment configuration, deployment hardening.</div>
+                <div class="roadmap-details">
+                    <div class="detail-item">✓ 6 Technical Indicators (includes ATR for volatility)</div>
+                    <div class="detail-item">✓ 4 Exit Strategies (Stop Loss, Take Profit, Trailing Stop, Time-Based)
+                    </div>
+                    <div class="detail-item">✓ Real-Time Position Management with P&L Tracking</div>
+                    <div class="detail-item">✓ Adaptive 10-Step Trading Loop</div>
+                    <div class="detail-item">✓ Zero-Error Test Suite (55/55 passing)</div>
+                    <div class="detail-item">✓ MT5 Live Account Verification</div>
+                    <div class="detail-item">✓ CI/CD Pipeline (GitHub Actions)</div>
+                    <div class="detail-item">✓ Enterprise architecture</div>
+                </div>
+            </div>
+
+            <div class="roadmap-item complete expandable" data-phase="3">
+                <div class="roadmap-header">
+                    <div class="roadmap-phase">Phase 03</div>
+                    <div class="roadmap-title">Trade Management</div>
+                    <span class="roadmap-status complete">Complete</span>
+                </div>
+                <div class="roadmap-desc">
+                    External trade adoption, manual trade CLI, trading mindsets,
+                    Pydantic config validation, startup reconciliation.
+                </div>
+                <div class="roadmap-details">
+                    <div class="detail-item">✓ TradeManager for External Trade Adoption</div>
+                    <div class="detail-item">✓ Cthulu-trade CLI for Manual Trading</div>
+                    <div class="detail-item">✓ Trading Mindsets (aggressive/balanced/conservative)</div>
+                    <div class="detail-item">✓ Pydantic-based Config Validation</div>
+                    <div class="detail-item">✓ Position Reconciliation at Startup</div>
+                    <div class="detail-item">✓ Exit Strategy Consistency Fixes</div>
+                    <div class="detail-item">✓ Security Hardening (detect-secrets)</div>
+                </div>
+            </div>
+
+            <div class="roadmap-item complete expandable" data-phase="4">
+                <div class="roadmap-header">
+                    <div class="roadmap-phase">Phase 04</div>
+                    <div class="roadmap-title">Multi-Strategy & GUI</div>
+                    <span class="roadmap-status complete">Complete</span>
+                    <span class="roadmap-toggle">▼</span>
+                </div>
+                <div class="roadmap-desc">
+                    Runtime multi-strategy orchestration, dynamic strategy selection, desktop GUI with trade history and
+                    monitoring, and next-gen indicators.
+                </div>
+                <div class="roadmap-details">
+                    <div class="detail-item">✓ Strategy orchestration & arbitration</div>
+                    <div class="detail-item">✓ Desktop GUI: trade history, charts, and logs</div>
+                    <div class="detail-item">✓ Next-gen indicators: Supertrend, VWAP</div>
+                    <div class="detail-item">✓ Environment variable field overrides & security hardening</div>
+                </div>
+            </div>
+
+            <div class="roadmap-item expandable" data-phase="5">
+                <div class="roadmap-header">
+                    <div class="roadmap-phase">Phase 05</div>
+                    <div class="roadmap-title">Advanced Intelligence</div>
+                    <span class="roadmap-status current">Current</span>
+                    <span class="roadmap-toggle">▼</span>
+                </div>
+                <div class="roadmap-desc">
+                    LSTM and Transformer models, reinforcement learning,
+                    sentiment analysis, regime detection, operations dashboard.
+                </div>
+                <div class="roadmap-details">
+                    <div class="detail-item">ML Data Pipeline & Feature Engineering</div>
+                    <div class="detail-item">Reinforcement Learning agents for optimization</div>
+                    <div class="detail-item">LSTM/Transformer price forecasting</div>
+                    <div class="detail-item">Regime-aware feature store</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Releases Section -->
+    <section id="releases">
+        <div class="section-header">
+            <div class="section-tag">Releases</div>
+            <h2 class="section-title">Release Notes</h2>
+        </div>
+
+        <div class="release-container">
+            <div class="release-note">
+                <a href="releases/4.0.0.md">v4.0.0 — 2025-12-26 — Multi-Strategy Release</a>
+                <p>Introduces multi-strategy orchestration, desktop GUI with persistent trade history, Supertrend & VWAP
+                    indicators, env routing improvements, and stability fixes.</p>
+            </div>
+            <div class="release-note">
+                <a href="releases/3.1.0.md">v3.1.0 — 2025-12-07 — Trade Management</a>
+                <p>External trade adoption, manual trade CLI (`Cthulu-trade`), config validation, observability, and
+                    security hardening.</p>
+            </div>
+            <div class="release-note">
+                <a href="releases/3.0.0.md">v3.0.0 — 2024-12-07 — Stable Release</a>
+                <p>Stable MT5 trading system with execution, indicators, and CI/CD.</p>
+            </div>
+            <div class="release-note">
+                <a href="releases/2.0.0.md">v2.0.0 — 2024-12-06 — Adaptive Trading</a>
+                <p>Autonomous loop and core indicators.</p>
+            </div>
+            <div class="release-note">
+                <a href="releases/1.0.0.md">v1.0.0 — 2024-11-15 — Foundation Release</a>
+                <p>Repo scaffolding, connector, and initial modules.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2 class="cta-title">Start Trading</h2>
+        <p class="cta-subtitle">
+            Adaptive trading system for MT5. Configure, deploy, and monitor strategies.
+        </p>
+        <div class="cta-buttons">
+            <a href="#quickstart" class="btn btn-primary">Quick Start</a>
+            <a href="https://github.com/amuzetnoM/Cthulu" class="btn btn-secondary">View Source</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <strong>Cthulu</strong> v5.1.0 | Adaptive Trading Intelligence<br>
+                MIT License | Educational purposes only | Trade at your own risk
+            </div>
+            <div class="footer-links">
+                <a href="architecture.html">Architecture</a>
+                <a href="https://artifact-virtual.gitbook.io/cthulu/" target="_blank" rel="noopener">Documentation</a>
+                <a href="roadmap.html">Roadmap</a>
+                <a href="https://github.com/amuzetnoM/cthulu" target="_blank" rel="noopener">GitHub</a>
+                <a href="terms.html">Terms</a>
+                <a href="privacy.html">Policies</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (15 + Math.random() * 20) + 's';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Parallax hero interaction (mouse & subtle scroll)
+        const heroParallax = document.getElementById('heroParallax');
+        if (heroParallax) {
+            const main = heroParallax.querySelector('.hero-main');
+            const sub = heroParallax.querySelector('.hero-sub');
+
+            function handleHeroMove(e) {
+                const rect = heroParallax.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                if (main) main.style.transform = `translate3d(${x * 18}px, ${y * 10}px, 0)`;
+                if (sub) sub.style.transform = `translate3d(${x * 36}px, ${y * 18}px, 0)`;
+            }
+
+            heroParallax.addEventListener('mousemove', handleHeroMove);
+            heroParallax.addEventListener('mouseleave', () => {
+                if (main) main.style.transform = '';
+                if (sub) sub.style.transform = '';
+            });
+
+            // subtle scroll-based parallax offset
+            window.addEventListener('scroll', () => {
+                const offset = Math.min(Math.max((window.scrollY / 6), -60), 60);
+                heroParallax.style.transform = `translateY(${offset}px)`;
+            });
+        }
+
+        // Terminal typing effect
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        terminalLines.forEach((line, index) => {
+            line.style.animationDelay = (index * 0.2) + 's';
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Live Metrics Dashboard - Fetch from Gist (GitHub Pages) or local JSON
+        // Gist: https://gist.github.com/amuzetnoM/0e860218dbdf40ab4019970b1e035cab
+        const GIST_ID = '0e860218dbdf40ab4019970b1e035cab';
+        const GIST_FILENAME = 'cthulu_metrics.json';
+
+        async function loadMetricsDashboard() {
+            const statusEl = document.getElementById('metricsStatus');
+            const timestampEl = document.getElementById('metricsTimestamp');
+
+            // Element references (match the IDs in the HTML)
+            const elements = {
+                equity: document.getElementById('metricEquity'),
+                balance: document.getElementById('metricBalance'),
+                marginLevel: document.getElementById('metricMarginLevel'),
+                uptime: document.getElementById('metricUptime'),
+                trades: document.getElementById('metricTrades'),
+                winRate: document.getElementById('metricWinRate'),
+                drawdown: document.getElementById('metricDrawdown'),
+                peak: document.getElementById('metricPeak'),
+                state: document.getElementById('metricState'),
+                symbol: document.getElementById('metricSymbol'),
+                memory: document.getElementById('metricMemory')
+            };
+
+            function formatCurrency(val) {
+                const num = parseFloat(val);
+                if (isNaN(num)) return '—';
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            function formatPercent(val) {
+                const num = parseFloat(val);
+                if (isNaN(num)) return '—';
+                return num.toFixed(2) + '%';
+            }
+
+            function formatUptime(seconds) {
+                const sec = parseFloat(seconds);
+                if (isNaN(sec)) return '—';
+                const days = Math.floor(sec / 86400);
+                const hrs = Math.floor((sec % 86400) / 3600);
+                const mins = Math.floor((sec % 3600) / 60);
+                if (days > 0) return `${days}d ${hrs}h`;
+                if (hrs > 0) return `${hrs}h ${mins}m`;
+                return `${mins}m ${Math.floor(sec % 60)}s`;
+            }
+
+            function setValueClass(el, value, { positive, warning, negative }) {
+                if (!el) return;
+                el.classList.remove('positive', 'negative', 'warning');
+                if (positive !== undefined && value >= positive) el.classList.add('positive');
+                else if (negative !== undefined && value <= negative) el.classList.add('negative');
+                else if (warning !== undefined) el.classList.add('warning');
+            }
+
+            function populateMetrics(data, source) {
+                // Populate all metric elements
+                if (elements.equity) {
+                    elements.equity.textContent = formatCurrency(data.account_equity);
+                    const pnl = (data.account_equity || 0) - (data.account_balance || 0);
+                    setValueClass(elements.equity, pnl, { positive: 0 });
+                }
+
+                if (elements.balance) {
+                    elements.balance.textContent = formatCurrency(data.account_balance);
+                }
+
+                if (elements.marginLevel) {
+                    const ml = parseFloat(data.account_margin_level);
+                    elements.marginLevel.textContent = isNaN(ml) ? '—' : ml.toFixed(0);
+                    setValueClass(elements.marginLevel, ml, { positive: 500, warning: 200, negative: 100 });
+                }
+
+                if (elements.uptime) {
+                    // Use exporter uptime if available (more accurate), otherwise CSV uptime
+                    const uptime = data._exporter_uptime || data.system_uptime_seconds;
+                    elements.uptime.textContent = formatUptime(uptime);
+                }
+
+                if (elements.trades) {
+                    elements.trades.textContent = data.total_trades ?? '0';
+                }
+
+                if (elements.winRate) {
+                    const wr = parseFloat(data.win_rate);
+                    elements.winRate.textContent = isNaN(wr) ? '—' : `Win Rate: ${wr.toFixed(1)}%`;
+                }
+
+                if (elements.drawdown) {
+                    const dd = parseFloat(data.max_drawdown_pct);
+                    elements.drawdown.textContent = isNaN(dd) ? '0.00' : dd.toFixed(2);
+                    setValueClass(elements.drawdown, -dd, { positive: -5, warning: -15, negative: -25 });
+                }
+
+                if (elements.peak) {
+                    elements.peak.textContent = formatCurrency(data.peak_equity);
+                }
+
+                if (elements.state) {
+                    const state = (data.drawdown_state || 'UNKNOWN').toUpperCase();
+                    elements.state.textContent = state;
+                    elements.state.classList.remove('positive', 'warning', 'negative');
+                    if (state === 'NORMAL' || state === 'HEALTHY') {
+                        elements.state.classList.add('positive');
+                    } else if (state === 'WARNING' || state === 'CAUTION') {
+                        elements.state.classList.add('warning');
+                    } else if (state === 'CRITICAL' || state === 'DANGER') {
+                        elements.state.classList.add('negative');
+                    }
+                }
+
+                if (elements.symbol) {
+                    const sym = data.current_symbol || '—';
+                    const price = data.current_price;
+                    elements.symbol.textContent = price ? `${sym} @ ${parseFloat(price).toLocaleString()}` : sym;
+                }
+
+                if (elements.memory) {
+                    const mem = parseFloat(data.memory_usage_mb);
+                    elements.memory.textContent = isNaN(mem) ? '—' : `Memory: ${mem.toFixed(0)} MB`;
+                }
+
+                // Update status
+                if (statusEl) {
+                    statusEl.classList.remove('stale');
+                    statusEl.classList.add('live');
+                    const statusText = statusEl.querySelector('span:last-child');
+                    if (statusText) statusText.textContent = source === 'gist' ? 'LIVE' : 'LOCAL';
+                }
+
+                // Update timestamp
+                if (timestampEl) {
+                    const ts = data.timestamp ? new Date(data.timestamp) : null;
+                    const exported = data._exported_at ? new Date(data._exported_at) : null;
+                    if (ts) {
+                        timestampEl.textContent = `Data: ${ts.toLocaleString()} | Updated: ${exported ? exported.toLocaleTimeString() : '—'}`;
+                    } else {
+                        timestampEl.textContent = `Last update: ${exported ? exported.toLocaleString() : '—'}`;
+                    }
+                }
+            }
+
+            // Try multiple sources in order
+            const sources = [];
+
+            // If Gist is configured, try it first (works on GitHub Pages)
+            if (GIST_ID) {
+                sources.push({
+                    name: 'gist',
+                    url: `https://gist.githubusercontent.com/raw/${GIST_ID}/${GIST_FILENAME}?t=${Date.now()}`
+                });
+            }
+
+            // Local file (works when running locally)
+            sources.push({
+                name: 'local',
+                url: `logs/dashboard_metrics.json?t=${Date.now()}`
+            });
+
+            for (const source of sources) {
+                try {
+                    const res = await fetch(source.url);
+                    if (!res.ok) continue;
+
+                    const data = await res.json();
+                    if (data.error) continue;
+
+                    populateMetrics(data, source.name);
+                    return; // Success!
+                } catch (e) {
+                    console.warn(`[${source.name}] fetch failed:`, e.message);
+                }
+            }
+
+            // All sources failed
+            if (statusEl) {
+                statusEl.classList.remove('live');
+                statusEl.classList.add('stale');
+                const statusText = statusEl.querySelector('span:last-child');
+                if (statusText) statusText.textContent = 'OFFLINE';
+            }
+            if (timestampEl) {
+                if (GIST_ID) {
+                    timestampEl.textContent = 'Waiting for metrics...';
+                } else {
+                    timestampEl.textContent = 'Set GIST_ID in script or run locally';
+                }
+            }
+        }
+
+        // Load metrics on page load and refresh every 15s
+        loadMetricsDashboard();
+        setInterval(loadMetricsDashboard, 15000);
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.module-card, .flow-step, .roadmap-item, .feature-row').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+
+        // Expandable roadmap items
+        document.querySelectorAll('.roadmap-item.expandable').forEach(item => {
+            item.addEventListener('click', function () {
+                this.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+
+</html>

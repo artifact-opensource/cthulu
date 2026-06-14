@@ -1,0 +1,16 @@
+[
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.08999999999999998,
+      "close_actions_count": 6,
+      "trail_actions_count": 7,
+      "modify_actions_count": 6,
+      "final_remaining_volume": 0.01,
+      "first_close_bar": 6,
+      "total_profit_estimate": 87.77999999999793
+    }
+  }
+]

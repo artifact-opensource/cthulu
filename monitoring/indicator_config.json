@@ -1,0 +1,126 @@
+{
+  "_comment": "Extensible indicator and strategy configuration for monitoring",
+  "indicators": [
+    {
+      "name": "RSI",
+      "enabled": true,
+      "parameters": {
+        "period": 14
+      },
+      "outputs": ["value", "overbought", "oversold"]
+    },
+    {
+      "name": "MACD",
+      "enabled": true,
+      "parameters": {
+        "fast": 12,
+        "slow": 26,
+        "signal": 9
+      },
+      "outputs": ["macd", "signal", "histogram"]
+    },
+    {
+      "name": "BollingerBands",
+      "enabled": true,
+      "parameters": {
+        "period": 20,
+        "std_dev": 2
+      },
+      "outputs": ["upper", "middle", "lower", "width"]
+    },
+    {
+      "name": "Stochastic",
+      "enabled": true,
+      "parameters": {
+        "k_period": 14,
+        "d_period": 3
+      },
+      "outputs": ["k", "d", "overbought", "oversold"]
+    },
+    {
+      "name": "ADX",
+      "enabled": true,
+      "parameters": {
+        "period": 14
+      },
+      "outputs": ["adx", "plus_di", "minus_di", "trend_strength"]
+    },
+    {
+      "name": "Supertrend",
+      "enabled": true,
+      "parameters": {
+        "period": 10,
+        "multiplier": 3
+      },
+      "outputs": ["value", "direction", "signal"]
+    },
+    {
+      "name": "VWAP",
+      "enabled": true,
+      "parameters": {},
+      "outputs": ["value", "deviation"]
+    },
+    {
+      "name": "ATR",
+      "enabled": true,
+      "parameters": {
+        "period": 14
+      },
+      "outputs": ["value"]
+    }
+  ],
+  "strategies": [
+    {
+      "name": "SMA_Crossover",
+      "enabled": true,
+      "parameters": {
+        "fast_period": 50,
+        "slow_period": 200
+      },
+      "outputs": ["signal", "strength"]
+    },
+    {
+      "name": "EMA_Crossover",
+      "enabled": true,
+      "parameters": {
+        "fast_period": 12,
+        "slow_period": 26
+      },
+      "outputs": ["signal", "strength"]
+    },
+    {
+      "name": "TrendFollowing",
+      "enabled": true,
+      "parameters": {},
+      "outputs": ["signal", "trend", "strength"]
+    },
+    {
+      "name": "MeanReversion",
+      "enabled": true,
+      "parameters": {},
+      "outputs": ["signal", "deviation"]
+    },
+    {
+      "name": "MomentumBreakout",
+      "enabled": true,
+      "parameters": {},
+      "outputs": ["signal", "momentum"]
+    },
+    {
+      "name": "Scalping",
+      "enabled": true,
+      "parameters": {},
+      "outputs": ["signal", "score"]
+    }
+  ],
+  "scoring": {
+    "confidence_weights": {
+      "indicator_agreement": 0.4,
+      "trend_strength": 0.3,
+      "volume_confirmation": 0.2,
+      "volatility_filter": 0.1
+    },
+    "confluence_min_indicators": 3,
+    "confluence_threshold": 0.6
+  }
+}

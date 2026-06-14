@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Roadmap | Cthulu v5.1.0</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --void: #000;
+            --surface: #0a0a0f;
+            --border: #1a1a25;
+            --muted: #4a4a5a;
+            --text: #e0e0e8;
+            --bright: #fff;
+            --accent: #00ff88;
+            --warning: #ffaa00;
+            --info: #00aaff
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Space Grotesk, sans-serif;
+            background: var(--void);
+            color: var(--text);
+            line-height: 1.6
+        }
+
+        nav {
+            height: 60px;
+            background: rgba(0, 0, 0, .95);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .9rem;
+            transition: color .2s
+        }
+
+        .nav-links a:hover {
+            color: var(--accent)
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.2rem;
+            margin-bottom: 3rem
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin-top: 4rem
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--border))
+        }
+
+        .phase {
+            position: relative;
+            padding: 2.5rem 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .phase:last-child {
+            border-bottom: none
+        }
+
+        .phase::before {
+            content: "";
+            position: absolute;
+            left: -3.5rem;
+            top: 3rem;
+            width: 16px;
+            height: 16px;
+            background: var(--void);
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            z-index: 1
+        }
+
+        .phase.complete::before {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent)
+        }
+
+        .phase.current::before {
+            background: var(--warning);
+            border-color: var(--warning);
+            box-shadow: 0 0 20px var(--warning);
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .5
+            }
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem
+        }
+
+        .phase-number {
+            font-family: JetBrains Mono, monospace;
+            font-size: .8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px
+        }
+
+        .phase-status {
+            font-family: JetBrains Mono, monospace;
+            font-size: .7rem;
+            padding: .25rem .6rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .phase-status.complete {
+            background: rgba(0, 255, 136, .2);
+            color: var(--accent)
+        }
+
+        .phase-status.current {
+            background: rgba(255, 170, 0, .2);
+            color: var(--warning)
+        }
+
+        .phase-status.planned {
+            background: rgba(74, 74, 90, .2);
+            color: var(--muted)
+        }
+
+        .phase-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--bright);
+            margin-bottom: .5rem
+        }
+
+        .phase-date {
+            font-family: JetBrains Mono, monospace;
+            font-size: .8rem;
+            color: var(--muted);
+            margin-bottom: 1rem
+        }
+
+        .phase-description {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem
+        }
+
+        .deliverables {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem
+        }
+
+        .deliverable {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 4px
+        }
+
+        .deliverable-title {
+            font-family: JetBrains Mono, monospace;
+            font-size: .85rem;
+            color: var(--accent);
+            margin-bottom: .5rem
+        }
+
+        .deliverable-desc {
+            font-size: .9rem;
+            color: var(--muted)
+        }
+
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            margin-top: 4rem
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .9rem;
+            transition: color .2s
+        }
+
+        .footer-links a:hover {
+            color: var(--accent)
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div style="font-family:JetBrains Mono;color:var(--accent);font-weight:600;font-size:1.1rem">Cthulu</div>
+        <div class="nav-links"><a href="index.html">Home</a><a href="architecture.html">Architecture</a><a
+                href="features.html">Features</a><a href="roadmap.html">Roadmap</a><a
+                href="https://github.com/amuzetnoM/cthulu">GitHub</a></div>
+    </nav>
+    <div class="container">
+        <h1>Development Roadmap</h1>
+        <p class="subtitle">Strategic phases for building the ultimate autonomous trading system</p>
+        <div class="timeline">
+            <div class="phase complete">
+                <div class="phase-header"><span class="phase-number">Phase 01</span><span
+                        class="phase-status complete">✓ Complete</span></div>
+                <div class="phase-title">Foundation & Core Architecture</div>
+                <div class="phase-date">Completed: Q4 2024</div>
+                <div class="phase-description">Established the foundational architecture with MT5 connector, basic
+                    strategy framework, and core trading loop.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🔌 MT5 Integration</div>
+                        <div class="deliverable-desc">Robust MetaTrader 5 connector with order execution and position
+                            management</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📊 Data Layer</div>
+                        <div class="deliverable-desc">OHLCV data fetching, normalization, and caching system</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🎯 Strategy Framework</div>
+                        <div class="deliverable-desc">Base strategy interface with SMA/EMA crossover implementations
+                        </div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🔒 Risk Management</div>
+                        <div class="deliverable-desc">Position sizing, stop-loss, and exposure limits</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase complete">
+                <div class="phase-header"><span class="phase-number">Phase 02</span><span
+                        class="phase-status complete">✓ Complete</span></div>
+                <div class="phase-title">Technical Indicators & Market Intelligence</div>
+                <div class="phase-date">Completed: Q1 2025</div>
+                <div class="phase-description">Expanded indicator library and implemented advanced market analysis
+                    capabilities.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">📈 12 Core Indicators</div>
+                        <div class="deliverable-desc">RSI, MACD, ATR, ADX, Bollinger Bands, Stochastic, Supertrend, VWAP
+                        </div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🧠 Regime Detection</div>
+                        <div class="deliverable-desc">Market regime classification (trending/ranging/volatile)</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">⚙️ Runtime Indicators</div>
+                        <div class="deliverable-desc">Dynamic indicator calculation and caching system</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📰 News Integration</div>
+                        <div class="deliverable-desc">Economic calendar and news feed integration</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase complete">
+                <div class="phase-header"><span class="phase-number">Phase 03</span><span
+                        class="phase-status complete">✓ Complete</span></div>
+                <div class="phase-title">Multi-Strategy System & Exit Management</div>
+                <div class="phase-date">Completed: December 2025</div>
+                <div class="phase-description">Implemented sophisticated multi-strategy orchestration with dynamic
+                    selection and comprehensive exit management.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🎼 6 Trading Strategies</div>
+                        <div class="deliverable-desc">SMA/EMA Crossover, Momentum Breakout, Scalping, Mean Reversion
+                        </div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🎯 Dynamic Strategy Selection</div>
+                        <div class="deliverable-desc">Automatic strategy switching based on market regime</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🚪 Exit Strategy System</div>
+                        <div class="deliverable-desc">Trailing stops, time-based exits, profit targets</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📦 Position Lifecycle</div>
+                        <div class="deliverable-desc">Complete position management from entry to exit</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase complete">
+                <div class="phase-header"><span class="phase-number">Phase 04</span><span
+                        class="phase-status complete">✓ Complete</span></div>
+                <div class="phase-title">Production Polish & User Experience</div>
+                <div class="phase-date">Completed: Q1 2025</div>
+                <div class="phase-description">Refined user experience, completed documentation, and ensured
+                    production-ready stability.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🖥️ Desktop GUI</div>
+                        <div class="deliverable-desc">Tkinter-based monitoring dashboard</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📊 Observability</div>
+                        <div class="deliverable-desc">Prometheus metrics, structured logging</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📚 Documentation</div>
+                        <div class="deliverable-desc">Comprehensive guides and API docs</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🐳 Containerization</div>
+                        <div class="deliverable-desc">Docker compose setup</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase current">
+                <div class="phase-header"><span class="phase-number">Phase 05</span><span class="phase-status current">⚡
+                        Current</span></div>
+                <div class="phase-title">Machine Learning & Advanced Intelligence</div>
+                <div class="phase-date">In Progress: Q2 2025</div>
+                <div class="phase-description">Integration of ML models for pattern recognition and strategy
+                    optimization.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🤖 ML Data Pipeline</div>
+                        <div class="deliverable-desc">Feature engineering and model training</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🎓 Reinforcement Learning</div>
+                        <div class="deliverable-desc">RL agents for strategy optimization</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🔮 Predictive Models</div>
+                        <div class="deliverable-desc">LSTM/Transformer for forecasting</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📊 Feature Store</div>
+                        <div class="deliverable-desc">Regime-aware feature extraction</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase planned">
+                <div class="phase-header"><span class="phase-number">Phase 06</span><span
+                        class="phase-status planned">📋 Planned</span></div>
+                <div class="phase-title">Scaling & Operational Excellence</div>
+                <div class="phase-date">Planned: Q3 2025</div>
+                <div class="phase-description">Enterprise-grade features for running at scale.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🌐 Multi-Broker Support</div>
+                        <div class="deliverable-desc">Multiple brokers beyond MT5</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">⚡ High Availability</div>
+                        <div class="deliverable-desc">Failover and redundancy</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📡 Distributed Metrics</div>
+                        <div class="deliverable-desc">Centralized monitoring</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🔐 Security Hardening</div>
+                        <div class="deliverable-desc">Secrets management, encryption</div>
+                    </div>
+                </div>
+            </div>
+            <div class="phase planned">
+                <div class="phase-header"><span class="phase-number">Phase 07</span><span
+                        class="phase-status planned">📋 Planned</span></div>
+                <div class="phase-title">Community Platform & Strategy Marketplace</div>
+                <div class="phase-date">Planned: Q4 2025</div>
+                <div class="phase-description">Build a thriving community with strategy sharing and collaborative
+                    development.</div>
+                <div class="deliverables">
+                    <div class="deliverable">
+                        <div class="deliverable-title">🏪 Strategy Marketplace</div>
+                        <div class="deliverable-desc">Share and monetize strategies</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">📈 Backtesting Platform</div>
+                        <div class="deliverable-desc">Web-based strategy backtesting</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">👥 Social Features</div>
+                        <div class="deliverable-desc">Follow traders, copy strategies</div>
+                    </div>
+                    <div class="deliverable">
+                        <div class="deliverable-title">🎓 Learning Hub</div>
+                        <div class="deliverable-desc">Tutorials and educational content</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-content">
+            <div style="font-family:JetBrains Mono;color:var(--muted)"><strong>Cthulu</strong> v5.1.0</div>
+            <div class="footer-links"><a href="index.html">Home</a><a href="architecture.html">Architecture</a><a
+                    href="features.html">Features</a><a href="https://github.com/amuzetnoM/cthulu">GitHub</a><a
+                    href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div>
+        </div>
+    </footer>
+</body>
+
+</html>

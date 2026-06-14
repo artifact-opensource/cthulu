@@ -1,0 +1,1 @@
+Use this to safely update obsidian without creating conflicts.

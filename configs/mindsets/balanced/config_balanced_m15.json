@@ -1,0 +1,133 @@
+{
+  "_comment": "Balanced profile, M15 timeframe - Optimized risk/reward",
+  "mt5": {
+    "login": "${MT5_LOGIN}",
+    "password": "CHANGE_ME",
+    "server": "${MT5_SERVER}",
+    "timeout": 60000,
+    "path": "${MT5_PATH}"
+  },
+  "risk": {
+    "max_position_size": 0.5,
+    "default_position_size": 0.03,
+    "max_daily_loss": 75.0,
+    "max_positions_per_symbol": 2,
+    "max_total_positions": 4,
+    "position_size_pct": 3.0,
+    "use_kelly_sizing": true,
+    "emergency_stop_loss_pct": 4.0,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 3.0
+  },
+  "trading": {
+    "symbol": "BTCUSD#",
+    "timeframe": "TIMEFRAME_M15",
+    "poll_interval": 45,
+    "lookback_bars": 500
+  },
+  "strategy": {
+    "type": "ema_crossover",
+    "params": {
+      "fast_period": 12,
+      "slow_period": 26,
+      "atr_period": 14,
+      "atr_multiplier": 1.8,
+      "risk_reward_ratio": 2.5,
+      "symbol": "BTCUSD#"
+    }
+  },
+  "confidence_threshold": 0.55,
+  "orphan_trades": {
+    "enabled": true,
+    "adopt_symbols": [
+      "BTCUSD#"
+    ],
+    "ignore_symbols": [],
+    "apply_exit_strategies": true,
+    "max_adoption_age_hours": 0,
+    "log_only": false
+  },
+  "exit_strategies": [
+    {
+      "type": "trailing_stop",
+      "enabled": true,
+      "params": {
+        "atr_multiplier": 2.0,
+        "activation_pct": 0.4
+      }
+    },
+    {
+      "type": "time_based",
+      "enabled": true,
+      "params": {
+        "max_hold_hours": 12.0,
+        "close_before_weekend": true
+      }
+    },
+    {
+      "type": "profit_target",
+      "enabled": true,
+      "params": {
+        "target_pct": 1.0,
+        "partial_close_enabled": true,
+        "partial_close_pct": 30.0
+      }
+    }
+  ],
+  "indicators": [
+    {
+      "type": "rsi",
+      "params": {
+        "period": 14
+      }
+    },
+    {
+      "type": "macd",
+      "params": {
+        "fast_period": 12,
+        "slow_period": 26,
+        "signal_period": 9
+      }
+    },
+    {
+      "type": "bollinger",
+      "params": {
+        "period": 20,
+        "std_dev": 2.0
+      }
+    },
+    {
+      "type": "adx",
+      "params": {
+        "period": 14
+      }
+    }
+  ],
+  "database": {
+    "path": "cthulu_balanced.db"
+  },
+  "rpc": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8278
+  },
+  "dynamic_sltp": {
+    "enabled": true,
+    "base_sl_atr_mult": 2.5,
+    "base_tp_atr_mult": 5.0,
+    "breakeven_activation_pct": 0.4,
+    "breakeven_buffer_pct": 0.08,
+    "partial_tp_enabled": true,
+    "partial_tp_1_pct": 0.3,
+    "partial_tp_2_pct": 0.6,
+    "trail_activation_pct": 0.6,
+    "trail_distance_atr_mult": 2.0
+  },
+  "adaptive_drawdown": {
+    "enabled": true,
+    "trailing_lock_pct": 0.4,
+    "survival_threshold_pct": 40.0,
+    "critical_threshold_pct": 25.0,
+    "danger_threshold_pct": 15.0
+  }
+}

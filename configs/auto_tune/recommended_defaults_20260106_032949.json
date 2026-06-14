@@ -1,0 +1,60 @@
+{
+  "recommendations": {
+    "BTCUSD#_H1": {
+      "symbol": "BTCUSD#",
+      "timeframe": "H1",
+      "min_time_in_trade_bars": 0,
+      "trail_pct": 0.3,
+      "concurrency": 1,
+      "samples": 4,
+      "source_files": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "BTCUSD#_M15": {
+      "symbol": "BTCUSD#",
+      "timeframe": "M15",
+      "min_time_in_trade_bars": 2,
+      "trail_pct": 0.3,
+      "concurrency": 1,
+      "samples": 4,
+      "source_files": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "GOLDm#_H1": {
+      "symbol": "GOLDm#",
+      "timeframe": "H1",
+      "min_time_in_trade_bars": 4,
+      "trail_pct": 0.3,
+      "concurrency": 1,
+      "samples": 4,
+      "source_files": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "GOLDm#_M15": {
+      "symbol": "GOLDm#",
+      "timeframe": "M15",
+      "min_time_in_trade_bars": 0,
+      "trail_pct": 0.3,
+      "concurrency": 1,
+      "samples": 4,
+      "source_files": [
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  }
+}

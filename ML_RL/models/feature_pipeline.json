@@ -1,0 +1,27 @@
+{
+  "config": {
+    "momentum_periods": [
+      5,
+      10,
+      20,
+      50
+    ],
+    "atr_period": 14,
+    "bb_period": 20,
+    "bb_std": 2.0,
+    "volume_ma_periods": [
+      5,
+      10,
+      20
+    ],
+    "swing_lookback": 20,
+    "rsi_period": 14,
+    "macd_fast": 12,
+    "macd_slow": 26,
+    "macd_signal": 9,
+    "adx_period": 14
+  },
+  "means": null,
+  "stds": null,
+  "fitted": false
+}

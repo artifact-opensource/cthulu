@@ -1,0 +1,637 @@
+{
+  "roadmap_2026": {
+    "version": "1.0.0",
+    "title": "Cthulu Trading System - 2026 Strategic Roadmap",
+    "subtitle": "Evolution from Autonomous Trading System to AI-Native Trading Platform",
+    "planning_period": "2026-01-01 to 2026-12-31",
+    "last_updated": "2026-01-27",
+    "vision": "Become the world's most advanced open-source AI-native trading platform, empowering traders with enterprise-grade automation, intelligent risk management, and community-driven innovation"
+  },
+  "strategic_themes": {
+    "theme_1": {
+      "name": "Production Excellence",
+      "description": "Achieve enterprise-grade reliability, performance, and operational excellence",
+      "key_goals": [
+        "99.9% uptime in production deployments",
+        "Sub-100ms p95 signal-to-execution latency",
+        "Zero-downtime deployments and upgrades",
+        "Comprehensive monitoring and alerting",
+        "Automated recovery from all transient failures"
+      ],
+      "success_metrics": {
+        "uptime_sla": "99.9%",
+        "p95_latency_ms": 100,
+        "mean_time_to_recovery_minutes": 5,
+        "test_coverage_percent": 98,
+        "critical_bugs_open": 0
+      }
+    },
+    "theme_2": {
+      "name": "AI/ML Leadership",
+      "description": "Establish Cthulu as the most advanced AI-native trading system in the open-source ecosystem",
+      "key_goals": [
+        "Automated model training and deployment pipeline",
+        "Ensemble ML models with uncertainty quantification",
+        "Reinforcement learning for strategy and risk optimization",
+        "Transformer-based time-series models",
+        "Explainable AI for trade decisions"
+      ],
+      "success_metrics": {
+        "model_accuracy_improvement_percent": 15,
+        "auto_retraining_success_rate_percent": 95,
+        "prediction_confidence_calibration_score": 0.9,
+        "explainability_coverage_percent": 100
+      }
+    },
+    "theme_3": {
+      "name": "Multi-Asset Trading",
+      "description": "Expand from single-instrument to comprehensive portfolio management",
+      "key_goals": [
+        "Trade 10+ symbols concurrently with independent strategies",
+        "Portfolio-level risk management and optimization",
+        "Cross-asset correlation and regime analysis",
+        "Automated rebalancing and allocation",
+        "Support for forex, equities, commodities, crypto"
+      ],
+      "success_metrics": {
+        "concurrent_symbols_supported": 10,
+        "portfolio_sharpe_ratio": 2.0,
+        "diversification_benefit_percent": 25,
+        "asset_classes_supported": 5
+      }
+    },
+    "theme_4": {
+      "name": "Community Ecosystem",
+      "description": "Build vibrant community with strategy sharing, education, and collaboration",
+      "key_goals": [
+        "Strategy marketplace with 100+ community strategies",
+        "Educational platform with certifications",
+        "Active Discord community (1000+ members)",
+        "Monthly trading competitions",
+        "Partner program for educators and influencers"
+      ],
+      "success_metrics": {
+        "community_strategies_count": 100,
+        "certified_users_count": 500,
+        "discord_members_count": 1000,
+        "monthly_active_users": 500,
+        "partner_organizations": 10
+      }
+    },
+    "theme_5": {
+      "name": "Cloud-Native Platform",
+      "description": "Simplify deployment and enable scalability through cloud-native architecture",
+      "key_goals": [
+        "One-click deployment to AWS, GCP, Azure",
+        "Kubernetes-native with Helm charts",
+        "Serverless options for cost optimization",
+        "Multi-region deployments for resilience",
+        "Managed SaaS offering (optional)"
+      ],
+      "success_metrics": {
+        "cloud_platforms_supported": 3,
+        "deployment_time_minutes": 15,
+        "infrastructure_cost_reduction_percent": 40,
+        "multi_region_deployments": 3
+      }
+    }
+  },
+  "quarterly_milestones": {
+    "Q1_2026": {
+      "period": "January - March 2026",
+      "theme": "Stability & Performance",
+      "status": "IN_PROGRESS",
+      "progress_percent": 40,
+      "key_deliverables": [
+        {
+          "id": "Q1-D0",
+          "name": "CTHULU TNT v2.0 Architecture",
+          "description": "Trading-Native Transformer with Sparse MoE for multi-horizon prediction",
+          "target_date": "2026-02-01",
+          "status": "COMPLETE",
+          "business_value": "Advanced ML model purpose-built for trading with expert routing",
+          "technical_details": "50-iteration design process, ~850K params, 3 experts (Trend/Range/Volatility), RoPE, Bayesian confidence"
+        },
+        {
+          "id": "Q1-D1",
+          "name": "Unified Risk Management Module",
+          "description": "Single, comprehensive risk manager replacing fragmented modules",
+          "target_date": "2026-02-15",
+          "status": "PLANNED",
+          "business_value": "Simplified maintenance, consistent risk logic, easier testing",
+          "technical_details": "Merge risk/manager.py and position/risk_manager.py into unified module with backward-compatible API"
+        },
+        {
+          "id": "Q1-D2",
+          "name": "Enhanced Error Recovery System",
+          "description": "Comprehensive automatic recovery from all transient failures",
+          "target_date": "2026-02-28",
+          "status": "PLANNED",
+          "business_value": "Near-zero manual intervention, improved uptime, user confidence",
+          "technical_details": "Auto-reconnect to MT5, position reconciliation, database recovery, graceful ML degradation"
+        },
+        {
+          "id": "Q1-D3",
+          "name": "Automated Performance Benchmarking",
+          "description": "CI/CD integrated performance regression testing",
+          "target_date": "2026-03-15",
+          "status": "PLANNED",
+          "business_value": "Prevent performance regressions, quantify optimizations, data-driven decisions",
+          "technical_details": "Continuous latency/throughput tracking, resource profiling, regression alerts"
+        },
+        {
+          "id": "Q1-D4",
+          "name": "100-Hour Stress Test Certification",
+          "description": "Validate rock-solid reliability under continuous load",
+          "target_date": "2026-03-31",
+          "status": "IN_PROGRESS",
+          "business_value": "Production confidence, marketing credibility, identify edge cases",
+          "technical_details": "100+ hours continuous operation, memory leak detection, failure mode documentation"
+        }
+      ],
+      "technical_achievements": [
+        "TNT v2.0 Sparse MoE Transformer architecture designed and implemented",
+        "Unified risk management architecture",
+        "Self-healing system with automatic recovery",
+        "Performance benchmarking infrastructure",
+        "Stress test certification and report"
+      ],
+      "business_outcomes": [
+        "State-of-the-art ML model for trading prediction",
+        "Reduced support burden from automatic recovery",
+        "Measurable performance improvements",
+        "Production-ready confidence for enterprise users",
+        "Foundation for SLA-based offerings"
+      ]
+    },
+    "Q2_2026": {
+      "period": "April - June 2026",
+      "theme": "ML/RL Advancement",
+      "status": "PLANNED",
+      "progress_percent": 0,
+      "key_deliverables": [
+        {
+          "id": "Q2-D1",
+          "name": "Automated Model Retraining Pipeline",
+          "description": "Nightly retraining with A/B testing and automated deployment",
+          "target_date": "2026-04-30",
+          "status": "PLANNED",
+          "business_value": "Models stay fresh with market conditions, no manual intervention",
+          "technical_details": "Scheduled jobs, model versioning, A/B testing framework, auto-rollback on degradation"
+        },
+        {
+          "id": "Q2-D2",
+          "name": "Advanced Feature Engineering",
+          "description": "Expand feature set with market microstructure indicators",
+          "target_date": "2026-05-15",
+          "status": "PLANNED",
+          "business_value": "Improved model accuracy, better edge in markets",
+          "technical_details": "Order flow imbalance, volume profile, market depth, session features, temporal features"
+        },
+        {
+          "id": "Q2-D3",
+          "name": "RL-Based Strategy Selector",
+          "description": "Replace heuristic strategy selection with RL agent",
+          "target_date": "2026-06-15",
+          "status": "PLANNED",
+          "business_value": "Adaptive strategy selection that learns from live results",
+          "technical_details": "Contextual bandit or multi-armed bandit, online learning, exploration-exploitation balance"
+        },
+        {
+          "id": "Q2-D4",
+          "name": "Ensemble Prediction System",
+          "description": "Multiple models with weighted voting for robust predictions",
+          "target_date": "2026-06-30",
+          "status": "PLANNED",
+          "business_value": "Reduced prediction variance, uncertainty quantification, better accuracy",
+          "technical_details": "Tree-based, neural, linear models combined via stacking or voting, calibrated probabilities"
+        }
+      ],
+      "technical_achievements": [
+        "Automated MLOps pipeline in production",
+        "Expanded feature library with microstructure data",
+        "RL-powered strategy selection",
+        "Ensemble ML system with uncertainty quantification"
+      ],
+      "business_outcomes": [
+        "Improved trading performance from better models",
+        "Reduced maintenance burden via automation",
+        "Competitive differentiation in AI/ML capabilities",
+        "Foundation for advanced research and publications"
+      ]
+    },
+    "Q3_2026": {
+      "period": "July - September 2026",
+      "theme": "Multi-Asset & Portfolio",
+      "status": "PLANNED",
+      "progress_percent": 0,
+      "key_deliverables": [
+        {
+          "id": "Q3-D1",
+          "name": "Multi-Symbol Trading Engine",
+          "description": "Refactored core to handle 10+ symbols concurrently",
+          "target_date": "2026-07-31",
+          "status": "PLANNED",
+          "business_value": "Unlock portfolio strategies, diversification, higher capacity",
+          "technical_details": "Parallel data ingestion, independent strategies per symbol, shared risk budget"
+        },
+        {
+          "id": "Q3-D2",
+          "name": "Portfolio Risk Manager",
+          "description": "Portfolio-level limits with correlation-aware sizing",
+          "target_date": "2026-08-15",
+          "status": "PLANNED",
+          "business_value": "Better risk management across correlated assets, diversification benefits",
+          "technical_details": "Total exposure limits, correlation matrix, VaR/CVaR calculations, sector diversification"
+        },
+        {
+          "id": "Q3-D3",
+          "name": "Portfolio Optimization Engine",
+          "description": "Modern portfolio theory for allocation and rebalancing",
+          "target_date": "2026-09-15",
+          "status": "PLANNED",
+          "business_value": "Optimal capital allocation, Sharpe ratio maximization, risk parity",
+          "technical_details": "Mean-variance optimization, risk parity, max Sharpe, rebalancing triggers"
+        },
+        {
+          "id": "Q3-D4",
+          "name": "Cross-Asset Analysis Dashboard",
+          "description": "Real-time correlation and regime analysis across assets",
+          "target_date": "2026-09-30",
+          "status": "PLANNED",
+          "business_value": "Market regime awareness, correlation breakdowns, risk diversification insights",
+          "technical_details": "Correlation matrix, cross-asset regime detection, flight-to-quality indicators"
+        }
+      ],
+      "technical_achievements": [
+        "Multi-symbol concurrent trading capability",
+        "Portfolio-level risk management system",
+        "Modern portfolio theory optimization",
+        "Cross-asset analytics and monitoring"
+      ],
+      "business_outcomes": [
+        "Expanded addressable market (portfolio managers)",
+        "Higher system capacity (10x symbols)",
+        "Better risk-adjusted returns via diversification",
+        "Competitive parity with institutional platforms"
+      ]
+    },
+    "Q4_2026": {
+      "period": "October - December 2026",
+      "theme": "Ecosystem & Community",
+      "status": "PLANNED",
+      "progress_percent": 0,
+      "key_deliverables": [
+        {
+          "id": "Q4-D1",
+          "name": "Strategy Marketplace Platform",
+          "description": "Web platform for discovering and sharing community strategies",
+          "target_date": "2026-10-31",
+          "status": "PLANNED",
+          "business_value": "Network effects, community engagement, strategy diversity",
+          "technical_details": "Upload/download interface, performance stats, backtesting required, rating system"
+        },
+        {
+          "id": "Q4-D2",
+          "name": "Cloud Deployment Templates",
+          "description": "One-click deployment to AWS, GCP, Azure",
+          "target_date": "2026-11-15",
+          "status": "PLANNED",
+          "business_value": "Lower barrier to entry, scalability, enterprise adoption",
+          "technical_details": "Kubernetes Helm charts, Terraform modules, Docker Compose, CI/CD templates"
+        },
+        {
+          "id": "Q4-D3",
+          "name": "Mobile Monitoring App",
+          "description": "iOS/Android app for trade monitoring and alerts",
+          "target_date": "2026-11-30",
+          "status": "PLANNED",
+          "business_value": "On-the-go monitoring, improved user experience, emergency controls",
+          "technical_details": "Real-time position sync, push notifications, performance dashboards, kill-switch"
+        },
+        {
+          "id": "Q4-D4",
+          "name": "Educational Platform & Certifications",
+          "description": "Courses, tutorials, and certification program",
+          "target_date": "2026-12-31",
+          "status": "PLANNED",
+          "business_value": "User onboarding, community growth, thought leadership",
+          "technical_details": "Video tutorials, Jupyter notebooks, certification exams, workshops"
+        }
+      ],
+      "technical_achievements": [
+        "Strategy marketplace with community contributions",
+        "Cloud-native deployment across 3 platforms",
+        "Cross-platform mobile app",
+        "Comprehensive educational content"
+      ],
+      "business_outcomes": [
+        "Vibrant community with 100+ strategies",
+        "Simplified deployment (15 min vs 2+ hours)",
+        "Mobile-first user experience",
+        "500+ certified users driving adoption"
+      ]
+    }
+  },
+  "feature_roadmap": {
+    "production_hardening": {
+      "priority": "CRITICAL",
+      "timeline": "Q1-Q2 2026",
+      "features": [
+        "Unified risk management module",
+        "Enhanced error recovery and self-healing",
+        "Comprehensive monitoring and alerting",
+        "Performance benchmarking automation",
+        "100-hour stress test certification",
+        "Database migration and versioning system",
+        "Standardized error handling across modules",
+        "100% type hints coverage for mypy strict mode"
+      ]
+    },
+    "ml_ai_advancement": {
+      "priority": "HIGH",
+      "timeline": "Q2-Q3 2026",
+      "features": [
+        "Automated model retraining pipeline",
+        "Advanced feature engineering (microstructure)",
+        "RL-based strategy selector",
+        "Ensemble ML predictions",
+        "Transformer models for time-series",
+        "Model drift detection and alerting",
+        "Explainable AI for trade decisions",
+        "Uncertainty quantification for predictions"
+      ]
+    },
+    "multi_asset_portfolio": {
+      "priority": "HIGH",
+      "timeline": "Q3-Q4 2026",
+      "features": [
+        "Multi-symbol concurrent trading (10+ symbols)",
+        "Portfolio-level risk management",
+        "Cross-asset correlation analysis",
+        "Modern portfolio theory optimization",
+        "Automated rebalancing",
+        "VaR/CVaR risk metrics",
+        "Sector and asset class diversification",
+        "Multi-asset backtesting framework"
+      ]
+    },
+    "community_ecosystem": {
+      "priority": "MEDIUM",
+      "timeline": "Q4 2026",
+      "features": [
+        "Strategy marketplace platform",
+        "Community strategy sharing and discovery",
+        "Rating and review system",
+        "Educational content library",
+        "Certification program",
+        "Discord community integration",
+        "Monthly trading competitions",
+        "Partner program for educators"
+      ]
+    },
+    "cloud_deployment": {
+      "priority": "MEDIUM",
+      "timeline": "Q4 2026",
+      "features": [
+        "Kubernetes Helm charts",
+        "Terraform modules (AWS, GCP, Azure)",
+        "Docker Compose quick-start",
+        "CI/CD pipeline templates",
+        "One-click deployment scripts",
+        "Multi-region support",
+        "Auto-scaling configurations",
+        "Cost optimization templates"
+      ]
+    },
+    "user_experience": {
+      "priority": "MEDIUM",
+      "timeline": "Q3-Q4 2026",
+      "features": [
+        "Mobile app (iOS/Android)",
+        "Enhanced web-based backtesting UI",
+        "Real-time WebSocket API",
+        "Grafana dashboard templates",
+        "Improved setup wizard with AI assistance",
+        "Interactive tutorials",
+        "Dark/light theme consistency",
+        "Accessibility improvements (WCAG 2.1)"
+      ]
+    },
+    "integrations": {
+      "priority": "LOW",
+      "timeline": "Q4 2026 - Q1 2027",
+      "features": [
+        "TradingView webhook integration",
+        "Telegram bot notifications",
+        "Multi-broker support (Interactive Brokers, Binance)",
+        "Copy trading feature",
+        "Third-party signal providers",
+        "Webhooks for custom integrations",
+        "REST API for programmatic access",
+        "Zapier/IFTTT integration"
+      ]
+    }
+  },
+  "technology_evolution": {
+    "infrastructure": {
+      "current": "Local deployment, Docker Compose, systemd services",
+      "2026_target": "Kubernetes-native, multi-cloud, serverless options",
+      "key_migrations": [
+        "Adopt Infrastructure as Code (Terraform/Pulumi)",
+        "Implement GitOps for configuration management",
+        "Multi-region deployment capabilities",
+        "Auto-scaling based on market volatility"
+      ]
+    },
+    "data_storage": {
+      "current": "SQLite (WAL mode), local file system",
+      "2026_target": "Distributed storage, object storage for ML data",
+      "key_migrations": [
+        "PostgreSQL option for production scale",
+        "S3/GCS for backtest results and ML data",
+        "Redis for caching and real-time state",
+        "TimescaleDB for time-series analytics"
+      ]
+    },
+    "ml_infrastructure": {
+      "current": "Scikit-learn, manual training, local models",
+      "2026_target": "MLOps platform, automated pipelines, model registry",
+      "key_migrations": [
+        "MLflow or Weights & Biases for experiment tracking",
+        "Automated feature stores",
+        "Model registry with versioning",
+        "Distributed training for large models",
+        "GPU support for transformer models"
+      ]
+    },
+    "observability": {
+      "current": "Prometheus, structured logging, basic dashboards",
+      "2026_target": "Full observability stack with distributed tracing",
+      "key_migrations": [
+        "OpenTelemetry for distributed tracing",
+        "Grafana with pre-built dashboards",
+        "Log aggregation (ELK or Loki)",
+        "APM for performance monitoring",
+        "Synthetic monitoring and alerting"
+      ]
+    }
+  },
+  "competitive_positioning": {
+    "target_market": "Retail algorithmic traders, quant researchers, trading system developers",
+    "key_differentiators": [
+      "Open-source with AGPL-3.0 (vs proprietary competitors)",
+      "AI-native with ML/RL at core (vs traditional rules-based)",
+      "Production-grade observability (vs hobby projects)",
+      "Community-driven strategy marketplace (network effects)",
+      "Multi-asset portfolio support (vs single-instrument tools)",
+      "Cloud-native deployment (vs local-only solutions)"
+    ],
+    "competitive_landscape": {
+      "open_source_competitors": [
+        "QuantConnect (closed-source platform)",
+        "Backtrader (backtesting only, no live trading)",
+        "Zipline (discontinued)",
+        "Freqtrade (crypto-focused, limited assets)"
+      ],
+      "commercial_competitors": [
+        "TradingView (charting + alerts, no full automation)",
+        "NinjaTrader (Windows-only, proprietary)",
+        "MultiCharts (expensive, closed ecosystem)",
+        "TradeStation (broker-locked)"
+      ],
+      "cthulu_advantages": [
+        "Full automation with ML/RL intelligence",
+        "Multi-asset support beyond crypto",
+        "Production-ready with 95%+ test coverage",
+        "Active development and community",
+        "Flexible deployment (local, cloud, hybrid)"
+      ]
+    }
+  },
+  "risk_factors": {
+    "technical_risks": [
+      {
+        "risk": "MT5 API breaking changes",
+        "likelihood": "Medium",
+        "impact": "High",
+        "mitigation": "Abstraction layer, regression testing, community monitoring"
+      },
+      {
+        "risk": "ML model degradation in live markets",
+        "likelihood": "High",
+        "impact": "Medium",
+        "mitigation": "Continuous monitoring, auto-retraining, ensemble models, human-in-loop alerts"
+      },
+      {
+        "risk": "Scaling challenges with 10+ symbols",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Load testing, async architecture, resource profiling, gradual rollout"
+      }
+    ],
+    "market_risks": [
+      {
+        "risk": "Regulatory changes affecting algorithmic trading",
+        "likelihood": "Low",
+        "impact": "High",
+        "mitigation": "Compliance monitoring, legal review, geographic diversification"
+      },
+      {
+        "risk": "Broker restrictions on API trading",
+        "likelihood": "Low",
+        "impact": "High",
+        "mitigation": "Multi-broker support, community feedback, broker partnerships"
+      }
+    ],
+    "community_risks": [
+      {
+        "risk": "Low community adoption",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Marketing, educational content, influencer partnerships, open communication"
+      },
+      {
+        "risk": "Malicious strategies in marketplace",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Mandatory backtesting, code review, rating system, community moderation"
+      }
+    ]
+  },
+  "success_criteria": {
+    "technical_excellence": {
+      "test_coverage": "98%+ (current: 95%)",
+      "uptime_sla": "99.9% (current: 98.5%)",
+      "p95_latency": "<100ms (current: 150ms)",
+      "bugs_critical": "0 open (current: 12 total)",
+      "code_quality": "A grade on Code Climate"
+    },
+    "performance_metrics": {
+      "win_rate_target": "55%+ (backtest baseline)",
+      "sharpe_ratio_target": "1.5+ (annualized)",
+      "max_drawdown_target": "<15%",
+      "profit_factor_target": "1.8+",
+      "recovery_factor_target": "3.0+"
+    },
+    "community_growth": {
+      "github_stars": "500+ (current: 0)",
+      "active_monthly_users": "500+ (current: 0)",
+      "community_strategies": "100+ (current: 0)",
+      "certified_users": "500+ (current: 0)",
+      "discord_members": "1000+ (current: 0)"
+    },
+    "business_outcomes": {
+      "production_deployments": "100+ active instances",
+      "cloud_adoption": "30% of users on cloud",
+      "partner_organizations": "10+ educational/research partners",
+      "marketplace_revenue": "$10k+ monthly (from optional services)",
+      "brand_recognition": "Top 3 open-source trading systems"
+    }
+  },
+  "investment_requirements": {
+    "development_effort": {
+      "q1_person_weeks": 20,
+      "q2_person_weeks": 24,
+      "q3_person_weeks": 28,
+      "q4_person_weeks": 32,
+      "total_person_weeks": 104,
+      "estimated_cost_usd": "Based on volunteer/community contributions"
+    },
+    "infrastructure_costs": {
+      "hosting": "AWS/GCP credits for CI/CD, staging environments",
+      "ml_training": "GPU compute for transformer models",
+      "monitoring": "Prometheus/Grafana cloud tiers",
+      "estimated_annual_usd": "5000-10000 (varies with usage)"
+    },
+    "community_investment": {
+      "marketing": "Content creation, video production, social media",
+      "events": "Virtual meetups, workshops, trading competitions",
+      "rewards": "Bounties for contributions, bug fixes, strategies",
+      "estimated_annual_usd": "10000-15000"
+    }
+  },
+  "governance": {
+    "decision_making": "Core team consensus with community input",
+    "roadmap_updates": "Quarterly reviews with community feedback",
+    "feature_prioritization": "Combination of strategic alignment, community votes, and technical feasibility",
+    "release_process": "Semantic versioning, monthly minors, quarterly majors",
+    "community_involvement": "GitHub Discussions for proposals, voting on major features"
+  },
+  "metadata": {
+    "document_version": "1.0.0",
+    "created_date": "2026-01-27T11:17:55.842Z",
+    "last_reviewed": "2026-01-27T11:17:55.842Z",
+    "next_review_date": "2026-04-27",
+    "approvers": ["Cthulu Core Team", "Community Advisory Board"],
+    "status": "APPROVED",
+    "change_log": [
+      {
+        "date": "2026-01-27",
+        "version": "1.0.0",
+        "changes": "Initial 2026 roadmap creation",
+        "author": "Project Management Team"
+      }
+    ]
+  }
+}

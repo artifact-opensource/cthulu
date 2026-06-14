@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "Cthulu Documentation Index",
+  "version": "6.0.0",
+  "lastUpdated": "2026-01-04T12:19:41.807Z",
+  "baseUrl": "./",
+  "documents": [
+    {
+      "id": "01-readme",
+      "file": "01_README.md",
+      "title": "Introduction",
+      "description": "Advanced multi-strategy autonomous trading system with MetaTrader 5 integration",
+      "order": 1,
+      "category": "getting-started",
+      "tags": [
+        "trading",
+        "mt5",
+        "autonomous",
+        "multi-strategy",
+        "risk-management"
+      ]
+    },
+    {
+      "id": "02-quickstart",
+      "file": "02_QUICKSTART.md",
+      "title": "Quick Start",
+      "description": "Get started with Cthulu trading system - installation, configuration, and first trades",
+      "order": 2,
+      "category": "getting-started",
+      "tags": [
+        "quickstart",
+        "installation",
+        "setup",
+        "getting-started"
+      ]
+    },
+    {
+      "id": "03-usage",
+      "file": "03_USAGE.md",
+      "title": "Usage Guide",
+      "description": "Terms of use, disclaimers, and legal notices for the Cthulu trading system",
+      "order": 3,
+      "category": "getting-started",
+      "tags": [
+        "terms",
+        "legal",
+        "disclaimer",
+        "risk-disclosure"
+      ]
+    },
+    {
+      "id": "04-architecture",
+      "file": "04_ARCHITECTURE.md",
+      "title": "Architecture",
+      "description": "Technical architecture and system design of the Cthulu multi-strategy autonomous trading platform",
+      "order": 4,
+      "category": "technical",
+      "tags": [
+        "architecture",
+        "system-design",
+        "technical-overview"
+      ]
+    },
+    {
+      "id": "05-features-guide",
+      "file": "05_FEATURES_GUIDE.md",
+      "title": "Features Guide",
+      "description": "Comprehensive guide to Cthulu's advanced trading strategies, indicators, and dynamic strategy selection",
+      "order": 5,
+      "category": "features",
+      "tags": [
+        "features",
+        "strategies",
+        "indicators",
+        "dynamic-selection",
+        "SAFE"
+      ]
+    },
+    {
+      "id": "06-mindsets",
+      "file": "06_MINDSETS.md",
+      "title": "Mindsets Guide",
+      "description": "Mindsets guide covering Conservative, Balanced, Aggressive, and Ultra-Aggressive trading configurations",
+      "order": 6,
+      "category": "configuration",
+      "tags": [
+        "conservative",
+        "balanced",
+        "aggressive",
+        "ultra-aggressive"
+      ]
+    },
+    {
+      "id": "07-risk",
+      "file": "07_RISK.md",
+      "title": "Risk Management",
+      "description": "Risk management configuration and stop-loss strategies for Cthulu trading system",
+      "order": 7,
+      "category": "configuration",
+      "tags": [
+        "risk-management",
+        "stop-loss",
+        "position-sizing"
+      ]
+    },
+    {
+      "id": "08-deployment",
+      "file": "08_DEPLOYMENT.md",
+      "title": "Deployment",
+      "description": "Production deployment strategies including Docker, Linux, Windows service, and monitoring setup",
+      "order": 8,
+      "category": "operations",
+      "tags": [
+        "deployment",
+        "docker",
+        "production",
+        "monitoring"
+      ]
+    },
+    {
+      "id": "09-observability",
+      "file": "09_OBSERVABILITY.md",
+      "title": "Observability",
+      "description": "Performance metrics, Prometheus exporter, and guidance for monitoring Cthulu",
+      "order": 9,
+      "category": "operations",
+      "tags": [
+        "observability",
+        "metrics",
+        "prometheus"
+      ]
+    },
+    {
+      "id": "10-backtesting",
+      "file": "10_BACKTESTING.md",
+      "title": "Backtesting Framework",
+      "description": "Professional-grade strategy validation with ML-enhanced decision making and benchmarking",
+      "order": 10,
+      "category": "technical",
+      "tags": [
+        "backtesting",
+        "ml",
+        "optimization",
+        "benchmarking",
+        "monte-carlo"
+      ]
+    },
+    {
+      "id": "11-ml-rl",
+      "file": "11_ML-RL.md",
+      "title": "Machine & Reinforcement Learning",
+      "description": "Cognition Engine - ML/RL integration philosophy and implementation",
+      "order": 11,
+      "category": "advanced",
+      "tags": [
+        "machine-learning",
+        "reinforcement-learning",
+        "cognition"
+      ]
+    },
+    {
+      "id": "12-performance-tuning",
+      "file": "12_PERFORMANCE_TUNING.md",
+      "title": "Performance Tuning",
+      "description": "Optimize Cthulu's performance with database tuning, memory management, and CPU optimization",
+      "order": 12,
+      "category": "operations",
+      "tags": [
+        "performance",
+        "optimization",
+        "tuning",
+        "benchmarking"
+      ]
+    },
+    {
+      "id": "13-advisory",
+      "file": "13_ADVISORY.md",
+      "title": "Advisory & Ghost Modes",
+      "description": "Safe deployment testing modes for validating Cthulu without real trades",
+      "order": 13,
+      "category": "testing",
+      "tags": [
+        "advisory",
+        "testing",
+        "paper-trading",
+        "validation"
+      ]
+    },
+    {
+      "id": "14-security",
+      "file": "14_SECURITY.md",
+      "title": "Security",
+      "description": "Security guidelines including credential management, API security, and access control",
+      "order": 14,
+      "category": "legal",
+      "tags": [
+        "security",
+        "credentials",
+        "api-security",
+        "access-control"
+      ]
+    },
+    {
+      "id": "15-privacy-policy",
+      "file": "15_PRIVACY_POLICY.md",
+      "title": "Privacy Policy",
+      "description": "Privacy policy and data handling practices for the Cthulu trading system",
+      "order": 15,
+      "category": "legal",
+      "tags": [
+        "privacy",
+        "policies",
+        "data-handling",
+        "legal"
+      ]
+    },
+    {
+      "id": "16-hecktor",
+      "file": "16_HECKTOR.md",
+      "title": "Hecktor Integration",
+      "description": "Technical integration specification between Cthulu and Vector Studio (Hecktor) for semantic trading memory",
+      "order": 16,
+      "category": "advanced",
+      "tags": [
+        "hecktor",
+        "vector-database",
+        "integration",
+        "semantic-memory",
+        "embeddings",
+        "pattern-recognition"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "getting-started",
+      "name": "Getting Started",
+      "order": 1
+    },
+    {
+      "id": "features",
+      "name": "Features",
+      "order": 2
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration",
+      "order": 3
+    },
+    {
+      "id": "technical",
+      "name": "Technical",
+      "order": 4
+    },
+    {
+      "id": "operations",
+      "name": "Operations",
+      "order": 5
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced",
+      "order": 6
+    },
+    {
+      "id": "testing",
+      "name": "Testing",
+      "order": 7
+    },
+    {
+      "id": "legal",
+      "name": "Legal & Policies",
+      "order": 8
+    }
+  ],
+  "htmlPages": [
+    {
+      "file": "index.html",
+      "title": "Home",
+      "order": 0
+    },
+    {
+      "file": "architecture.html",
+      "title": "System Architecture",
+      "order": 1
+    },
+    {
+      "file": "roadmap.html",
+      "title": "Roadmap",
+      "order": 2
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "start": "2026-01-05T11:00:00",
+  "end": "2026-01-05T11:30:00",
+  "trades_count": 0,
+  "timeline_default": [
+    {
+      "ts": "2026-01-05 11:00:00",
+      "price": 4430.46,
+      "actions": []
+    },
+    {
+      "ts": "2026-01-05 11:15:00",
+      "price": 4432.6,
+      "actions": []
+    },
+    {
+      "ts": "2026-01-05 11:30:00",
+      "price": 4437.58,
+      "actions": [
+        {
+          "type": "close_partial",
+          "ticket": 9001,
+          "volume": 0.02,
+          "tier": 0,
+          "reason": "Tier 1 profit target (50%) reached"
+        },
+        {
+          "type": "modify_sl",
+          "ticket": 9001,
+          "new_sl": 4429.85,
+          "reason": "Breakeven stop after profit tier"
+        },
+        {
+          "type": "trail_sl",
+          "ticket": 9001,
+          "new_sl": 4433.715,
+          "reason": "Trailing stop at 50% of profit"
+        }
+      ]
+    }
+  ],
+  "timeline_guarded": [
+    {
+      "ts": "2026-01-05 11:00:00",
+      "price": 4430.46,
+      "actions": []
+    },
+    {
+      "ts": "2026-01-05 11:15:00",
+      "price": 4432.6,
+      "actions": []
+    },
+    {
+      "ts": "2026-01-05 11:30:00",
+      "price": 4437.58,
+      "actions": [
+        {
+          "type": "close_partial",
+          "ticket": 9001,
+          "volume": 0.02,
+          "tier": 0,
+          "reason": "Tier 1 profit target (50%) reached"
+        },
+        {
+          "type": "modify_sl",
+          "ticket": 9001,
+          "new_sl": 4429.85,
+          "reason": "Breakeven stop after profit tier"
+        },
+        {
+          "type": "trail_sl",
+          "ticket": 9001,
+          "new_sl": 4433.715,
+          "reason": "Trailing stop at 50% of profit"
+        }
+      ]
+    }
+  ]
+}
