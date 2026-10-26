@@ -1,0 +1,744 @@
+{
+  "development_plan": {
+    "version": "1.0.0",
+    "planning_horizon": "2026",
+    "last_updated": "2026-01-27",
+    "status": "ACTIVE",
+    "methodology": "Agile with quarterly planning cycles"
+  },
+  "current_state": {
+    "version": "5.3.0 EVOQUE",
+    "status": "STABLE - Production Ready",
+    "completion_percentage": 85,
+    "key_achievements": [
+      "Complete architectural overhaul (Phase 10/10 completed)",
+      "7 active trading strategies with fallback system",
+      "12 technical indicators with runtime management",
+      "AI/ML cognition layer with regime detection",
+      "Entry confluence filtering system",
+      "Adaptive risk management with 7-state drawdown protection",
+      "Intelligent profit scaling",
+      "Web-based backtesting UI with real-time updates",
+      "Hektor vector database integration",
+      "Local LLM integration (Ollama)",
+      "95% test coverage, 243 passing tests",
+      "98.5% uptime in stress testing",
+      "Production-grade observability (Prometheus, structured logging)"
+    ],
+    "known_limitations": [
+      "MT5-only broker support (no multi-broker)",
+      "Single-asset trading (no portfolio optimization)",
+      "Manual model training required (no auto-retraining)",
+      "Limited mobile monitoring (desktop GUI only)",
+      "No community strategy marketplace",
+      "Risk management modules not fully unified"
+    ]
+  },
+  "strategic_priorities": {
+    "2026_focus_areas": [
+      {
+        "priority": 1,
+        "area": "Production Hardening",
+        "description": "Ensure rock-solid reliability for live trading deployments",
+        "rationale": "Users trust the system with real money - zero tolerance for failures"
+      },
+      {
+        "priority": 2,
+        "area": "AI/ML Enhancement",
+        "description": "Advance machine learning capabilities for better predictions and adaptation",
+        "rationale": "AI-native features are key differentiator vs traditional trading systems"
+      },
+      {
+        "priority": 3,
+        "area": "Multi-Asset Support",
+        "description": "Expand beyond single-instrument trading to portfolio management",
+        "rationale": "Real traders manage portfolios, not single positions"
+      },
+      {
+        "priority": 4,
+        "area": "Community & Ecosystem",
+        "description": "Build community features and strategy sharing marketplace",
+        "rationale": "Network effects drive adoption and innovation"
+      },
+      {
+        "priority": 5,
+        "area": "Cloud-Native Deployment",
+        "description": "Kubernetes, serverless, and managed cloud deployments",
+        "rationale": "Simplify deployment and scaling for non-technical users"
+      }
+    ]
+  },
+  "quarterly_roadmap": {
+    "Q1_2026": {
+      "period": "January - March 2026",
+      "theme": "Stability & Performance",
+      "status": "IN_PROGRESS",
+      "objectives": [
+        "Complete stress testing under various market conditions",
+        "Optimize signal-to-execution latency (<100ms p95)",
+        "Unify risk management modules",
+        "Improve error recovery mechanisms",
+        "Expand test coverage to 98%+"
+      ],
+      "milestones": [
+        {
+          "id": "Q1-M1",
+          "name": "Unified Risk Manager",
+          "status": "PLANNED",
+          "target_date": "2026-02-15",
+          "description": "Merge risk/manager.py and position/risk_manager.py into single unified module",
+          "dependencies": [],
+          "success_criteria": [
+            "All risk logic in one module",
+            "No duplicate code",
+            "Backward compatible API",
+            "Tests pass at 100%"
+          ]
+        },
+        {
+          "id": "Q1-M2",
+          "name": "Enhanced Error Recovery",
+          "status": "PLANNED",
+          "target_date": "2026-02-28",
+          "description": "Implement comprehensive error recovery for all failure modes",
+          "dependencies": ["Q1-M1"],
+          "success_criteria": [
+            "Automatic reconnection to MT5",
+            "Position reconciliation after disconnect",
+            "Database corruption recovery",
+            "Graceful degradation for ML model failures",
+            "Zero manual intervention for transient failures"
+          ]
+        },
+        {
+          "id": "Q1-M3",
+          "name": "Performance Benchmarking Suite",
+          "status": "PLANNED",
+          "target_date": "2026-03-15",
+          "description": "Automated performance regression testing",
+          "dependencies": [],
+          "success_criteria": [
+            "Continuous benchmarking in CI/CD",
+            "Latency tracking (p50, p95, p99)",
+            "Throughput measurement",
+            "Resource usage profiling",
+            "Regression alerts"
+          ]
+        },
+        {
+          "id": "Q1-M4",
+          "name": "Stress Test Campaign",
+          "status": "IN_PROGRESS",
+          "target_date": "2026-03-31",
+          "description": "100+ hour continuous stress testing",
+          "dependencies": ["Q1-M2", "Q1-M3"],
+          "success_criteria": [
+            "100 hours continuous operation",
+            "Zero crashes or fatal errors",
+            "Memory leak detection (<1% growth per day)",
+            "Sustained throughput under load",
+            "Documented failure modes and mitigations"
+          ]
+        }
+      ],
+      "deliverables": [
+        "Unified risk management module",
+        "Enhanced error recovery system",
+        "Automated performance benchmarks",
+        "Stress test report with findings"
+      ]
+    },
+    "Q2_2026": {
+      "period": "April - June 2026",
+      "theme": "ML/RL Advancement",
+      "status": "PLANNED",
+      "objectives": [
+        "Automated model retraining pipeline",
+        "Advanced feature engineering",
+        "Ensemble ML models for predictions",
+        "Reinforcement learning for strategy selection",
+        "Model drift detection and alerts"
+      ],
+      "milestones": [
+        {
+          "id": "Q2-M1",
+          "name": "Auto-Retraining Pipeline",
+          "status": "PLANNED",
+          "target_date": "2026-04-30",
+          "description": "Automated nightly model retraining based on recent data",
+          "dependencies": [],
+          "success_criteria": [
+            "Scheduled retraining jobs",
+            "Model versioning and rollback",
+            "A/B testing framework",
+            "Performance comparison reports",
+            "Automatic deployment of better models"
+          ]
+        },
+        {
+          "id": "Q2-M2",
+          "name": "Advanced Feature Engineering",
+          "status": "PLANNED",
+          "target_date": "2026-05-15",
+          "description": "Expand feature set with advanced market microstructure indicators",
+          "dependencies": [],
+          "success_criteria": [
+            "Order flow imbalance features",
+            "Volume profile features",
+            "Market depth features (if available)",
+            "Time-of-day and session features",
+            "Improved model accuracy (baseline: 58%)"
+          ]
+        },
+        {
+          "id": "Q2-M3",
+          "name": "RL Strategy Selector",
+          "status": "PLANNED",
+          "target_date": "2026-06-15",
+          "description": "RL agent for dynamic strategy selection replacing heuristic selector",
+          "dependencies": ["Q2-M1"],
+          "success_criteria": [
+            "Multi-armed bandit or contextual bandit approach",
+            "Online learning from live results",
+            "Exploration-exploitation balance",
+            "Outperforms current dynamic selector",
+            "Deployed in production with monitoring"
+          ]
+        },
+        {
+          "id": "Q2-M4",
+          "name": "Ensemble Predictions",
+          "status": "PLANNED",
+          "target_date": "2026-06-30",
+          "description": "Ensemble multiple ML models for robust predictions",
+          "dependencies": ["Q2-M2"],
+          "success_criteria": [
+            "3+ diverse models (tree-based, neural, linear)",
+            "Weighted voting or stacking",
+            "Uncertainty quantification",
+            "Better than single-model baseline",
+            "Production deployment"
+          ]
+        }
+      ],
+      "deliverables": [
+        "Auto-retraining pipeline in production",
+        "Expanded feature set documentation",
+        "RL-based strategy selector",
+        "Ensemble prediction system",
+        "ML model performance dashboard"
+      ]
+    },
+    "Q3_2026": {
+      "period": "July - September 2026",
+      "theme": "Multi-Asset & Portfolio",
+      "status": "PLANNED",
+      "objectives": [
+        "Multi-symbol concurrent trading",
+        "Portfolio-level risk management",
+        "Cross-asset correlation analysis",
+        "Portfolio optimization algorithms",
+        "Unified position management across assets"
+      ],
+      "milestones": [
+        {
+          "id": "Q3-M1",
+          "name": "Multi-Symbol Trading Engine",
+          "status": "PLANNED",
+          "target_date": "2026-07-31",
+          "description": "Refactor core loop to handle multiple symbols simultaneously",
+          "dependencies": [],
+          "success_criteria": [
+            "Trade 3+ symbols concurrently",
+            "Independent strategy per symbol",
+            "Shared risk budget enforcement",
+            "Performance parity with single-symbol mode",
+            "Clean architecture (minimal coupling)"
+          ]
+        },
+        {
+          "id": "Q3-M2",
+          "name": "Portfolio Risk Manager",
+          "status": "PLANNED",
+          "target_date": "2026-08-15",
+          "description": "Portfolio-level risk limits and correlation-aware sizing",
+          "dependencies": ["Q3-M1"],
+          "success_criteria": [
+            "Total portfolio exposure limit",
+            "Correlation-based risk adjustment",
+            "Sector/asset class diversification rules",
+            "VaR or CVaR calculations",
+            "Risk decomposition by asset"
+          ]
+        },
+        {
+          "id": "Q3-M3",
+          "name": "Portfolio Optimizer",
+          "status": "PLANNED",
+          "target_date": "2026-09-15",
+          "description": "Modern portfolio theory optimization for position allocation",
+          "dependencies": ["Q3-M2"],
+          "success_criteria": [
+            "Mean-variance optimization",
+            "Risk parity allocation",
+            "Maximum Sharpe ratio allocation",
+            "Rebalancing triggers and execution",
+            "Backtested on multi-asset portfolios"
+          ]
+        },
+        {
+          "id": "Q3-M4",
+          "name": "Cross-Asset Analysis",
+          "status": "PLANNED",
+          "target_date": "2026-09-30",
+          "description": "Correlation and regime analysis across asset classes",
+          "dependencies": ["Q3-M2"],
+          "success_criteria": [
+            "Real-time correlation matrix",
+            "Cross-asset regime detection",
+            "Flight-to-quality indicators",
+            "Diversification score",
+            "Integration with strategy selection"
+          ]
+        }
+      ],
+      "deliverables": [
+        "Multi-symbol trading capability",
+        "Portfolio risk management system",
+        "Portfolio optimization engine",
+        "Cross-asset analysis dashboard",
+        "Multi-asset backtesting framework"
+      ]
+    },
+    "Q4_2026": {
+      "period": "October - December 2026",
+      "theme": "Ecosystem & Community",
+      "status": "PLANNED",
+      "objectives": [
+        "Strategy marketplace platform",
+        "Community strategy sharing",
+        "Cloud deployment templates",
+        "Mobile monitoring app",
+        "Educational content and certifications"
+      ],
+      "milestones": [
+        {
+          "id": "Q4-M1",
+          "name": "Strategy Marketplace MVP",
+          "status": "PLANNED",
+          "target_date": "2026-10-31",
+          "description": "Platform for sharing and discovering community strategies",
+          "dependencies": [],
+          "success_criteria": [
+            "Web platform for strategy upload/download",
+            "Strategy metadata and performance stats",
+            "Backtesting required before listing",
+            "Rating and review system",
+            "10+ community strategies listed"
+          ]
+        },
+        {
+          "id": "Q4-M2",
+          "name": "Cloud Deployment Templates",
+          "status": "PLANNED",
+          "target_date": "2026-11-15",
+          "description": "One-click deployment to major cloud providers",
+          "dependencies": [],
+          "success_criteria": [
+            "Kubernetes Helm chart",
+            "Terraform modules for AWS/GCP/Azure",
+            "Docker Compose for quick start",
+            "CI/CD pipeline templates",
+            "Documentation and tutorials"
+          ]
+        },
+        {
+          "id": "Q4-M3",
+          "name": "Mobile Monitoring App",
+          "status": "PLANNED",
+          "target_date": "2026-11-30",
+          "description": "iOS/Android app for monitoring trades and metrics",
+          "dependencies": [],
+          "success_criteria": [
+            "Real-time position monitoring",
+            "Push notifications for trades and alerts",
+            "Performance dashboards",
+            "Emergency kill-switch",
+            "Alpha/beta testing with 50+ users"
+          ]
+        },
+        {
+          "id": "Q4-M4",
+          "name": "Educational Platform",
+          "status": "PLANNED",
+          "target_date": "2026-12-31",
+          "description": "Courses, tutorials, and certification program",
+          "dependencies": [],
+          "success_criteria": [
+            "10+ video tutorials",
+            "Interactive Jupyter notebook courses",
+            "Certification exam for advanced users",
+            "Strategy development workshops",
+            "100+ certified users"
+          ]
+        }
+      ],
+      "deliverables": [
+        "Strategy marketplace platform",
+        "Cloud deployment templates",
+        "Mobile app (iOS/Android)",
+        "Educational content library",
+        "Community certification program"
+      ]
+    }
+  },
+  "technical_debt_backlog": {
+    "high_priority": [
+      {
+        "id": "TD-001",
+        "title": "Unify Risk Management Modules",
+        "description": "Consolidate risk/manager.py and position/risk_manager.py",
+        "impact": "High (code duplication, maintenance burden)",
+        "effort": "Medium (2-3 weeks)",
+        "target_quarter": "Q1_2026"
+      },
+      {
+        "id": "TD-002",
+        "title": "100% Type Hints Coverage",
+        "description": "Add type hints to all modules for mypy strict mode",
+        "impact": "Medium (code quality, IDE support)",
+        "effort": "High (4-6 weeks)",
+        "target_quarter": "Q2_2026"
+      },
+      {
+        "id": "TD-003",
+        "title": "Refactor .archive Directory",
+        "description": "Clean up or remove deprecated code in .archive",
+        "impact": "Low (technical debt cleanup)",
+        "effort": "Low (1 week)",
+        "target_quarter": "Q1_2026"
+      }
+    ],
+    "medium_priority": [
+      {
+        "id": "TD-004",
+        "title": "Standardize Error Handling",
+        "description": "Consistent error handling patterns across all modules",
+        "impact": "Medium (maintainability)",
+        "effort": "Medium (2-3 weeks)",
+        "target_quarter": "Q2_2026"
+      },
+      {
+        "id": "TD-005",
+        "title": "Database Schema Migration System",
+        "description": "Implement Alembic or similar for schema versioning",
+        "impact": "Medium (future-proofing)",
+        "effort": "Medium (2 weeks)",
+        "target_quarter": "Q3_2026"
+      }
+    ],
+    "low_priority": [
+      {
+        "id": "TD-006",
+        "title": "Code Style Consistency",
+        "description": "Enforce black, isort, and flake8 in pre-commit hooks",
+        "impact": "Low (code quality)",
+        "effort": "Low (1 week)",
+        "target_quarter": "Q1_2026"
+      }
+    ]
+  },
+  "feature_requests": {
+    "community_requested": [
+      {
+        "id": "FR-001",
+        "title": "TradingView Integration",
+        "description": "Send/receive signals from TradingView",
+        "votes": 47,
+        "status": "UNDER_REVIEW",
+        "target_quarter": "Q3_2026"
+      },
+      {
+        "id": "FR-002",
+        "title": "Telegram Bot Notifications",
+        "description": "Alternative to Discord for notifications",
+        "votes": 35,
+        "status": "PLANNED",
+        "target_quarter": "Q2_2026"
+      },
+      {
+        "id": "FR-003",
+        "title": "Multi-Broker Support",
+        "description": "Support for Interactive Brokers, Binance, etc.",
+        "votes": 89,
+        "status": "PLANNED",
+        "target_quarter": "Q4_2026"
+      },
+      {
+        "id": "FR-004",
+        "title": "Copy Trading Feature",
+        "description": "Follow and copy other traders' positions",
+        "votes": 62,
+        "status": "PLANNED",
+        "target_quarter": "Q4_2026"
+      }
+    ],
+    "internal_planned": [
+      {
+        "id": "FR-101",
+        "title": "Advanced Backtesting Analytics",
+        "description": "Monte Carlo simulation, walk-forward optimization",
+        "priority": "High",
+        "target_quarter": "Q2_2026"
+      },
+      {
+        "id": "FR-102",
+        "title": "WebSocket API for Real-Time Data",
+        "description": "Real-time streaming of positions, metrics to external clients",
+        "priority": "Medium",
+        "target_quarter": "Q3_2026"
+      },
+      {
+        "id": "FR-103",
+        "title": "Grafana Dashboard Templates",
+        "description": "Pre-built Grafana dashboards for Prometheus metrics",
+        "priority": "Medium",
+        "target_quarter": "Q2_2026"
+      }
+    ]
+  },
+  "risk_mitigation": {
+    "identified_risks": [
+      {
+        "id": "RISK-001",
+        "category": "Technical",
+        "description": "MT5 API stability issues under heavy load",
+        "likelihood": "Medium",
+        "impact": "High",
+        "mitigation": "Circuit breaker, retry logic, fallback to manual trading mode",
+        "status": "MITIGATED"
+      },
+      {
+        "id": "RISK-002",
+        "category": "Market",
+        "description": "Flash crash events causing uncontrolled losses",
+        "likelihood": "Low",
+        "impact": "Critical",
+        "mitigation": "Adverse movement exit strategy, emergency kill-switch, max drawdown limits",
+        "status": "MITIGATED"
+      },
+      {
+        "id": "RISK-003",
+        "category": "Technical",
+        "description": "ML model overfitting to historical data",
+        "likelihood": "High",
+        "impact": "Medium",
+        "mitigation": "Walk-forward validation, out-of-sample testing, ensemble models, model monitoring",
+        "status": "ONGOING"
+      },
+      {
+        "id": "RISK-004",
+        "category": "Operational",
+        "description": "Loss of internet connection during active trades",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Auto-reconnect, position reconciliation, local database for state preservation",
+        "status": "MITIGATED"
+      },
+      {
+        "id": "RISK-005",
+        "category": "Security",
+        "description": "Unauthorized access to RPC API or trading controls",
+        "likelihood": "Low",
+        "impact": "High",
+        "mitigation": "API token authentication, localhost-only binding, rate limiting, audit logging",
+        "status": "MITIGATED"
+      },
+      {
+        "id": "RISK-006",
+        "category": "Community",
+        "description": "Low adoption due to complexity",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Setup wizard, mindset presets, comprehensive documentation, video tutorials",
+        "status": "ONGOING"
+      }
+    ]
+  },
+  "resource_allocation": {
+    "development_team": {
+      "core_developers": 2,
+      "ml_specialists": 1,
+      "qa_engineers": 1,
+      "documentation_writers": 1,
+      "community_managers": 1
+    },
+    "focus_distribution": {
+      "Q1_2026": {
+        "stability": 50,
+        "features": 20,
+        "ml_research": 15,
+        "documentation": 10,
+        "community": 5
+      },
+      "Q2_2026": {
+        "stability": 20,
+        "features": 30,
+        "ml_research": 30,
+        "documentation": 10,
+        "community": 10
+      },
+      "Q3_2026": {
+        "stability": 15,
+        "features": 45,
+        "ml_research": 20,
+        "documentation": 10,
+        "community": 10
+      },
+      "Q4_2026": {
+        "stability": 10,
+        "features": 30,
+        "ml_research": 15,
+        "documentation": 15,
+        "community": 30
+      }
+    }
+  },
+  "success_metrics": {
+    "technical_kpis": {
+      "test_coverage": {
+        "current": 95,
+        "q1_target": 96,
+        "q2_target": 97,
+        "q3_target": 97,
+        "q4_target": 98,
+        "unit": "percent"
+      },
+      "uptime": {
+        "current": 98.5,
+        "target": 99.5,
+        "unit": "percent"
+      },
+      "p95_latency": {
+        "current": 150,
+        "q1_target": 120,
+        "q2_target": 100,
+        "q3_target": 80,
+        "q4_target": 80,
+        "unit": "milliseconds"
+      },
+      "bugs_open": {
+        "current": 12,
+        "target": 5,
+        "unit": "count"
+      }
+    },
+    "community_kpis": {
+      "github_stars": {
+        "current": 0,
+        "q1_target": 50,
+        "q2_target": 150,
+        "q3_target": 300,
+        "q4_target": 500,
+        "unit": "count"
+      },
+      "active_users": {
+        "current": 0,
+        "q1_target": 20,
+        "q2_target": 50,
+        "q3_target": 100,
+        "q4_target": 250,
+        "unit": "count"
+      },
+      "community_strategies": {
+        "current": 0,
+        "q4_target": 25,
+        "unit": "count"
+      }
+    },
+    "trading_performance_kpis": {
+      "win_rate": {
+        "target": 55,
+        "unit": "percent",
+        "note": "Backtest baseline, user results vary"
+      },
+      "sharpe_ratio": {
+        "target": 1.5,
+        "unit": "ratio",
+        "note": "Annualized, risk-free rate = 0"
+      },
+      "max_drawdown": {
+        "target": 15,
+        "unit": "percent",
+        "note": "Maximum historical drawdown"
+      }
+    }
+  },
+  "dependencies": {
+    "external_dependencies": [
+      {
+        "name": "MetaTrader 5 API",
+        "criticality": "Critical",
+        "version_compatibility": "Build 3950+",
+        "risk": "API changes by MetaQuotes could break integration",
+        "mitigation": "Monitor MT5 updates, regression testing on new builds"
+      },
+      {
+        "name": "Python Ecosystem",
+        "criticality": "High",
+        "version_compatibility": "3.10 - 3.13",
+        "risk": "Dependency version conflicts, breaking changes",
+        "mitigation": "Lock dependency versions, regular security updates"
+      },
+      {
+        "name": "Hektor Vector Studio",
+        "criticality": "Medium",
+        "version_compatibility": "Custom integration",
+        "risk": "Hektor API changes",
+        "mitigation": "Version pinning, abstraction layer"
+      }
+    ],
+    "internal_dependencies": [
+      {
+        "component": "Core Trading Loop",
+        "depends_on": ["MT5 Connector", "Strategy Engine", "Risk Manager"],
+        "coupling": "High"
+      },
+      {
+        "component": "ML Models",
+        "depends_on": ["Feature Pipeline", "Training Logger"],
+        "coupling": "Medium"
+      },
+      {
+        "component": "Backtesting UI",
+        "depends_on": ["Backtesting Engine", "Hektor Vector DB"],
+        "coupling": "Low"
+      }
+    ]
+  },
+  "communication_plan": {
+    "stakeholder_updates": {
+      "frequency": "Monthly",
+      "channels": ["GitHub Discussions", "Discord (planned)", "Newsletter (planned)"],
+      "content": ["Progress updates", "Roadmap changes", "Release notes", "Performance reports"]
+    },
+    "release_schedule": {
+      "cadence": "Monthly minor releases, quarterly major releases",
+      "versioning": "Semantic versioning (MAJOR.MINOR.PATCH)",
+      "release_notes": "Detailed changelog in docs/Changelog/CHANGELOG.md"
+    },
+    "feedback_loops": {
+      "bug_reports": "GitHub Issues",
+      "feature_requests": "GitHub Discussions",
+      "community_chat": "Discord (planned)",
+      "performance_feedback": "Anonymous telemetry (opt-in, planned)"
+    }
+  },
+  "metadata": {
+    "document_version": "1.0.0",
+    "generated_date": "2026-01-27T11:17:55.842Z",
+    "author": "Cthulu Project Management Team",
+    "next_review_date": "2026-02-27",
+    "approval_status": "APPROVED"
+  }
+}

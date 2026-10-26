@@ -1,0 +1,187 @@
+{
+  "_comment": "Cthulu v5.3.0 EVOQUE - Example Configuration",
+  "mt5": {
+    "login": "${MT5_LOGIN}",
+    "password": "CHANGE_ME",
+    "server": "${MT5_SERVER}",
+    "timeout": 60000,
+    "path": "${MT5_PATH}"
+  },
+  "risk": {
+    "max_position_size": 1.0,
+    "default_position_size": 0.1,
+    "max_daily_loss": 500.0,
+    "max_positions_per_symbol": 1,
+    "max_total_positions": 3,
+    "position_size_pct": 2.0,
+    "use_kelly_sizing": false,
+    "emergency_stop_loss_pct": 5.0,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 3.0,
+    "performance_based_sizing": true,
+    "min_risk_reward_ratio": 1.5,
+    "drawdown_halt_percent": 40.0
+  },
+  "trading": {
+    "symbol": "BTCUSD#",
+    "timeframe": "H1",
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "poll_interval": 60,
+    "lookback_bars": 500,
+    "enable_tick_data": true,
+    "enable_scalping": false,
+    "min_trade_interval": 120
+  },
+  "strategy": {
+    "type": "sma_crossover",
+    "params": {
+      "fast_period": 10,
+      "slow_period": 30,
+      "symbol": "BTCUSD#"
+    }
+  },
+  "features": {
+    "ml_enabled": true,
+    "adaptive_parameters": true,
+    "multi_timeframe_analysis": true
+  },
+  "ml_enhancement": {
+    "_comment": "Auto-initializes with trading loop - continuous learning",
+    "enabled": true,
+    "enable_rl_sizing": true,
+    "rl_learning_rate": 0.001,
+    "rl_explore_rate": 0.1,
+    "enable_features": true,
+    "feature_lookback": 50,
+    "enable_cognition": true,
+    "enable_regime": true,
+    "enable_prediction": true,
+    "enable_sentiment": true,
+    "enable_drift_detection": true,
+    "drift_check_interval": 100,
+    "enable_online_learning": true,
+    "learning_batch_size": 32,
+    "min_samples_before_learning": 50
+  },
+  "trade_collection": {
+    "_comment": "Non-blocking collection for all trade sources",
+    "enabled": true,
+    "batch_size": 50,
+    "flush_interval_seconds": 60,
+    "collect_system_trades": true,
+    "collect_rpc_trades": true,
+    "collect_adopted_trades": true,
+    "emit_close_events": true
+  },
+  "discord": {
+    "_comment": "Configure webhooks in .env",
+    "enabled": false,
+    "alert_on_trade": true,
+    "alert_on_risk": true,
+    "alert_on_health": true,
+    "alert_on_signals": true,
+    "daily_digest": true,
+    "digest_hour": 0,
+    "rate_limit_per_minute": 30
+  },
+  "mlops": {
+    "_comment": "Model versioning and automated retraining",
+    "enabled": true,
+    "auto_retrain": true,
+    "min_trades_for_retrain": 500,
+    "drift_threshold": 0.15,
+    "model_save_interval_trades": 100,
+    "model_path": "./ML_RL/models"
+  },
+  "indicators": [
+    {
+      "type": "rsi",
+      "params": {
+        "period": 14
+      }
+    },
+    {
+      "type": "macd",
+      "params": {
+        "fast_period": 12,
+        "slow_period": 26,
+        "signal_period": 9
+      }
+    },
+    {
+      "type": "bollinger",
+      "params": {
+        "period": 20,
+        "std_dev": 2.0
+      }
+    },
+    {
+      "type": "adx",
+      "params": {
+        "period": 14
+      }
+    }
+  ],
+  "exit_strategies": [
+    {
+      "type": "adverse_movement",
+      "enabled": true,
+      "params": {
+        "movement_threshold_pct": 1.0,
+        "time_window_seconds": 60,
+        "consecutive_moves_required": 3
+      }
+    },
+    {
+      "type": "time_based",
+      "enabled": true,
+      "params": {
+        "max_hold_hours": 24.0,
+        "weekend_protection": true,
+        "friday_close_time": "16:00",
+        "day_trading_mode": false
+      }
+    },
+    {
+      "type": "profit_target",
+      "enabled": true,
+      "params": {
+        "target_pct": 2.0,
+        "partial_close_enabled": false,
+        "risk_reward_ratio": 2.0
+      }
+    },
+    {
+      "type": "trailing_stop",
+      "enabled": true,
+      "params": {
+        "atr_multiplier": 2.0,
+        "activation_profit_pct": 0.5,
+        "min_stop_distance_pips": 10.0
+      }
+    }
+  ],
+  "database": {
+    "path": "${DATABASE_PATH}"
+  },
+  "cache_enabled": true,
+  "hektor": {
+    "enabled": false,
+    "fallback_to_sqlite": true,
+    "database_path": "./vectors/cthulu_memory",
+    "dimension": 512,
+    "hnsw_m": 16,
+    "hnsw_ef_construction": 200,
+    "hnsw_ef_search": 50,
+    "default_k": 10,
+    "min_similarity_score": 0.7,
+    "max_context_age_days": 90,
+    "batch_size": 100,
+    "async_writes": true,
+    "cache_embeddings": true,
+    "connection_timeout_ms": 5000,
+    "retry_attempts": 3
+  }
+}

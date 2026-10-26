@@ -1,0 +1,5284 @@
+{
+  "summary": {
+    "total_files": 288,
+    "total_lines": 72546,
+    "total_functions": 2275,
+    "total_classes": 503,
+    "total_modules": 32,
+    "critical_issues": 3,
+    "warning_issues": 19,
+    "ml_components": 98
+  },
+  "modules": {
+    "root": {
+      "name": "root",
+      "path": "root",
+      "total_lines": 440,
+      "total_functions": 6,
+      "total_classes": 7,
+      "files": [
+        "constants.py",
+        "config_schema.py",
+        ".tmp_db_test.py",
+        "Cthulu.py",
+        ".tmp_repo_write_test.py",
+        "__init__.py",
+        ".tmp_db_fallback_test.py"
+      ],
+      "dependencies": [
+        "logging",
+        "pydantic",
+        "dotenv",
+        "importlib",
+        "sqlite3",
+        "__future__",
+        "persistence",
+        "types"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "ui_server": {
+      "name": "ui_server",
+      "path": "ui_server",
+      "total_lines": 357,
+      "total_functions": 15,
+      "total_classes": 0,
+      "files": [
+        "ui_server/app.py"
+      ],
+      "dependencies": [
+        "flask_socketio",
+        "flask_cors",
+        "logging",
+        "traceback",
+        "sqlite3",
+        "time",
+        "threading",
+        "requests"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "cognition": {
+      "name": "cognition",
+      "path": "cognition",
+      "total_lines": 9783,
+      "total_functions": 303,
+      "total_classes": 71,
+      "files": [
+        "cognition/instrumentation.py",
+        "cognition/order_blocks.py",
+        "cognition/exit_oracle.py",
+        "cognition/training_logger.py",
+        "cognition/structure_detector.py",
+        "cognition/entry_confluence.py",
+        "cognition/regime_classifier.py",
+        "cognition/chart_manager.py",
+        "cognition/session_orb.py",
+        "cognition/tier_optimizer.py",
+        "cognition/sentiment_analyzer.py",
+        "cognition/price_predictor.py",
+        "cognition/engine.py",
+        "cognition/__init__.py",
+        "cognition/pattern_recognition.py"
+      ],
+      "dependencies": [
+        "tier_optimizer",
+        "regime_classifier",
+        "engine",
+        "cthulu",
+        "asyncio",
+        "price_predictor",
+        "uuid",
+        "logging",
+        "gzip",
+        "queue",
+        "session_orb",
+        "instrumentation",
+        "time",
+        "training_logger",
+        "sentiment_analyzer",
+        "chart_manager",
+        "order_blocks",
+        "math",
+        "exit_oracle",
+        "__future__",
+        "threading",
+        "enum"
+      ],
+      "issues": [
+        "CRITICAL: Very large file (1578 lines) - needs refactoring",
+        "WARNING: High complexity score (36) - needs simplification",
+        "CRITICAL: Very large file (1697 lines) - needs refactoring",
+        "WARNING: Many functions (51) - consider modularization",
+        "WARNING: High complexity score (34) - needs simplification"
+      ],
+      "complexity": "High",
+      "is_ml_module": false
+    },
+    "utils": {
+      "name": "utils",
+      "path": "utils",
+      "total_lines": 1055,
+      "total_functions": 47,
+      "total_classes": 7,
+      "files": [
+        "utils/retry.py",
+        "utils/indicator_calculator.py",
+        "utils/rate_limiter.py",
+        "utils/health_monitor.py",
+        "utils/cache.py",
+        "utils/circuit_breaker.py",
+        "utils/__init__.py"
+      ],
+      "dependencies": [
+        "enum",
+        "cthulu",
+        "time",
+        "logging"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "monitoring": {
+      "name": "monitoring",
+      "path": "monitoring",
+      "total_lines": 1307,
+      "total_functions": 46,
+      "total_classes": 5,
+      "files": [
+        "monitoring/service.py",
+        "monitoring/system_health_collector.py",
+        "monitoring/indicator_collector.py",
+        "monitoring/trade_monitor.py"
+      ],
+      "dependencies": [
+        "psutil",
+        "monitoring",
+        "logging",
+        "csv",
+        "time",
+        "multiprocessing",
+        "threading",
+        "observability"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "scripts": {
+      "name": "scripts",
+      "path": "scripts",
+      "total_lines": 2776,
+      "total_functions": 47,
+      "total_classes": 1,
+      "files": [
+        "scripts/eval_profit_scaler_on_csv.py",
+        "scripts/monitor_500_loops.py",
+        "scripts/fetch_gold_m15.py",
+        "scripts/test_order_provenance.py",
+        "scripts/backfill_cthulu_to_vectors.py",
+        "scripts/place_live_buy.py",
+        "scripts/check_llm.py",
+        "scripts/init_db.py",
+        "scripts/purge_provenance.py",
+        "scripts/check_trade_db.py",
+        "scripts/validate_hektor_enhancements.py",
+        "scripts/probe_cthulu.py",
+        "scripts/trade_cli.py",
+        "scripts/run_backtest_suite.py",
+        "scripts/force_trade.py",
+        "scripts/submit_trade_rpc.py",
+        "scripts/replay_gold_incident.py",
+        "scripts/list_external_trades.py",
+        "scripts/simulate_scaling_execution.py",
+        "scripts/test_db_write.py",
+        "scripts/start_rpc_with_ops.py",
+        "scripts/db_health_check.py",
+        "scripts/place_live_sell.py",
+        "scripts/check_runtime.py",
+        "scripts/check_rpc_status.py",
+        "scripts/grid_sweep_scaler.py",
+        "scripts/vectorize_handbook.py",
+        "scripts/run_wizard_auto.py",
+        "scripts/query_provenance.py",
+        "scripts/run_wizard_manual.py"
+      ],
+      "dependencies": [
+        "traceback",
+        "itertools",
+        "cthulu",
+        "urllib",
+        "pyvdb",
+        "config",
+        "subprocess",
+        "logging",
+        "integrations",
+        "cognition",
+        "unittest",
+        "time",
+        "core",
+        "backtesting",
+        "importlib",
+        "dotenv",
+        "types",
+        "hashlib",
+        "position",
+        "config_schema",
+        "pkgutil",
+        "sqlite3",
+        "requests"
+      ],
+      "issues": [
+        "INFO: Contains TODO/FIXME markers"
+      ],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "connector": {
+      "name": "connector",
+      "path": "connector",
+      "total_lines": 806,
+      "total_functions": 29,
+      "total_classes": 3,
+      "files": [
+        "connector/mt5_connector.py",
+        "connector/__init__.py"
+      ],
+      "dependencies": [
+        "subprocess",
+        "logging",
+        "market",
+        "cthulu",
+        "time",
+        "threading",
+        "mt5_connector"
+      ],
+      "issues": [
+        "WARNING: High complexity score (20) - needs simplification"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "cthulu": {
+      "name": "cthulu",
+      "path": "cthulu",
+      "total_lines": 628,
+      "total_functions": 24,
+      "total_classes": 4,
+      "files": [
+        "cthulu/__main__.py",
+        "cthulu/__init__.py",
+        "cthulu/llm/local_llm.py",
+        "cthulu/llm/__init__.py"
+      ],
+      "dependencies": [
+        "logging",
+        "core",
+        "config_schema",
+        "local_llm",
+        "llama_cpp",
+        "cognition",
+        "glob",
+        "__future__",
+        "signal",
+        "ML_RL",
+        "observability",
+        "atexit",
+        "config",
+        "ctypes"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "exit": {
+      "name": "exit",
+      "path": "exit",
+      "total_lines": 5292,
+      "total_functions": 150,
+      "total_classes": 41,
+      "files": [
+        "exit/stop_loss.py",
+        "exit/take_profit.py",
+        "exit/confluence_exit_manager.py",
+        "exit/multi_rrr_manager.py",
+        "exit/coordinator.py",
+        "exit/profit_scaling.py",
+        "exit/adverse_movement.py",
+        "exit/multi_rrr.py",
+        "exit/time_based.py",
+        "exit/adaptive_loss_curve.py",
+        "exit/micro_account_protection.py",
+        "exit/__init__.py",
+        "exit/trailing_stop.py",
+        "exit/exit_manager.py",
+        "exit/profit_target.py",
+        "exit/base.py"
+      ],
+      "dependencies": [
+        "exit_manager",
+        "cthulu",
+        "time_based",
+        "logging",
+        "enum",
+        "confluence_exit_manager",
+        "abc",
+        "profit_target",
+        "coordinator",
+        "adaptive_loss_curve",
+        "stop_loss",
+        "take_profit",
+        "profit_scaling",
+        "base",
+        "trailing_stop",
+        "adverse_movement",
+        "micro_account_protection",
+        "__future__",
+        "math"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "strategy": {
+      "name": "strategy",
+      "path": "strategy",
+      "total_lines": 2377,
+      "total_functions": 52,
+      "total_classes": 14,
+      "files": [
+        "strategy/mean_reversion.py",
+        "strategy/selector_adapter.py",
+        "strategy/strategy_selector.py",
+        "strategy/ema_crossover.py",
+        "strategy/sma_crossover.py",
+        "strategy/rsi_reversal.py",
+        "strategy/trend_following.py",
+        "strategy/__init__.py",
+        "strategy/scalping.py",
+        "strategy/momentum_breakout.py",
+        "strategy/base.py"
+      ],
+      "dependencies": [
+        "scalping",
+        "rsi_reversal",
+        "base",
+        "logging",
+        "abc",
+        "trend_following",
+        "ema_crossover",
+        "sma_crossover",
+        "mean_reversion",
+        "cthulu",
+        "strategy_selector",
+        "enum",
+        "momentum_breakout"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "execution": {
+      "name": "execution",
+      "path": "execution",
+      "total_lines": 1077,
+      "total_functions": 10,
+      "total_classes": 5,
+      "files": [
+        "execution/engine.py",
+        "execution/__init__.py"
+      ],
+      "dependencies": [
+        "logging",
+        "engine",
+        "inspect",
+        "platform",
+        "traceback",
+        "concurrent",
+        "socket",
+        "cthulu",
+        "threading",
+        "hashlib",
+        "enum"
+      ],
+      "issues": [
+        "WARNING: Large file (1068 lines) - consider splitting",
+        "WARNING: High complexity score (22) - needs simplification"
+      ],
+      "complexity": "High",
+      "is_ml_module": false
+    },
+    "tools": {
+      "name": "tools",
+      "path": "tools",
+      "total_lines": 1300,
+      "total_functions": 32,
+      "total_classes": 6,
+      "files": [
+        "tools/analyze_cthulu.py"
+      ],
+      "dependencies": [],
+      "issues": [
+        "WARNING: Large file (1300 lines) - consider splitting",
+        "WARNING: High complexity score (29) - needs simplification",
+        "INFO: Contains TODO/FIXME markers"
+      ],
+      "complexity": "Very High",
+      "is_ml_module": false
+    },
+    "market": {
+      "name": "market",
+      "path": "market",
+      "total_lines": 438,
+      "total_functions": 19,
+      "total_classes": 6,
+      "files": [
+        "market/tick_manager.py",
+        "market/providers.py"
+      ],
+      "dependencies": [
+        "logging",
+        "cthulu",
+        "time",
+        "observability",
+        "threading",
+        "urllib",
+        "providers",
+        "requests"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "news": {
+      "name": "news",
+      "path": "news",
+      "total_lines": 433,
+      "total_functions": 19,
+      "total_classes": 9,
+      "files": [
+        "news/newsapi_adapter.py",
+        "news/tradingeconomics_adapter.py",
+        "news/rss_adapter.py",
+        "news/ingest.py",
+        "news/cache.py",
+        "news/manager.py",
+        "news/fred_adapter.py",
+        "news/__init__.py",
+        "news/base.py"
+      ],
+      "dependencies": [
+        "requests",
+        "tradingeconomics_adapter",
+        "base",
+        "logging",
+        "newsapi_adapter",
+        "ingest",
+        "xml",
+        "__future__",
+        "cache",
+        "cthulu",
+        "time",
+        "threading",
+        "urllib",
+        "fred_adapter",
+        "manager",
+        "rss_adapter"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "herald": {
+      "name": "herald",
+      "path": "herald",
+      "total_lines": 10,
+      "total_functions": 0,
+      "total_classes": 0,
+      "files": [
+        "herald/__init__.py"
+      ],
+      "dependencies": [
+        "importlib"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "rpc": {
+      "name": "rpc",
+      "path": "rpc",
+      "total_lines": 1635,
+      "total_functions": 40,
+      "total_classes": 14,
+      "files": [
+        "rpc/server.py",
+        "rpc/security.py"
+      ],
+      "dependencies": [
+        "hmac",
+        "uuid",
+        "pkg_resources",
+        "logging",
+        "ssl",
+        "socket",
+        "functools",
+        "cthulu",
+        "time",
+        "threading",
+        "urllib",
+        "hashlib",
+        "enum",
+        "http"
+      ],
+      "issues": [
+        "WARNING: High complexity score (17) - needs simplification",
+        "WARNING: High complexity score (20) - needs simplification"
+      ],
+      "complexity": "High",
+      "is_ml_module": false
+    },
+    "sentinel": {
+      "name": "sentinel",
+      "path": "sentinel",
+      "total_lines": 1728,
+      "total_functions": 47,
+      "total_classes": 7,
+      "files": [
+        "sentinel/__main__.py",
+        "sentinel/__init__.py",
+        "sentinel/core/guardian.py",
+        "sentinel/core/__init__.py",
+        "sentinel/gui/dashboard.py",
+        "sentinel/gui/__main__.py",
+        "sentinel/gui/__init__.py",
+        "sentinel/webui/server.py",
+        "sentinel/webui/__init__.py"
+      ],
+      "dependencies": [
+        "psutil",
+        "subprocess",
+        "gui",
+        "logging",
+        "core",
+        "enum",
+        "traceback",
+        "sentinel",
+        "time",
+        "signal",
+        "threading",
+        "guardian",
+        "tkinter",
+        "dashboard"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "ui": {
+      "name": "ui",
+      "path": "ui",
+      "total_lines": 774,
+      "total_functions": 23,
+      "total_classes": 1,
+      "files": [
+        "ui/local/desktop.py",
+        "ui/local/__init__.py"
+      ],
+      "dependencies": [
+        "csv",
+        "traceback",
+        "cthulu",
+        "time",
+        "threading",
+        "atexit",
+        "tkinter",
+        "requests",
+        "ctypes"
+      ],
+      "issues": [
+        "WARNING: High complexity score (17) - needs simplification"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "ops": {
+      "name": "ops",
+      "path": "ops",
+      "total_lines": 132,
+      "total_functions": 7,
+      "total_classes": 1,
+      "files": [
+        "ops/controller.py",
+        "ops/guardrails.py"
+      ],
+      "dependencies": [
+        "psutil",
+        "shutil",
+        "logging"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "data": {
+      "name": "data",
+      "path": "data",
+      "total_lines": 372,
+      "total_functions": 14,
+      "total_classes": 1,
+      "files": [
+        "data/layer.py",
+        "data/__init__.py"
+      ],
+      "dependencies": [
+        "layer",
+        "logging"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "core": {
+      "name": "core",
+      "path": "core",
+      "total_lines": 4975,
+      "total_functions": 122,
+      "total_classes": 27,
+      "files": [
+        "core/bootstrap.py",
+        "core/indicator_loader.py",
+        "core/strategy_factory.py",
+        "core/exceptions.py",
+        "core/shutdown.py",
+        "core/exit_loader.py",
+        "core/trading_loop.py",
+        "core/__init__.py"
+      ],
+      "dependencies": [
+        "shutdown",
+        "inspect",
+        "bootstrap",
+        "traceback",
+        "cthulu",
+        "observability",
+        "trading_loop",
+        "strategy_factory",
+        "config",
+        "http",
+        "tempfile",
+        "logging",
+        "queue",
+        "integrations",
+        "time",
+        "monitoring",
+        "core",
+        "importlib",
+        "indicator_loader",
+        "exit_loader",
+        "config_schema",
+        "functools",
+        "threading",
+        "enum"
+      ],
+      "issues": [
+        "WARNING: High complexity score (16) - needs simplification",
+        "CRITICAL: Very large file (2400 lines) - needs refactoring",
+        "WARNING: High complexity score (65) - needs simplification"
+      ],
+      "complexity": "High",
+      "is_ml_module": false
+    },
+    "observability": {
+      "name": "observability",
+      "path": "observability",
+      "total_lines": 2680,
+      "total_functions": 80,
+      "total_classes": 12,
+      "files": [
+        "observability/metrics.py",
+        "observability/logger.py",
+        "observability/comprehensive_collector.py",
+        "observability/integration.py",
+        "observability/suit.py",
+        "observability/service.py",
+        "observability/telemetry.py",
+        "observability/prometheus.py"
+      ],
+      "dependencies": [
+        "psutil",
+        "monitoring",
+        "logging",
+        "csv",
+        "cthulu",
+        "statistics",
+        "time",
+        "threading",
+        "multiprocessing",
+        "observability",
+        "signal",
+        "http",
+        "ctypes"
+      ],
+      "issues": [
+        "WARNING: High complexity score (16) - needs simplification"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "position": {
+      "name": "position",
+      "path": "position",
+      "total_lines": 2706,
+      "total_functions": 84,
+      "total_classes": 13,
+      "files": [
+        "position/lifecycle.py",
+        "position/risk_manager.py",
+        "position/trade_manager.py",
+        "position/tracker.py",
+        "position/profit_scaler.py",
+        "position/manager.py",
+        "position/adoption.py",
+        "position/__init__.py"
+      ],
+      "dependencies": [
+        "logging",
+        "position",
+        "__future__",
+        "cthulu",
+        "threading",
+        "math"
+      ],
+      "issues": [
+        "WARNING: High complexity score (19) - needs simplification"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "integrations": {
+      "name": "integrations",
+      "path": "integrations",
+      "total_lines": 2672,
+      "total_functions": 82,
+      "total_classes": 12,
+      "files": [
+        "integrations/performance_analyzer.py",
+        "integrations/vector_studio.py",
+        "integrations/retriever.py",
+        "integrations/ml_exporter.py",
+        "integrations/embedder.py",
+        "integrations/data_layer.py",
+        "integrations/__init__.py"
+      ],
+      "dependencies": [
+        "retriever",
+        "logging",
+        "queue",
+        "vector_studio",
+        "sqlite3",
+        "persistence",
+        "embedder",
+        "threading",
+        "data_layer",
+        "pyvdb"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "tests": {
+      "name": "tests",
+      "path": "tests",
+      "total_lines": 7194,
+      "total_functions": 431,
+      "total_classes": 110,
+      "files": [
+        "tests/test_connect.py",
+        "tests/test_connection.py",
+        "tests/test_runtime_indicators_more.py",
+        "tests/test_runtime_indicators.py",
+        "tests/test_wizard_nlp.py",
+        "tests/test_profit_scaling.py",
+        "tests/test_runtime_indicators_supertrend_vwap.py",
+        "tests/test_runtime_atr.py",
+        "tests/test_stop_loss_fix.py",
+        "tests/conftest.py",
+        "tests/__init__.py",
+        "tests/test_rpc_server.py",
+        "tests/run_indicator_tests.py",
+        "tests/test_installation.py",
+        "tests/integration/set_sl_tp_live.py",
+        "tests/integration/test_news_ingest_live.py",
+        "tests/integration/test_providers_live.py",
+        "tests/integration/live_place_order.py",
+        "tests/integration/test_profit_scaler_end_to_end.py",
+        "tests/integration/test_ml_instrumentation_live.py",
+        "tests/integration/__init__.py",
+        "tests/unit/test_trade_monitor_news.py",
+        "tests/unit/test_ml_pipeline.py",
+        "tests/unit/test_strategy_selector_adapter.py",
+        "tests/unit/test_trading_loop_skip_too_close.py",
+        "tests/unit/test_execution_engine_timeout.py",
+        "tests/unit/test_auto_tune_runner.py",
+        "tests/unit/test_symbol_matching.py",
+        "tests/unit/test_auto_tune_summary.py",
+        "tests/unit/test_modify_position_min_distance.py",
+        "tests/unit/test_ml_collector.py",
+        "tests/unit/test_metrics_improved.py",
+        "tests/unit/test_dynamic_sltp_breakeven_buffer.py",
+        "tests/unit/test_trade_manager.py",
+        "tests/unit/test_dynamic_sltp_symbol_min_distance.py",
+        "tests/unit/test_news_manager.py",
+        "tests/unit/test_modify_untracked_position.py",
+        "tests/unit/test_dynamic_sltp_retry.py",
+        "tests/unit/test_exit_strategies.py",
+        "tests/unit/test_indicators.py",
+        "tests/unit/test_local_llm.py",
+        "tests/unit/test_profit_scaler_min_time.py",
+        "tests/unit/test_auto_tune_apply.py",
+        "tests/unit/test_lifecycle_open_position.py",
+        "tests/unit/test_auto_tune_ai_fallback.py",
+        "tests/unit/test_execution_engine.py",
+        "tests/unit/test_idempotency_close_collision.py",
+        "tests/unit/test_ml_flag.py",
+        "tests/unit/test_profit_scaler_actions.py",
+        "tests/unit/test_db_health_check.py",
+        "tests/unit/test_wizard_nlp.py",
+        "tests/unit/test_tradingeconomics_adapter.py",
+        "tests/unit/test_news_manager_fred.py",
+        "tests/unit/test_advanced_strategies.py",
+        "tests/unit/test_next_gen_indicators.py",
+        "tests/unit/test_fred_adapter.py",
+        "tests/unit/test_profit_scaler_min_lot_full_close.py",
+        "tests/unit/test_news_adapter.py",
+        "tests/unit/test_database_purge.py",
+        "tests/unit/test_position_manager.py",
+        "tests/unit/test_metrics.py",
+        "tests/unit/test_news_ingest.py",
+        "tests/unit/__init__.py",
+        "tests/unit/test_advisory_manager.py",
+        "tests/unit/test_wizard_auto_start.py",
+        "tests/unit/test_trade_monitor.py",
+        "tests/unit/test_dynamic_sltp_sanity_guard.py",
+        "tests/unit/test_strategy_selector_regime.py",
+        "tests/unit/test_utils.py",
+        "tests/unit/test_risk_manager.py",
+        "tests/unit/test_trade_adoption_sl_tp.py",
+        "tests/unit/test_close_idempotency.py",
+        "tests/unit/test_modify_position_idempotent.py",
+        "tests/unit/test_compat_engine_lifecycle.py",
+        "tests/unit/test_metrics_prometheus_integration.py"
+      ],
+      "dependencies": [
+        "traceback",
+        "cthulu",
+        "statistics",
+        "urllib",
+        "pytest",
+        "config",
+        "utils",
+        "tempfile",
+        "logging",
+        "gzip",
+        "stat",
+        "glob",
+        "unittest",
+        "threading",
+        "time",
+        "strategies",
+        "decimal",
+        "core",
+        "dotenv",
+        "importlib",
+        "persistence",
+        "types",
+        "position",
+        "yaml",
+        "sqlite3",
+        "ML_RL",
+        "math"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "config": {
+      "name": "config",
+      "path": "config",
+      "total_lines": 1702,
+      "total_functions": 30,
+      "total_classes": 1,
+      "files": [
+        "config/loader.py",
+        "config/wizard.py",
+        "config/mindsets.py",
+        "config/__init__.py"
+      ],
+      "dependencies": [
+        "mindsets",
+        "importlib",
+        "config_schema",
+        "spacy",
+        "sentence_transformers",
+        "copy"
+      ],
+      "issues": [
+        "WARNING: Large file (1386 lines) - consider splitting",
+        "WARNING: High complexity score (34) - needs simplification"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "backtesting": {
+      "name": "backtesting",
+      "path": "backtesting",
+      "total_lines": 6082,
+      "total_functions": 163,
+      "total_classes": 40,
+      "files": [
+        "backtesting/ui_server.py",
+        "backtesting/reporter.py",
+        "backtesting/benchmarks.py",
+        "backtesting/data_manager.py",
+        "backtesting/hektor_backtest.py",
+        "backtesting/optimizer.py",
+        "backtesting/auto_optimizer.py",
+        "backtesting/ensemble.py",
+        "backtesting/enhancer.py",
+        "backtesting/engine.py",
+        "backtesting/__init__.py",
+        "backtesting/ml_decision.py",
+        "backtesting/test_harness.py",
+        "backtesting/examples/basic_backtest.py",
+        "backtesting/scripts/auto_tune_runner.py",
+        "backtesting/reports/ui/test_generate_report.py",
+        "backtesting/reports/ui/serve.py"
+      ],
+      "dependencies": [
+        "engine",
+        "ml_decision",
+        "itertools",
+        "cthulu",
+        "asyncio",
+        "strategy",
+        "statistics",
+        "data_manager",
+        "config",
+        "http",
+        "ensemble",
+        "uuid",
+        "flask_socketio",
+        "logging",
+        "webbrowser",
+        "concurrent",
+        "time",
+        "benchmarks",
+        "random",
+        "matplotlib",
+        "backtesting",
+        "pickle",
+        "types",
+        "optimizer",
+        "flask_cors",
+        "reporter",
+        "socketserver",
+        "__future__",
+        "scripts",
+        "enum",
+        "copy",
+        "requests"
+      ],
+      "issues": [
+        "INFO: Contains TODO/FIXME markers",
+        "INFO: Contains TODO/FIXME markers"
+      ],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "persistence": {
+      "name": "persistence",
+      "path": "persistence",
+      "total_lines": 940,
+      "total_functions": 20,
+      "total_classes": 3,
+      "files": [
+        "persistence/database.py",
+        "persistence/__init__.py"
+      ],
+      "dependencies": [
+        "sqlite3",
+        "logging",
+        "time",
+        "database"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "risk": {
+      "name": "risk",
+      "path": "risk",
+      "total_lines": 4799,
+      "total_functions": 120,
+      "total_classes": 31,
+      "files": [
+        "risk/adaptive_account_manager.py",
+        "risk/dynamic_sltp.py",
+        "risk/liquidity_trap_detector.py",
+        "risk/unified_manager.py",
+        "risk/equity_curve_manager.py",
+        "risk/adaptive_drawdown.py",
+        "risk/manager.py",
+        "risk/__init__.py",
+        "risk/evaluator.py"
+      ],
+      "dependencies": [
+        "logging",
+        "adaptive_account_manager",
+        "math",
+        "__future__",
+        "adaptive_drawdown",
+        "cthulu",
+        "statistics",
+        "evaluator",
+        "enum",
+        "manager"
+      ],
+      "issues": [
+        "WARNING: High complexity score (16) - needs simplification"
+      ],
+      "complexity": "High",
+      "is_ml_module": false
+    },
+    "advisory": {
+      "name": "advisory",
+      "path": "advisory",
+      "total_lines": 191,
+      "total_functions": 5,
+      "total_classes": 1,
+      "files": [
+        "advisory/manager.py"
+      ],
+      "dependencies": [
+        "logging",
+        "queue",
+        "__future__",
+        "cthulu",
+        "time",
+        "threading"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    },
+    "ML_RL": {
+      "name": "ML_RL",
+      "path": "ML_RL",
+      "total_lines": 3504,
+      "total_functions": 117,
+      "total_classes": 31,
+      "files": [
+        "ML_RL/instrumentation.py",
+        "ML_RL/rl_position_sizer.py",
+        "ML_RL/llm_analysis.py",
+        "ML_RL/mlops.py",
+        "ML_RL/tier_optimizer.py",
+        "ML_RL/feature_pipeline.py",
+        "ML_RL/train_models.py",
+        "ML_RL/__init__.py"
+      ],
+      "dependencies": [
+        "logging",
+        "enum",
+        "gzip",
+        "queue",
+        "threading",
+        "__future__",
+        "cthulu",
+        "time",
+        "ML_RL",
+        "hashlib",
+        "math"
+      ],
+      "issues": [],
+      "complexity": "Medium",
+      "is_ml_module": false
+    },
+    "indicators": {
+      "name": "indicators",
+      "path": "indicators",
+      "total_lines": 2381,
+      "total_functions": 91,
+      "total_classes": 19,
+      "files": [
+        "indicators/volume_indicators.py",
+        "indicators/stochastic.py",
+        "indicators/macd.py",
+        "indicators/supertrend.py",
+        "indicators/rsi.py",
+        "indicators/bollinger.py",
+        "indicators/adx.py",
+        "indicators/market_structure.py",
+        "indicators/__init__.py",
+        "indicators/atr.py",
+        "indicators/vwap.py",
+        "indicators/base.py"
+      ],
+      "dependencies": [
+        "base",
+        "logging",
+        "adx",
+        "abc",
+        "stochastic",
+        "enum",
+        "rsi",
+        "macd",
+        "bollinger",
+        "cthulu",
+        "vwap",
+        "volume_indicators",
+        "supertrend"
+      ],
+      "issues": [],
+      "complexity": "Low",
+      "is_ml_module": false
+    }
+  },
+  "ml_analysis": {
+    "summary": {
+      "total_ml_files": 98,
+      "total_ml_lines": 40757,
+      "total_ml_functions": 1219,
+      "ml_architectures": [
+        "Softmax Classifier",
+        "Policy Network (PPO)"
+      ],
+      "training_capabilities": [
+        "supervised_training"
+      ]
+    },
+    "components_by_type": {
+      "other": [
+        {
+          "component_name": "instrumentation",
+          "component_type": "other",
+          "file_path": "cognition/instrumentation.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "gzip",
+            "queue",
+            "__future__",
+            "time",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "order_blocks",
+          "component_type": "other",
+          "file_path": "cognition/order_blocks.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "exit_oracle",
+          "component_type": "other",
+          "file_path": "cognition/exit_oracle.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "structure_detector",
+          "component_type": "other",
+          "file_path": "cognition/structure_detector.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "entry_confluence",
+          "component_type": "other",
+          "file_path": "cognition/entry_confluence.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "regime_classifier",
+          "component_type": "other",
+          "file_path": "cognition/regime_classifier.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "chart_manager",
+          "component_type": "other",
+          "file_path": "cognition/chart_manager.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "uuid",
+            "logging",
+            "queue",
+            "__future__",
+            "asyncio",
+            "threading",
+            "enum"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "session_orb",
+          "component_type": "other",
+          "file_path": "cognition/session_orb.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "tier_optimizer",
+          "component_type": "other",
+          "file_path": "cognition/tier_optimizer.py",
+          "features_count": 2,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "math",
+            "logging",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "sentiment_analyzer",
+          "component_type": "other",
+          "file_path": "cognition/sentiment_analyzer.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "engine",
+          "component_type": "other",
+          "file_path": "cognition/engine.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "sentiment_analyzer",
+            "regime_classifier",
+            "logging",
+            "session_orb",
+            "__future__",
+            "price_predictor",
+            "order_blocks",
+            "exit_oracle"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "__init__",
+          "component_type": "other",
+          "file_path": "cognition/__init__.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "sentiment_analyzer",
+            "tier_optimizer",
+            "regime_classifier",
+            "engine",
+            "session_orb",
+            "instrumentation",
+            "chart_manager",
+            "training_logger",
+            "price_predictor",
+            "order_blocks",
+            "exit_oracle"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "pattern_recognition",
+          "component_type": "other",
+          "file_path": "cognition/pattern_recognition.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "indicator_calculator",
+          "component_type": "other",
+          "file_path": "utils/indicator_calculator.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "system_health_collector",
+          "component_type": "other",
+          "file_path": "monitoring/system_health_collector.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "psutil",
+            "logging",
+            "csv",
+            "time",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "eval_profit_scaler_on_csv",
+          "component_type": "other",
+          "file_path": "scripts/eval_profit_scaler_on_csv.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "position",
+            "cthulu",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "validate_hektor_enhancements",
+          "component_type": "other",
+          "file_path": "scripts/validate_hektor_enhancements.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "integrations",
+            "backtesting",
+            "cognition"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "run_backtest_suite",
+          "component_type": "other",
+          "file_path": "scripts/run_backtest_suite.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "integrations",
+            "backtesting",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "replay_gold_incident",
+          "component_type": "other",
+          "file_path": "scripts/replay_gold_incident.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "core",
+            "backtesting",
+            "position",
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "simulate_scaling_execution",
+          "component_type": "other",
+          "file_path": "scripts/simulate_scaling_execution.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "position",
+            "cthulu",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "check_runtime",
+          "component_type": "other",
+          "file_path": "scripts/check_runtime.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "grid_sweep_scaler",
+          "component_type": "other",
+          "file_path": "scripts/grid_sweep_scaler.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "position",
+            "backtesting",
+            "core",
+            "itertools",
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "confluence_exit_manager",
+          "component_type": "other",
+          "file_path": "exit/confluence_exit_manager.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "base",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "multi_rrr",
+          "component_type": "other",
+          "file_path": "exit/multi_rrr.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "adaptive_loss_curve",
+          "component_type": "other",
+          "file_path": "exit/adaptive_loss_curve.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "math",
+            "base",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "__init__",
+          "component_type": "other",
+          "file_path": "exit/__init__.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "exit_manager",
+            "profit_scaling",
+            "base",
+            "trailing_stop",
+            "adverse_movement",
+            "profit_target",
+            "coordinator",
+            "adaptive_loss_curve",
+            "confluence_exit_manager",
+            "micro_account_protection",
+            "stop_loss",
+            "take_profit",
+            "time_based"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "trailing_stop",
+          "component_type": "other",
+          "file_path": "exit/trailing_stop.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "base",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "mean_reversion",
+          "component_type": "other",
+          "file_path": "strategy/mean_reversion.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "selector_adapter",
+          "component_type": "other",
+          "file_path": "strategy/selector_adapter.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "strategy_selector",
+          "component_type": "other",
+          "file_path": "strategy/strategy_selector.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "ema_crossover",
+          "component_type": "other",
+          "file_path": "strategy/ema_crossover.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "sma_crossover",
+          "component_type": "other",
+          "file_path": "strategy/sma_crossover.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "rsi_reversal",
+          "component_type": "other",
+          "file_path": "strategy/rsi_reversal.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "trend_following",
+          "component_type": "other",
+          "file_path": "strategy/trend_following.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "scalping",
+          "component_type": "other",
+          "file_path": "strategy/scalping.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "momentum_breakout",
+          "component_type": "other",
+          "file_path": "strategy/momentum_breakout.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "base",
+          "component_type": "other",
+          "file_path": "strategy/base.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "abc",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "analyze_cthulu",
+          "component_type": "other",
+          "file_path": "tools/analyze_cthulu.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [],
+          "status": "implemented"
+        },
+        {
+          "component_name": "security",
+          "component_type": "other",
+          "file_path": "rpc/security.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "hmac",
+            "pkg_resources",
+            "logging",
+            "ssl",
+            "functools",
+            "time",
+            "threading",
+            "hashlib",
+            "enum"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "layer",
+          "component_type": "other",
+          "file_path": "data/layer.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "bootstrap",
+          "component_type": "other",
+          "file_path": "core/bootstrap.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "tempfile",
+            "monitoring",
+            "logging",
+            "core",
+            "config_schema",
+            "integrations",
+            "cthulu",
+            "observability",
+            "threading",
+            "config",
+            "http"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "indicator_loader",
+          "component_type": "other",
+          "file_path": "core/indicator_loader.py",
+          "features_count": 2,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "inspect",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "exceptions",
+          "component_type": "other",
+          "file_path": "core/exceptions.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "importlib",
+            "traceback",
+            "functools",
+            "time",
+            "enum"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "trading_loop",
+          "component_type": "other",
+          "file_path": "core/trading_loop.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "tempfile",
+            "logging",
+            "cthulu",
+            "time",
+            "threading",
+            "http"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "comprehensive_collector",
+          "component_type": "other",
+          "file_path": "observability/comprehensive_collector.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "psutil",
+            "logging",
+            "csv",
+            "time",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "adoption",
+          "component_type": "other",
+          "file_path": "position/adoption.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "position",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "performance_analyzer",
+          "component_type": "other",
+          "file_path": "integrations/performance_analyzer.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "vector_studio",
+          "component_type": "other",
+          "file_path": "integrations/vector_studio.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "queue",
+            "sqlite3",
+            "embedder",
+            "threading",
+            "pyvdb"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "ml_exporter",
+          "component_type": "other",
+          "file_path": "integrations/ml_exporter.py",
+          "features_count": 4,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "embedder",
+          "component_type": "other",
+          "file_path": "integrations/embedder.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_runtime_indicators_more",
+          "component_type": "other",
+          "file_path": "tests/test_runtime_indicators_more.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_runtime_indicators",
+          "component_type": "other",
+          "file_path": "tests/test_runtime_indicators.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_runtime_indicators_supertrend_vwap",
+          "component_type": "other",
+          "file_path": "tests/test_runtime_indicators_supertrend_vwap.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_runtime_atr",
+          "component_type": "other",
+          "file_path": "tests/test_runtime_atr.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "types",
+            "logging"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_news_ingest_live",
+          "component_type": "other",
+          "file_path": "tests/integration/test_news_ingest_live.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu",
+            "pytest",
+            "time"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_strategy_selector_adapter",
+          "component_type": "other",
+          "file_path": "tests/unit/test_strategy_selector_adapter.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "test_auto_tune_runner",
+          "component_type": "other",
+          "file_path": "tests/unit/test_auto_tune_runner.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "unittest",
+            "pytest",
+            "cthulu"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_indicators",
+          "component_type": "other",
+          "file_path": "tests/unit/test_indicators.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "unittest",
+            "cthulu"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_profit_scaler_min_time",
+          "component_type": "other",
+          "file_path": "tests/unit/test_profit_scaler_min_time.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "position",
+            "cthulu"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "test_advanced_strategies",
+          "component_type": "other",
+          "file_path": "tests/unit/test_advanced_strategies.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "pytest",
+            "cthulu"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_next_gen_indicators",
+          "component_type": "other",
+          "file_path": "tests/unit/test_next_gen_indicators.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "pytest",
+            "cthulu"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_strategy_selector_regime",
+          "component_type": "other",
+          "file_path": "tests/unit/test_strategy_selector_regime.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "wizard",
+          "component_type": "other",
+          "file_path": "config/wizard.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "sentence_transformers",
+            "spacy",
+            "importlib",
+            "copy"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "ui_server",
+          "component_type": "other",
+          "file_path": "backtesting/ui_server.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "uuid",
+            "flask_socketio",
+            "flask_cors",
+            "logging",
+            "backtesting",
+            "asyncio",
+            "strategy",
+            "config"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "reporter",
+          "component_type": "other",
+          "file_path": "backtesting/reporter.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "benchmarks",
+          "component_type": "other",
+          "file_path": "backtesting/benchmarks.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "data_manager",
+          "component_type": "other",
+          "file_path": "backtesting/data_manager.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "pickle",
+            "logging",
+            "enum"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "optimizer",
+          "component_type": "other",
+          "file_path": "backtesting/optimizer.py",
+          "features_count": 3,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "random",
+            "matplotlib",
+            "logging",
+            "backtesting",
+            "itertools"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "auto_optimizer",
+          "component_type": "other",
+          "file_path": "backtesting/auto_optimizer.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "backtesting",
+            "itertools",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "ensemble",
+          "component_type": "other",
+          "file_path": "backtesting/ensemble.py",
+          "features_count": 1,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "enum",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "enhancer",
+          "component_type": "other",
+          "file_path": "backtesting/enhancer.py",
+          "features_count": 2,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "concurrent",
+            "itertools",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "engine",
+          "component_type": "other",
+          "file_path": "backtesting/engine.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "cthulu",
+            "time",
+            "enum",
+            "copy"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "__init__",
+          "component_type": "other",
+          "file_path": "backtesting/__init__.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "engine",
+            "reporter",
+            "ml_decision",
+            "benchmarks",
+            "optimizer",
+            "data_manager",
+            "ensemble"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "ml_decision",
+          "component_type": "other",
+          "file_path": "backtesting/ml_decision.py",
+          "features_count": 7,
+          "model_architecture": "Softmax Classifier",
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "enum",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "test_harness",
+          "component_type": "other",
+          "file_path": "backtesting/test_harness.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "backtesting",
+            "strategy",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "unified_manager",
+          "component_type": "other",
+          "file_path": "risk/unified_manager.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "cthulu",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "instrumentation",
+          "component_type": "other",
+          "file_path": "ML_RL/instrumentation.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "gzip",
+            "queue",
+            "__future__",
+            "time",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "tier_optimizer",
+          "component_type": "other",
+          "file_path": "ML_RL/tier_optimizer.py",
+          "features_count": 2,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "math",
+            "logging",
+            "threading"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "__init__",
+          "component_type": "other",
+          "file_path": "ML_RL/__init__.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "ML_RL"
+          ],
+          "status": "stub"
+        },
+        {
+          "component_name": "volume_indicators",
+          "component_type": "other",
+          "file_path": "indicators/volume_indicators.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "cthulu"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "stochastic",
+          "component_type": "other",
+          "file_path": "indicators/stochastic.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "macd",
+          "component_type": "other",
+          "file_path": "indicators/macd.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "supertrend",
+          "component_type": "other",
+          "file_path": "indicators/supertrend.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "rsi",
+          "component_type": "other",
+          "file_path": "indicators/rsi.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "bollinger",
+          "component_type": "other",
+          "file_path": "indicators/bollinger.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "adx",
+          "component_type": "other",
+          "file_path": "indicators/adx.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "market_structure",
+          "component_type": "other",
+          "file_path": "indicators/market_structure.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "atr",
+          "component_type": "other",
+          "file_path": "indicators/atr.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "partial"
+        },
+        {
+          "component_name": "vwap",
+          "component_type": "other",
+          "file_path": "indicators/vwap.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "base"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "base",
+          "component_type": "other",
+          "file_path": "indicators/base.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "abc",
+            "logging"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "training": [
+        {
+          "component_name": "training_logger",
+          "component_type": "training",
+          "file_path": "cognition/training_logger.py",
+          "features_count": 3,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "gzip",
+            "__future__",
+            "logging"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "train_models",
+          "component_type": "training",
+          "file_path": "ML_RL/train_models.py",
+          "features_count": 5,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "logging",
+            "__future__",
+            "cthulu",
+            "time",
+            "ML_RL"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "model": [
+        {
+          "component_name": "price_predictor",
+          "component_type": "model",
+          "file_path": "cognition/price_predictor.py",
+          "features_count": 13,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "time",
+            "logging"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "feature_pipeline": [
+        {
+          "component_name": "test_ml_pipeline",
+          "component_type": "feature_pipeline",
+          "file_path": "tests/unit/test_ml_pipeline.py",
+          "features_count": 5,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "tempfile",
+            "pytest",
+            "ML_RL"
+          ],
+          "status": "implemented"
+        },
+        {
+          "component_name": "feature_pipeline",
+          "component_type": "feature_pipeline",
+          "file_path": "ML_RL/feature_pipeline.py",
+          "features_count": 3,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "reinforcement_learning": [
+        {
+          "component_name": "rl_position_sizer",
+          "component_type": "reinforcement_learning",
+          "file_path": "ML_RL/rl_position_sizer.py",
+          "features_count": 9,
+          "model_architecture": "Policy Network (PPO)",
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "__future__",
+            "enum",
+            "logging",
+            "threading"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "llm_analysis": [
+        {
+          "component_name": "llm_analysis",
+          "component_type": "llm_analysis",
+          "file_path": "ML_RL/llm_analysis.py",
+          "features_count": 0,
+          "model_architecture": null,
+          "training_capabilities": [],
+          "dependencies": [
+            "logging",
+            "__future__",
+            "cthulu",
+            "threading",
+            "enum"
+          ],
+          "status": "implemented"
+        }
+      ],
+      "mlops": [
+        {
+          "component_name": "mlops",
+          "component_type": "mlops",
+          "file_path": "ML_RL/mlops.py",
+          "features_count": 9,
+          "model_architecture": null,
+          "training_capabilities": [
+            "supervised_training"
+          ],
+          "dependencies": [
+            "logging",
+            "__future__",
+            "threading",
+            "hashlib",
+            "enum"
+          ],
+          "status": "implemented"
+        }
+      ]
+    },
+    "implementation_status": {
+      "implemented": 70,
+      "partial": 12,
+      "stub": 16
+    }
+  },
+  "top_issues": {
+    "critical": [
+      {
+        "file": "cognition/entry_confluence.py",
+        "issue": "CRITICAL: Very large file (1578 lines) - needs refactoring",
+        "lines": 1578,
+        "complexity": 36
+      },
+      {
+        "file": "cognition/chart_manager.py",
+        "issue": "CRITICAL: Very large file (1697 lines) - needs refactoring",
+        "lines": 1697,
+        "complexity": 34
+      },
+      {
+        "file": "core/trading_loop.py",
+        "issue": "CRITICAL: Very large file (2400 lines) - needs refactoring",
+        "lines": 2400,
+        "complexity": 65
+      }
+    ],
+    "warnings": [
+      {
+        "file": "cognition/entry_confluence.py",
+        "issue": "WARNING: High complexity score (36) - needs simplification",
+        "lines": 1578,
+        "complexity": 36
+      },
+      {
+        "file": "cognition/chart_manager.py",
+        "issue": "WARNING: Many functions (51) - consider modularization",
+        "lines": 1697,
+        "complexity": 34
+      },
+      {
+        "file": "cognition/chart_manager.py",
+        "issue": "WARNING: High complexity score (34) - needs simplification",
+        "lines": 1697,
+        "complexity": 34
+      },
+      {
+        "file": "cognition/engine.py",
+        "issue": "WARNING: High complexity score (19) - needs simplification",
+        "lines": 920,
+        "complexity": 19
+      },
+      {
+        "file": "connector/mt5_connector.py",
+        "issue": "WARNING: High complexity score (20) - needs simplification",
+        "lines": 797,
+        "complexity": 20
+      },
+      {
+        "file": "execution/engine.py",
+        "issue": "WARNING: Large file (1068 lines) - consider splitting",
+        "lines": 1068,
+        "complexity": 22
+      },
+      {
+        "file": "execution/engine.py",
+        "issue": "WARNING: High complexity score (22) - needs simplification",
+        "lines": 1068,
+        "complexity": 22
+      },
+      {
+        "file": "tools/analyze_cthulu.py",
+        "issue": "WARNING: Large file (1300 lines) - consider splitting",
+        "lines": 1300,
+        "complexity": 29
+      },
+      {
+        "file": "tools/analyze_cthulu.py",
+        "issue": "WARNING: High complexity score (29) - needs simplification",
+        "lines": 1300,
+        "complexity": 29
+      },
+      {
+        "file": "rpc/server.py",
+        "issue": "WARNING: High complexity score (17) - needs simplification",
+        "lines": 754,
+        "complexity": 17
+      }
+    ]
+  },
+  "largest_files": [
+    {
+      "path": "core/trading_loop.py",
+      "lines": 2400,
+      "functions": 36,
+      "complexity": 65
+    },
+    {
+      "path": "cognition/chart_manager.py",
+      "lines": 1697,
+      "functions": 51,
+      "complexity": 34
+    },
+    {
+      "path": "cognition/entry_confluence.py",
+      "lines": 1578,
+      "functions": 21,
+      "complexity": 36
+    },
+    {
+      "path": "config/wizard.py",
+      "lines": 1386,
+      "functions": 26,
+      "complexity": 34
+    },
+    {
+      "path": "tools/analyze_cthulu.py",
+      "lines": 1300,
+      "functions": 32,
+      "complexity": 29
+    },
+    {
+      "path": "execution/engine.py",
+      "lines": 1068,
+      "functions": 10,
+      "complexity": 22
+    },
+    {
+      "path": "sentinel/gui/dashboard.py",
+      "lines": 939,
+      "functions": 22,
+      "complexity": 15
+    },
+    {
+      "path": "persistence/database.py",
+      "lines": 923,
+      "functions": 20,
+      "complexity": 15
+    },
+    {
+      "path": "cognition/engine.py",
+      "lines": 920,
+      "functions": 27,
+      "complexity": 19
+    },
+    {
+      "path": "core/bootstrap.py",
+      "lines": 919,
+      "functions": 26,
+      "complexity": 16
+    }
+  ],
+  "most_complex_files": [
+    {
+      "path": "core/trading_loop.py",
+      "lines": 2400,
+      "functions": 36,
+      "complexity": 65
+    },
+    {
+      "path": "cognition/entry_confluence.py",
+      "lines": 1578,
+      "functions": 21,
+      "complexity": 36
+    },
+    {
+      "path": "cognition/chart_manager.py",
+      "lines": 1697,
+      "functions": 51,
+      "complexity": 34
+    },
+    {
+      "path": "config/wizard.py",
+      "lines": 1386,
+      "functions": 26,
+      "complexity": 34
+    },
+    {
+      "path": "tools/analyze_cthulu.py",
+      "lines": 1300,
+      "functions": 32,
+      "complexity": 29
+    },
+    {
+      "path": "execution/engine.py",
+      "lines": 1068,
+      "functions": 10,
+      "complexity": 22
+    },
+    {
+      "path": "connector/mt5_connector.py",
+      "lines": 797,
+      "functions": 29,
+      "complexity": 20
+    },
+    {
+      "path": "rpc/security.py",
+      "lines": 881,
+      "functions": 31,
+      "complexity": 20
+    },
+    {
+      "path": "cognition/engine.py",
+      "lines": 920,
+      "functions": 27,
+      "complexity": 19
+    },
+    {
+      "path": "position/profit_scaler.py",
+      "lines": 872,
+      "functions": 17,
+      "complexity": 19
+    }
+  ],
+  "dependency_graph": {
+    "root": [
+      "logging",
+      "pydantic",
+      "dotenv",
+      "importlib",
+      "sqlite3",
+      "__future__",
+      "persistence",
+      "types"
+    ],
+    "ui_server": [
+      "flask_socketio",
+      "flask_cors",
+      "logging",
+      "traceback",
+      "sqlite3",
+      "time",
+      "threading",
+      "requests"
+    ],
+    "cognition": [
+      "tier_optimizer",
+      "regime_classifier",
+      "engine",
+      "cthulu",
+      "asyncio",
+      "price_predictor",
+      "uuid",
+      "logging",
+      "gzip",
+      "queue",
+      "session_orb",
+      "instrumentation",
+      "time",
+      "training_logger",
+      "sentiment_analyzer",
+      "enum",
+      "chart_manager",
+      "order_blocks",
+      "exit_oracle",
+      "__future__",
+      "threading",
+      "math"
+    ],
+    "utils": [
+      "enum",
+      "cthulu",
+      "time",
+      "logging"
+    ],
+    "monitoring": [
+      "psutil",
+      "monitoring",
+      "logging",
+      "csv",
+      "threading",
+      "time",
+      "multiprocessing",
+      "observability"
+    ],
+    "scripts": [
+      "traceback",
+      "itertools",
+      "cthulu",
+      "urllib",
+      "pyvdb",
+      "config",
+      "subprocess",
+      "logging",
+      "integrations",
+      "cognition",
+      "unittest",
+      "time",
+      "core",
+      "backtesting",
+      "importlib",
+      "dotenv",
+      "types",
+      "hashlib",
+      "position",
+      "config_schema",
+      "pkgutil",
+      "sqlite3",
+      "requests"
+    ],
+    "connector": [
+      "subprocess",
+      "logging",
+      "market",
+      "cthulu",
+      "time",
+      "threading",
+      "mt5_connector"
+    ],
+    "cthulu": [
+      "logging",
+      "core",
+      "config_schema",
+      "local_llm",
+      "llama_cpp",
+      "cognition",
+      "glob",
+      "__future__",
+      "signal",
+      "ML_RL",
+      "observability",
+      "atexit",
+      "config",
+      "ctypes"
+    ],
+    "exit": [
+      "exit_manager",
+      "cthulu",
+      "time_based",
+      "logging",
+      "enum",
+      "confluence_exit_manager",
+      "abc",
+      "profit_target",
+      "coordinator",
+      "adaptive_loss_curve",
+      "stop_loss",
+      "take_profit",
+      "profit_scaling",
+      "base",
+      "trailing_stop",
+      "adverse_movement",
+      "micro_account_protection",
+      "__future__",
+      "math"
+    ],
+    "strategy": [
+      "scalping",
+      "rsi_reversal",
+      "base",
+      "logging",
+      "abc",
+      "trend_following",
+      "ema_crossover",
+      "sma_crossover",
+      "mean_reversion",
+      "cthulu",
+      "strategy_selector",
+      "enum",
+      "momentum_breakout"
+    ],
+    "execution": [
+      "logging",
+      "engine",
+      "inspect",
+      "platform",
+      "traceback",
+      "concurrent",
+      "socket",
+      "cthulu",
+      "threading",
+      "hashlib",
+      "enum"
+    ],
+    "tools": [],
+    "market": [
+      "logging",
+      "cthulu",
+      "time",
+      "observability",
+      "threading",
+      "urllib",
+      "providers",
+      "requests"
+    ],
+    "news": [
+      "tradingeconomics_adapter",
+      "base",
+      "logging",
+      "ingest",
+      "xml",
+      "__future__",
+      "cache",
+      "rss_adapter",
+      "cthulu",
+      "time",
+      "fred_adapter",
+      "threading",
+      "urllib",
+      "newsapi_adapter",
+      "manager",
+      "requests"
+    ],
+    "herald": [
+      "importlib"
+    ],
+    "rpc": [
+      "hmac",
+      "uuid",
+      "pkg_resources",
+      "logging",
+      "ssl",
+      "socket",
+      "functools",
+      "cthulu",
+      "time",
+      "threading",
+      "urllib",
+      "hashlib",
+      "enum",
+      "http"
+    ],
+    "sentinel": [
+      "psutil",
+      "subprocess",
+      "logging",
+      "gui",
+      "core",
+      "traceback",
+      "sentinel",
+      "guardian",
+      "time",
+      "signal",
+      "threading",
+      "enum",
+      "tkinter",
+      "dashboard"
+    ],
+    "ui": [
+      "csv",
+      "traceback",
+      "cthulu",
+      "time",
+      "threading",
+      "atexit",
+      "tkinter",
+      "requests",
+      "ctypes"
+    ],
+    "ops": [
+      "psutil",
+      "shutil",
+      "logging"
+    ],
+    "data": [
+      "layer",
+      "logging"
+    ],
+    "core": [
+      "shutdown",
+      "inspect",
+      "bootstrap",
+      "traceback",
+      "cthulu",
+      "observability",
+      "trading_loop",
+      "config",
+      "http",
+      "strategy_factory",
+      "tempfile",
+      "logging",
+      "queue",
+      "integrations",
+      "time",
+      "monitoring",
+      "core",
+      "importlib",
+      "indicator_loader",
+      "exit_loader",
+      "config_schema",
+      "functools",
+      "threading",
+      "enum"
+    ],
+    "observability": [
+      "psutil",
+      "monitoring",
+      "logging",
+      "csv",
+      "cthulu",
+      "statistics",
+      "time",
+      "threading",
+      "multiprocessing",
+      "observability",
+      "signal",
+      "http",
+      "ctypes"
+    ],
+    "position": [
+      "logging",
+      "position",
+      "__future__",
+      "cthulu",
+      "threading",
+      "math"
+    ],
+    "integrations": [
+      "retriever",
+      "logging",
+      "queue",
+      "vector_studio",
+      "sqlite3",
+      "persistence",
+      "embedder",
+      "threading",
+      "data_layer",
+      "pyvdb"
+    ],
+    "tests": [
+      "traceback",
+      "cthulu",
+      "statistics",
+      "urllib",
+      "pytest",
+      "config",
+      "utils",
+      "tempfile",
+      "logging",
+      "gzip",
+      "stat",
+      "glob",
+      "unittest",
+      "time",
+      "strategies",
+      "decimal",
+      "core",
+      "dotenv",
+      "importlib",
+      "persistence",
+      "types",
+      "ML_RL",
+      "position",
+      "yaml",
+      "sqlite3",
+      "threading",
+      "math"
+    ],
+    "config": [
+      "mindsets",
+      "importlib",
+      "spacy",
+      "config_schema",
+      "sentence_transformers",
+      "copy"
+    ],
+    "backtesting": [
+      "engine",
+      "ml_decision",
+      "itertools",
+      "cthulu",
+      "asyncio",
+      "strategy",
+      "statistics",
+      "data_manager",
+      "config",
+      "ensemble",
+      "http",
+      "uuid",
+      "flask_socketio",
+      "logging",
+      "webbrowser",
+      "concurrent",
+      "time",
+      "benchmarks",
+      "random",
+      "matplotlib",
+      "backtesting",
+      "pickle",
+      "types",
+      "optimizer",
+      "flask_cors",
+      "reporter",
+      "socketserver",
+      "__future__",
+      "scripts",
+      "enum",
+      "copy",
+      "requests"
+    ],
+    "persistence": [
+      "sqlite3",
+      "database",
+      "time",
+      "logging"
+    ],
+    "risk": [
+      "logging",
+      "enum",
+      "adaptive_account_manager",
+      "__future__",
+      "adaptive_drawdown",
+      "cthulu",
+      "statistics",
+      "evaluator",
+      "math",
+      "manager"
+    ],
+    "advisory": [
+      "logging",
+      "queue",
+      "__future__",
+      "cthulu",
+      "time",
+      "threading"
+    ],
+    "ML_RL": [
+      "ML_RL",
+      "logging",
+      "math",
+      "gzip",
+      "queue",
+      "__future__",
+      "cthulu",
+      "time",
+      "threading",
+      "hashlib",
+      "enum"
+    ],
+    "indicators": [
+      "base",
+      "logging",
+      "adx",
+      "abc",
+      "stochastic",
+      "rsi",
+      "macd",
+      "bollinger",
+      "cthulu",
+      "volume_indicators",
+      "vwap",
+      "enum",
+      "supertrend"
+    ]
+  },
+  "recommendations": [
+    "URGENT: Address 3 critical issues immediately. These files are too large and need refactoring.",
+    "Consider splitting 4 large modules into smaller, more focused components."
+  ],
+  "code_improvements": {
+    "total_suggestions": 176,
+    "by_severity": {
+      "critical": 4,
+      "high": 47,
+      "medium": 64,
+      "low": 61,
+      "info": 0
+    },
+    "by_category": {
+      "security": 7,
+      "performance": 20,
+      "maintainability": 79,
+      "extensibility": 0,
+      "ml_best_practice": 70
+    },
+    "by_effort": {
+      "low": 66,
+      "medium": 71,
+      "high": 39
+    },
+    "details": {
+      "critical": [
+        {
+          "file_path": "tests/unit/test_news_manager.py",
+          "severity": "critical",
+          "category": "security",
+          "issue": "Hardcoded credentials detected",
+          "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+          "impact": "Prevents credential exposure in version control",
+          "effort": "low",
+          "line_range": null
+        },
+        {
+          "file_path": "tests/unit/test_tradingeconomics_adapter.py",
+          "severity": "critical",
+          "category": "security",
+          "issue": "Hardcoded credentials detected",
+          "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+          "impact": "Prevents credential exposure in version control",
+          "effort": "low",
+          "line_range": null
+        },
+        {
+          "file_path": "tests/unit/test_fred_adapter.py",
+          "severity": "critical",
+          "category": "security",
+          "issue": "Hardcoded credentials detected",
+          "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+          "impact": "Prevents credential exposure in version control",
+          "effort": "low",
+          "line_range": null
+        },
+        {
+          "file_path": "tests/unit/test_news_adapter.py",
+          "severity": "critical",
+          "category": "security",
+          "issue": "Hardcoded credentials detected",
+          "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+          "impact": "Prevents credential exposure in version control",
+          "effort": "low",
+          "line_range": null
+        }
+      ],
+      "high": [
+        {
+          "file_path": "cognition/entry_confluence.py",
+          "severity": "high",
+          "category": "maintainability",
+          "issue": "Very large file (1578 lines)",
+          "suggestion": "Split into multiple focused modules. Group related functionality and extract to separate files.",
+          "impact": "Improves code organization and navigability",
+          "effort": "high",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/entry_confluence.py",
+          "severity": "high",
+          "category": "ml_best_practice",
+          "issue": "RL agent lacks safety constraints",
+          "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+          "impact": "Prevents dangerous actions in production trading",
+          "effort": "high",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/chart_manager.py",
+          "severity": "high",
+          "category": "performance",
+          "issue": "Database/API calls inside loops detected",
+          "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+          "impact": "Significantly reduces I/O overhead and latency",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/chart_manager.py",
+          "severity": "high",
+          "category": "maintainability",
+          "issue": "Very large file (1697 lines)",
+          "suggestion": "Split into multiple focused modules. Group related functionality and extract to separate files.",
+          "impact": "Improves code organization and navigability",
+          "effort": "high",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/tier_optimizer.py",
+          "severity": "high",
+          "category": "performance",
+          "issue": "Database/API calls inside loops detected",
+          "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+          "impact": "Significantly reduces I/O overhead and latency",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "scripts/vectorize_handbook.py",
+          "severity": "high",
+          "category": "performance",
+          "issue": "Database/API calls inside loops detected",
+          "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+          "impact": "Significantly reduces I/O overhead and latency",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "exit/coordinator.py",
+          "severity": "high",
+          "category": "performance",
+          "issue": "Database/API calls inside loops detected",
+          "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+          "impact": "Significantly reduces I/O overhead and latency",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "exit/multi_rrr.py",
+          "severity": "high",
+          "category": "ml_best_practice",
+          "issue": "RL agent lacks safety constraints",
+          "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+          "impact": "Prevents dangerous actions in production trading",
+          "effort": "high",
+          "line_range": null
+        },
+        {
+          "file_path": "strategy/mean_reversion.py",
+          "severity": "high",
+          "category": "ml_best_practice",
+          "issue": "RL agent lacks safety constraints",
+          "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+          "impact": "Prevents dangerous actions in production trading",
+          "effort": "high",
+          "line_range": null
+        },
+        {
+          "file_path": "strategy/ema_crossover.py",
+          "severity": "high",
+          "category": "ml_best_practice",
+          "issue": "RL agent lacks safety constraints",
+          "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+          "impact": "Prevents dangerous actions in production trading",
+          "effort": "high",
+          "line_range": null
+        }
+      ],
+      "medium": [
+        {
+          "file_path": "cognition/instrumentation.py",
+          "severity": "medium",
+          "category": "ml_best_practice",
+          "issue": "ML model lacks versioning",
+          "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+          "impact": "Enables model reproducibility and rollback capability",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/order_blocks.py",
+          "severity": "medium",
+          "category": "ml_best_practice",
+          "issue": "ML model lacks versioning",
+          "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+          "impact": "Enables model reproducibility and rollback capability",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/exit_oracle.py",
+          "severity": "medium",
+          "category": "ml_best_practice",
+          "issue": "ML model lacks versioning",
+          "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+          "impact": "Enables model reproducibility and rollback capability",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/exit_oracle.py",
+          "severity": "medium",
+          "category": "ml_best_practice",
+          "issue": "Missing prediction monitoring",
+          "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+          "impact": "Enables detection of model degradation and drift",
+          "effort": "medium",
+          "line_range": null
+        },
+        {
+          "file_path": "cognition/training_logger.py",
+          "severity": "medium",
+          "category": "ml_best_practice",
+          "issue": "ML model lacks versioning",
+          "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+          "impact": "Enables model reproducibility and rollback capability",
+          "effort": "medium",
+          "line_range": null
+        }
+      ],
+      "all": [
+        [
+          {
+            "file_path": "config_schema.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "config_schema.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "7 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "ui_server/app.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "11 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/instrumentation.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "monitoring/system_health_collector.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "19 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/replay_gold_incident.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "6 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/adaptive_loss_curve.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "15 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "execution/engine.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "7 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "market/tick_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "market/providers.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "news/ingest.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "news/base.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "rpc/security.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "8 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "ui/local/desktop.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "9 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "observability/suit.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "18 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "observability/service.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "12 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "position/trade_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_runtime_indicators.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_profit_scaling.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "28 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_stop_loss_fix.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "13 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_rpc_server.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/integration/test_profit_scaler_end_to_end.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_trade_monitor_news.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_ml_pipeline.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "13 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_strategy_selector_adapter.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_strategy_selector_adapter.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "8 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_execution_engine_timeout.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_trade_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "34 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_dynamic_sltp_symbol_min_distance.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "17 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_news_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_modify_untracked_position.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_dynamic_sltp_retry.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_exit_strategies.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "35 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_indicators.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "18 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_lifecycle_open_position.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_execution_engine.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_execution_engine.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "10 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_idempotency_close_collision.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_ml_flag.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_profit_scaler_actions.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_profit_scaler_actions.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "8 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_wizard_nlp.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_tradingeconomics_adapter.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_advanced_strategies.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "68 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_next_gen_indicators.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "30 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_fred_adapter.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_profit_scaler_min_lot_full_close.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_position_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "44 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_news_ingest.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_advisory_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_trade_adoption_sl_tp.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_close_idempotency.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_modify_position_idempotent.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_compat_engine_lifecycle.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/ui_server.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "14 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/enhancer.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "9 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/test_harness.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "11 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/scripts/auto_tune_runner.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "risk/adaptive_account_manager.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "8 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/instrumentation.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "Insufficient docstrings for classes/functions",
+            "suggestion": "Add docstrings following Google or NumPy style. Document parameters, returns, and raises.",
+            "impact": "Improves code understandability and maintainability",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/train_models.py",
+            "severity": "low",
+            "category": "maintainability",
+            "issue": "7 magic numbers found",
+            "suggestion": "Extract magic numbers to named constants at module level with descriptive names",
+            "impact": "Improves code readability and maintainability",
+            "effort": "low",
+            "line_range": null
+          }
+        ],
+        [
+          {
+            "file_path": "cognition/instrumentation.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/order_blocks.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/exit_oracle.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/exit_oracle.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/training_logger.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/training_logger.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/entry_confluence.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (36)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/chart_manager.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (34)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/session_orb.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/price_predictor.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/engine.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (19)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/engine.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/__init__.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/__init__.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/pattern_recognition.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/eval_profit_scaler_on_csv.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/validate_hektor_enhancements.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/replay_gold_incident.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/simulate_scaling_execution.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/grid_sweep_scaler.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "connector/mt5_connector.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (20)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/confluence_exit_manager.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/confluence_exit_manager.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/multi_rrr.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/adaptive_loss_curve.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/__init__.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/trailing_stop.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/ema_crossover.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/sma_crossover.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/rsi_reversal.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/trend_following.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/scalping.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/momentum_breakout.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/base.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "execution/engine.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (22)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "tools/analyze_cthulu.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (29)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "rpc/server.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (17)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "rpc/security.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (20)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ui/local/desktop.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (17)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "core/bootstrap.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (16)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "core/trading_loop.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (65)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "observability/comprehensive_collector.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (16)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "position/profit_scaler.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (19)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "position/adoption.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/ml_exporter.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/embedder.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_ml_pipeline.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing data validation in feature pipeline",
+            "suggestion": "Add input validation: check for NaN, inf, data types, value ranges. Use assertions or dedicated validation functions.",
+            "impact": "Prevents model failures from bad input data",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_auto_tune_runner.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_profit_scaler_min_time.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_advanced_strategies.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "config/wizard.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (34)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/reporter.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/benchmarks.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/optimizer.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/ensemble.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/engine.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/ml_decision.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/test_harness.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "risk/unified_manager.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "risk/evaluator.py",
+            "severity": "medium",
+            "category": "maintainability",
+            "issue": "High complexity score (16)",
+            "suggestion": "Refactor into smaller functions using Extract Method pattern. Apply Single Responsibility Principle.",
+            "impact": "Reduces cognitive load and improves testability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/instrumentation.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/rl_position_sizer.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/feature_pipeline.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "Missing prediction monitoring",
+            "suggestion": "Add monitoring for prediction latency, confidence distributions, and data drift. Log predictions for analysis.",
+            "impact": "Enables detection of model degradation and drift",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/__init__.py",
+            "severity": "medium",
+            "category": "ml_best_practice",
+            "issue": "ML model lacks versioning",
+            "suggestion": "Implement model versioning with semantic versioning. Track model metadata, hyperparameters, and training data version.",
+            "impact": "Enables model reproducibility and rollback capability",
+            "effort": "medium",
+            "line_range": null
+          }
+        ],
+        [
+          {
+            "file_path": "cognition/entry_confluence.py",
+            "severity": "high",
+            "category": "maintainability",
+            "issue": "Very large file (1578 lines)",
+            "suggestion": "Split into multiple focused modules. Group related functionality and extract to separate files.",
+            "impact": "Improves code organization and navigability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/entry_confluence.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/chart_manager.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/chart_manager.py",
+            "severity": "high",
+            "category": "maintainability",
+            "issue": "Very large file (1697 lines)",
+            "suggestion": "Split into multiple focused modules. Group related functionality and extract to separate files.",
+            "impact": "Improves code organization and navigability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "cognition/tier_optimizer.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "scripts/vectorize_handbook.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/coordinator.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "exit/multi_rrr.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/mean_reversion.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/ema_crossover.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/sma_crossover.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/rsi_reversal.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/trend_following.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/scalping.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "strategy/momentum_breakout.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "tools/analyze_cthulu.py",
+            "severity": "high",
+            "category": "security",
+            "issue": "Command injection risk with shell=True or os.system()",
+            "suggestion": "Use subprocess with shell=False and pass arguments as list. Validate and sanitize all inputs.",
+            "impact": "Prevents command injection attacks",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tools/analyze_cthulu.py",
+            "severity": "high",
+            "category": "security",
+            "issue": "Unsafe eval() usage detected",
+            "suggestion": "Replace eval() with safer alternatives like ast.literal_eval() or json.loads()",
+            "impact": "Prevents arbitrary code execution",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "core/bootstrap.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "core/indicator_loader.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "core/shutdown.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "core/trading_loop.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "core/trading_loop.py",
+            "severity": "high",
+            "category": "maintainability",
+            "issue": "Very large file (2400 lines)",
+            "suggestion": "Split into multiple focused modules. Group related functionality and extract to separate files.",
+            "impact": "Improves code organization and navigability",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "observability/comprehensive_collector.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "position/manager.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "position/adoption.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/performance_analyzer.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/vector_studio.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/retriever.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/ml_exporter.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "integrations/embedder.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_runtime_indicators.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/test_installation.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_ml_pipeline.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "config/wizard.py",
+            "severity": "high",
+            "category": "security",
+            "issue": "Command injection risk with shell=True or os.system()",
+            "suggestion": "Use subprocess with shell=False and pass arguments as list. Validate and sanitize all inputs.",
+            "impact": "Prevents command injection attacks",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/ui_server.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/benchmarks.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/auto_optimizer.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/ensemble.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/enhancer.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "backtesting/scripts/auto_tune_runner.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/instrumentation.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/llm_analysis.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/mlops.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/mlops.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/tier_optimizer.py",
+            "severity": "high",
+            "category": "performance",
+            "issue": "Database/API calls inside loops detected",
+            "suggestion": "Batch queries/requests outside loop. Use bulk operations or caching.",
+            "impact": "Significantly reduces I/O overhead and latency",
+            "effort": "medium",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/train_models.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          },
+          {
+            "file_path": "ML_RL/__init__.py",
+            "severity": "high",
+            "category": "ml_best_practice",
+            "issue": "RL agent lacks safety constraints",
+            "suggestion": "Implement safety constraints: action space clipping, reward normalization, exploration limits, and fail-safe mechanisms.",
+            "impact": "Prevents dangerous actions in production trading",
+            "effort": "high",
+            "line_range": null
+          }
+        ],
+        [
+          {
+            "file_path": "tests/unit/test_news_manager.py",
+            "severity": "critical",
+            "category": "security",
+            "issue": "Hardcoded credentials detected",
+            "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+            "impact": "Prevents credential exposure in version control",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_tradingeconomics_adapter.py",
+            "severity": "critical",
+            "category": "security",
+            "issue": "Hardcoded credentials detected",
+            "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+            "impact": "Prevents credential exposure in version control",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_fred_adapter.py",
+            "severity": "critical",
+            "category": "security",
+            "issue": "Hardcoded credentials detected",
+            "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+            "impact": "Prevents credential exposure in version control",
+            "effort": "low",
+            "line_range": null
+          },
+          {
+            "file_path": "tests/unit/test_news_adapter.py",
+            "severity": "critical",
+            "category": "security",
+            "issue": "Hardcoded credentials detected",
+            "suggestion": "Move credentials to environment variables or secure vault. Use os.getenv() or config management.",
+            "impact": "Prevents credential exposure in version control",
+            "effort": "low",
+            "line_range": null
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "future_readiness": {
+    "overall_score": 7.4,
+    "metrics": [
+      {
+        "aspect": "Extensibility",
+        "score": 10,
+        "assessment": "Excellent",
+        "recommendations": []
+      },
+      {
+        "aspect": "Scalability",
+        "score": 0,
+        "assessment": "Needs Improvement",
+        "recommendations": [
+          "Implement async/await for I/O bound operations",
+          "Add caching layer for expensive computations",
+          "Consider connection pooling for database/API access"
+        ]
+      },
+      {
+        "aspect": "ML/RL Maturity",
+        "score": 10,
+        "assessment": "Excellent",
+        "recommendations": [
+          "Consider A/B testing framework for model comparison",
+          "Implement feature store for consistent feature engineering"
+        ]
+      },
+      {
+        "aspect": "Documentation Quality",
+        "score": 10,
+        "assessment": "Excellent",
+        "recommendations": []
+      },
+      {
+        "aspect": "Test Coverage",
+        "score": 7,
+        "assessment": "Good",
+        "recommendations": [
+          "Expand test coverage to 80%+",
+          "Add property-based testing for complex logic",
+          "Implement end-to-end tests"
+        ]
+      }
+    ],
+    "summary": "System is GOOD for future expansion with some areas needing attention"
+  }
+}

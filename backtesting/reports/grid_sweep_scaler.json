@@ -1,0 +1,506 @@
+[
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.3,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.3,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.5,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.5,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.5,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.7,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.7,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 0,
+    "trail_pct": 0.7,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.3,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.3,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.5,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.5,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.5,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.7,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.7,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 1,
+    "trail_pct": 0.7,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.3,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.3,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.5,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.5,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.5,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.7,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.7,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 2,
+    "trail_pct": 0.7,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.02,
+      "close_actions_count": 1,
+      "trail_actions_count": 1,
+      "modify_actions_count": 1,
+      "final_remaining_volume": 0.08,
+      "first_close_bar": 3,
+      "total_profit_estimate": 15.3799999999992
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.3,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.3,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.3,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.5,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.5,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.5,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.7,
+    "concurrency": 1,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.7,
+    "concurrency": 3,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  },
+  {
+    "min_time_in_trade_bars": 4,
+    "trail_pct": 0.7,
+    "concurrency": 5,
+    "metrics": {
+      "closed_volume_total": 0.0,
+      "close_actions_count": 0,
+      "trail_actions_count": 0,
+      "modify_actions_count": 0,
+      "final_remaining_volume": 0.1,
+      "first_close_bar": null,
+      "total_profit_estimate": 0.0
+    }
+  }
+]

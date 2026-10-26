@@ -1,0 +1,361 @@
+{
+  "system_context": {
+    "project_name": "Cthulu Trading System",
+    "version": "5.3.0",
+    "codename": "EVOQUE",
+    "status": "STABLE - Production Ready",
+    "environment": "Multi-platform (Windows, Linux, Docker)",
+    "target_platform": "MetaTrader 5",
+    "primary_use_case": "Autonomous algorithmic trading with AI/ML enhancement",
+    "deployment_mode": "Standalone, Containerized, or Service-based",
+    "operational_paradigm": "SAFE™ - Smart, Adaptive, Fully autonomous, Expert risk management"
+  },
+  "business_context": {
+    "domain": "Quantitative Trading & Financial Technology",
+    "target_users": [
+      "Retail algorithmic traders",
+      "Quantitative researchers",
+      "Trading system developers",
+      "Financial technology enthusiasts",
+      "Academic researchers in algorithmic trading"
+    ],
+    "value_proposition": "Fully autonomous multi-strategy trading system with enterprise-grade risk management, AI/ML intelligence, and production observability",
+    "competitive_advantages": [
+      "Multi-strategy fallback system (7 strategies)",
+      "Entry confluence filtering with quality gates",
+      "Semantic pattern recognition via vector database",
+      "Local LLM integration for market narratives",
+      "Production-grade observability (95% test coverage, 98.5% uptime)",
+      "Adaptive risk management with 7-state drawdown protection",
+      "Intelligent profit scaling system",
+      "Full trade lifecycle automation"
+    ],
+    "market_position": "Open-source leader in AI-native autonomous trading systems",
+    "license_model": "AGPL-3.0-or-later (Open Source with strong copyleft)"
+  },
+  "technical_context": {
+    "architecture_pattern": "Event-driven microkernel with plugin-based strategies",
+    "design_philosophy": [
+      "Modularity: Single responsibility per module",
+      "Extensibility: Plugin architecture for strategies and indicators",
+      "Reliability: Circuit breakers, retry logic, graceful degradation",
+      "Observability: Structured logging, metrics, distributed tracing",
+      "Safety: Multiple layers of risk management and validation",
+      "Performance: Optimized for low-latency signal-to-execution"
+    ],
+    "core_principles": {
+      "autonomous_operation": "Minimal human intervention after initial setup",
+      "adaptive_intelligence": "ML/RL models adjust to market conditions",
+      "risk_first": "Risk management is primary concern, profits are secondary",
+      "full_observability": "Every action is logged, measured, and traceable",
+      "defensive_programming": "Assume failures and handle gracefully"
+    },
+    "technology_choices": {
+      "python": "Chosen for rapid development, rich ecosystem, ML/data science libraries",
+      "sqlite_wal": "Lightweight, zero-config database with concurrent access support",
+      "pydantic": "Strong typing and validation for configuration safety",
+      "prometheus": "Industry-standard metrics collection for production monitoring",
+      "flask": "Lightweight web framework for backtesting UI and RPC server",
+      "mt5_api": "Native Python binding to MetaTrader 5 for order execution"
+    }
+  },
+  "operational_context": {
+    "runtime_environment": {
+      "execution_mode": "Continuous loop with configurable poll interval (15-60 seconds)",
+      "trading_hours": "24/7 for forex, session-aware for other instruments",
+      "resource_requirements": {
+        "cpu": "2+ cores recommended (single-threaded main loop, async workers)",
+        "memory": "2GB minimum, 4GB recommended",
+        "disk": "10GB for logs, database, and ML models",
+        "network": "Stable internet connection to broker (low latency preferred)"
+      },
+      "dependencies": {
+        "mt5_terminal": "MetaTrader 5 terminal must be running and logged in",
+        "python_version": "3.10 or higher",
+        "optional_services": [
+          "Prometheus for metrics scraping",
+          "Discord webhook for notifications",
+          "Ollama for local LLM analysis"
+        ]
+      }
+    },
+    "trading_workflow": {
+      "startup_sequence": [
+        "Load and validate configuration",
+        "Initialize database connection (WAL mode)",
+        "Connect to MT5 terminal",
+        "Initialize indicators and strategies",
+        "Load ML models (if available)",
+        "Start monitoring and observability services",
+        "Enter main trading loop"
+      ],
+      "main_loop_steps": [
+        "Fetch latest market data from MT5",
+        "Calculate technical indicators",
+        "Detect market regime (trending/ranging/volatile)",
+        "Generate trading signals from active strategy",
+        "Apply entry confluence filtering (quality gate)",
+        "Evaluate risk and position sizing",
+        "Execute approved orders via MT5 API",
+        "Track active positions and unrealized P&L",
+        "Monitor exit conditions (trailing stop, time, profit target)",
+        "Execute exits when conditions are met",
+        "Record trades to database",
+        "Collect metrics and update dashboards",
+        "Sleep for poll interval"
+      ],
+      "shutdown_sequence": [
+        "Graceful signal handling (SIGINT/SIGTERM)",
+        "Close open positions (optional, configurable)",
+        "Flush database writes",
+        "Export final metrics",
+        "Close MT5 connection",
+        "Clean exit"
+      ]
+    },
+    "data_flows": {
+      "market_data_ingestion": "MT5 → Data Layer → Indicator Calculation → Strategy Engine",
+      "signal_generation": "Strategy Engine → Cognition Enhancement → Entry Confluence Filter → Risk Manager",
+      "order_execution": "Risk Approved Signal → Execution Engine → MT5 API → Position Manager",
+      "position_monitoring": "Position Tracker → Exit Coordinator → Exit Strategies → Execution Engine",
+      "observability": "All Modules → Structured Logger → Metrics Collector → Prometheus/Database"
+    }
+  },
+  "configuration_context": {
+    "configuration_sources": [
+      {
+        "file": "config.json",
+        "priority": 1,
+        "description": "Primary configuration file (validated by Pydantic schema)"
+      },
+      {
+        "file": ".env",
+        "priority": 2,
+        "description": "Environment variables for secrets (MT5 credentials, API keys)"
+      },
+      {
+        "file": "CLI arguments",
+        "priority": 3,
+        "description": "Runtime overrides (--dry-run, --mindset, --symbol, etc.)"
+      }
+    ],
+    "configuration_layers": {
+      "mt5_connection": {
+        "parameters": ["account", "password", "server"],
+        "source": ".env recommended (keep secrets out of config.json)"
+      },
+      "trading_parameters": {
+        "parameters": ["symbol", "timeframe", "poll_interval", "lookback_bars"],
+        "source": "config.json or CLI override"
+      },
+      "strategy_selection": {
+        "parameters": ["strategy.type", "strategy.params", "dynamic_selection"],
+        "source": "config.json or mindset preset"
+      },
+      "risk_management": {
+        "parameters": ["max_position_size_pct", "max_daily_loss_pct", "position_sizing_method"],
+        "source": "config.json or mindset preset"
+      },
+      "exit_strategies": {
+        "parameters": ["trailing_stop", "time_based", "profit_target", "adverse_movement"],
+        "source": "config.json (array of enabled strategies)"
+      },
+      "observability": {
+        "parameters": ["log_level", "prometheus_enabled", "discord_webhook"],
+        "source": "config.json and .env"
+      },
+      "ml_settings": {
+        "parameters": ["ml.enabled", "ml.models_path", "ml.training_mode"],
+        "source": "config.json"
+      }
+    },
+    "mindset_presets": {
+      "conservative": {
+        "risk_level": "Very Low",
+        "position_size": "1-2% per trade",
+        "max_positions": 2,
+        "daily_loss_limit": "$25 or 1% equity",
+        "poll_interval": "60 seconds",
+        "use_case": "Capital preservation, learning, small accounts"
+      },
+      "balanced": {
+        "risk_level": "Moderate",
+        "position_size": "2% per trade",
+        "max_positions": 3,
+        "daily_loss_limit": "$50 or 2% equity",
+        "poll_interval": "30 seconds",
+        "use_case": "Standard retail trading, most users"
+      },
+      "aggressive": {
+        "risk_level": "High",
+        "position_size": "5% per trade",
+        "max_positions": 5,
+        "daily_loss_limit": "$100 or 3% equity",
+        "poll_interval": "20 seconds",
+        "use_case": "Active trading, experienced traders"
+      },
+      "ultra_aggressive": {
+        "risk_level": "Very High",
+        "position_size": "15% per trade",
+        "max_positions": 10,
+        "daily_loss_limit": "$500 or 5% equity",
+        "poll_interval": "15 seconds",
+        "use_case": "Scalping, HFT, high-risk tolerance"
+      }
+    }
+  },
+  "integration_context": {
+    "mt5_integration": {
+      "connection_method": "MetaTrader5 Python API (via shared memory)",
+      "supported_order_types": ["MARKET", "LIMIT", "STOP"],
+      "supported_instruments": ["Forex", "Indices", "Commodities", "Futures", "Stocks"],
+      "order_execution_mode": "Synchronous with retry logic",
+      "position_tracking": "Real-time via MT5 API polling",
+      "data_updates": "On-demand (pulled every poll interval)"
+    },
+    "vector_database_integration": {
+      "name": "Hektor Vector Studio",
+      "purpose": "Semantic pattern recognition and backtest result storage",
+      "embedding_model": "Custom embedder for chart patterns and market narratives",
+      "use_cases": [
+        "Store and retrieve similar chart patterns",
+        "Semantic search of backtest results",
+        "Pattern-based strategy selection",
+        "Market regime clustering"
+      ],
+      "status": "Stable, optional feature"
+    },
+    "llm_integration": {
+      "name": "Ollama",
+      "model": "Local LLM (user-configurable)",
+      "purpose": "Generate market narratives and trade explanations",
+      "use_cases": [
+        "Explain why a trade was taken",
+        "Generate market commentary",
+        "Summarize trading session",
+        "Assist in configuration via NLP wizard"
+      ],
+      "status": "Experimental, optional feature"
+    },
+    "discord_integration": {
+      "purpose": "Real-time notifications",
+      "notification_types": [
+        "Trade executions (entry/exit)",
+        "Risk events (daily loss limit, drawdown warnings)",
+        "System health alerts (connection loss, errors)",
+        "Performance summaries (daily/weekly reports)"
+      ],
+      "configuration": "Webhook URL in .env file",
+      "status": "Stable, optional feature"
+    },
+    "prometheus_integration": {
+      "purpose": "Production metrics and monitoring",
+      "metrics_exported": [
+        "Trade performance (win rate, profit factor, Sharpe ratio)",
+        "Position metrics (open positions, unrealized P&L)",
+        "System health (CPU, memory, uptime)",
+        "Strategy performance (per-strategy win rate, P&L)"
+      ],
+      "endpoint": "http://localhost:8000/metrics",
+      "status": "Stable, recommended for production"
+    }
+  },
+  "development_context": {
+    "development_philosophy": "Test-driven, modular, production-ready from day one",
+    "code_quality_standards": {
+      "test_coverage": "95%+ (unit + integration tests)",
+      "linting": "flake8 for style, mypy for type checking",
+      "formatting": "black for consistent code style",
+      "documentation": "Comprehensive inline comments and markdown docs"
+    },
+    "testing_strategy": {
+      "unit_tests": "Test individual components in isolation (indicators, strategies, risk)",
+      "integration_tests": "Test component interactions (trading loop, database, MT5 connector)",
+      "stress_tests": "24-72 hour continuous runs with synthetic data",
+      "backtesting": "Historical validation of strategies on real market data"
+    },
+    "ci_cd_pipeline": {
+      "platform": "GitHub Actions",
+      "triggers": ["Push to main/develop", "Pull requests", "Nightly schedule"],
+      "jobs": [
+        "Lint and format check",
+        "Unit and integration tests (multi-OS, multi-Python)",
+        "Coverage report",
+        "Security audit",
+        "Build Docker image",
+        "Deploy to staging (on release tags)"
+      ]
+    },
+    "version_control": {
+      "repository": "https://github.com/amuzetnoM/cthulu",
+      "branching_strategy": "GitFlow (main, develop, feature/*, hotfix/*)",
+      "release_process": "Semantic versioning (MAJOR.MINOR.PATCH)",
+      "current_version": "5.3.0",
+      "previous_major_versions": [
+        "6.0.0 - K9 Release: Multi-asset intelligence, tentacle POA, autonomous trading",
+        "5.1.x - Architectural overhaul, 6→7 strategies",
+        "5.0.x - Rebranding from Herald to Cthulu",
+        "4.x - Dynamic strategy selection, exit strategies",
+        "3.x - Multi-strategy support, ML integration"
+      ]
+    }
+  },
+  "team_context": {
+    "project_ownership": "Artifact Virtual organization",
+    "primary_maintainers": "Cthulu Development Team",
+    "contribution_model": "Open source (AGPL-3.0), community contributions welcome",
+    "communication_channels": [
+      "GitHub Issues for bug reports and feature requests",
+      "GitHub Discussions for community Q&A",
+      "Pull requests for code contributions"
+    ],
+    "documentation_responsibility": "Maintained in /docs directory, updated with each release",
+    "support_model": "Community-supported, documentation-first"
+  },
+  "risk_and_compliance_context": {
+    "trading_disclaimer": "Software provided AS-IS for educational purposes. Trading carries substantial risk of loss. Users trade at their own risk.",
+    "license_compliance": "AGPL-3.0-or-later requires derivative works to be open source",
+    "data_privacy": "No user data is collected by default. Local database and logs remain on user's machine.",
+    "security_considerations": [
+      "Keep MT5 credentials in .env file (not committed to git)",
+      "Use RPC API token for external access",
+      "Firewall rules recommended for production deployments",
+      "Regular security audits (stored in /audit directory)"
+    ],
+    "regulatory_considerations": "Users responsible for compliance with local trading regulations and broker terms of service"
+  },
+  "future_context": {
+    "strategic_direction": "Evolve into comprehensive AI-native trading platform with multi-asset support, advanced ML models, and community strategy marketplace",
+    "planned_enhancements": [
+      "Multi-broker support (beyond MT5)",
+      "Cross-asset portfolio optimization",
+      "Advanced ML models (transformers for time-series)",
+      "Strategy marketplace (community-contributed strategies)",
+      "Cloud-native deployment options (Kubernetes, serverless)",
+      "Real-time collaboration features",
+      "Mobile app for monitoring",
+      "Enhanced backtesting with Monte Carlo simulation"
+    ],
+    "technical_debt_priorities": [
+      "Unify risk management modules (risk/manager.py and position/risk_manager.py)",
+      "Standardize error handling across all modules",
+      "Improve test coverage for edge cases",
+      "Refactor legacy code in .archive directory",
+      "Add type hints to all modules (100% mypy coverage)"
+    ],
+    "community_goals": [
+      "Grow contributor base",
+      "Establish strategy sharing community",
+      "Create video tutorials and courses",
+      "Host trading competitions (backtesting challenges)",
+      "Partner with educational institutions"
+    ]
+  },
+  "metadata": {
+    "document_version": "1.0.0",
+    "generated_date": "2026-01-27T11:17:55.842Z",
+    "last_updated": "2026-01-27T11:17:55.842Z",
+    "author": "Cthulu Project Management Team",
+    "purpose": "Provide comprehensive system context for developers, operators, and stakeholders"
+  }
+}

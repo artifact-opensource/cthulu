@@ -1,0 +1,83 @@
+# Cthulu Trading Bot Configuration
+# Copy this file to config.yaml and fill in your details
+
+mt5:
+  # Your MetaTrader 5 account credentials
+  login: 123456789  # Your account number
+  password: "your_password_here"
+  server: "YourBroker-Demo"  # e.g., "MetaQuotes-Demo"
+  timeout: 60000  # Connection timeout in milliseconds
+  portable: false  # Set to true if using portable MT5
+
+trading:
+  # Trading parameters
+  symbol: "XAUUSD"  # Primary trading symbol (Gold/USD)
+  timeframe: "H1"  # H1, M15, M5, D1, etc.
+  
+  # Risk management
+  risk_per_trade: 0.01  # 1% of account per trade
+  max_positions: 3  # Maximum concurrent positions
+  max_daily_loss: 0.05  # 5% max daily drawdown
+  
+  # Order parameters
+  slippage: 10  # Maximum slippage in points
+  magic_number: 123456  # Unique identifier for this bot's orders (default)
+  
+strategy:
+  # Active strategy configuration
+  name: "simple_ma_cross"  # Strategy to use
+  
+  # Strategy-specific parameters
+  params:
+    fast_period: 20
+    slow_period: 50
+    confirmation_candles: 1  # Wait N candles after signal
+    
+  # Trade filters
+  filters:
+    min_atr_multiple: 1.5  # Minimum profit target in ATR multiples
+    max_spread: 50  # Maximum spread in points
+    trading_hours:  # Only trade during these hours (UTC)
+      start: 7
+      end: 20
+
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/herald.log"
+  max_size: 10485760  # 10MB
+  backup_count: 5
+
+notifications:
+  enabled: false
+  # Email notifications (configure later)
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    from_email: ""
+    to_email: ""
+    password: ""
+  
+  # Telegram notifications (configure later)
+  telegram:
+    enabled: false
+    bot_token: ""
+    chat_id: ""
+
+backtesting:
+  enabled: false
+  start_date: "2024-01-01"
+  end_date: "2024-12-31"
+  initial_balance: 10000
+
+integration:
+  # Integration with gold_standard analysis
+  gold_standard:
+    enabled: false
+    db_path: "../gold_standard/gold_standard.db"
+    use_signals: true
+    use_regime: true
+
+
+
+

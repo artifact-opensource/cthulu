@@ -1,0 +1,111 @@
+{
+    "symbol": "EURUSD",
+    "timeframe": "M5",
+    "mode": "live",
+    "loop_interval": 15,
+    "connector_mode": "webhook",
+    "mt5": {
+        "login": 0,
+        "password": "",
+        "server": "",
+        "path": "/home/adam/.mt5/drive_c/Program Files/MetaTrader 5/terminal64.exe"
+    },
+    "market_data_server": {
+        "url": "http://127.0.0.1:9002"
+    },
+    "risk": {
+        "max_positions": 1,
+        "max_positions_per_symbol": 1,
+        "max_risk_per_trade": 0.01,
+        "min_balance_threshold": 50.0,
+        "default_lot_size": 0.01,
+        "max_lot_size": 0.05
+    },
+    "dynamic_sltp": {
+        "base_sl_atr": 2.0,
+        "base_tp_atr": 3.0,
+        "breakeven_trigger_atr": 1.0,
+        "trailing_trigger_atr": 1.5,
+        "trailing_lock_pct": 0.5
+    },
+    "entry_confluence": {
+        "enabled": true,
+        "min_score_to_enter": 60,
+        "min_score_for_full_size": 80,
+        "level_weight": 0.40,
+        "momentum_weight": 0.25,
+        "timing_weight": 0.20,
+        "structure_weight": 0.15
+    },
+    "session_orb": {
+        "enabled": true,
+        "range_duration": 30,
+        "confirm_bars": 1,
+        "min_range_size_atr": 0.5,
+        "max_range_size_atr": 3.0,
+        "sessions": ["london", "new_york"]
+    },
+    "order_blocks": {
+        "enabled": true,
+        "swing_lookback": 5,
+        "min_move_atr": 1.5,
+        "max_age_bars": 100,
+        "use_body_only": true
+    },
+    "adoption_policy": {
+        "enabled": true,
+        "min_trade_age_seconds": 0,
+        "apply_sltp_on_adopt": true,
+        "log_only": false
+    },
+    "strategy_selector": {
+        "enabled_strategies": [
+            "sma_crossover",
+            "ema_crossover",
+            "trend_following",
+            "mean_reversion"
+        ],
+        "regime_weight": 0.4,
+        "performance_weight": 0.35,
+        "confidence_weight": 0.25
+    },
+    "exit_strategies": {
+        "trailing_stop": {
+            "mode": "protective",
+            "atr_multiplier": 1.5,
+            "activation_profit_pips": 10,
+            "min_trail_distance": 5
+        },
+        "partial_profit": {
+            "levels": [
+                {
+                    "profit_pips": 15,
+                    "exit_portion": 0.5
+                }
+            ]
+        },
+        "time_based": {
+            "max_hold_hours": 12,
+            "close_before_weekend": true
+        }
+    },
+    "adaptive_drawdown": {
+        "trailing_lock": 0.5,
+        "survival_threshold": 50.0,
+        "recovery_factor": 0.5
+    },
+    "execution": {
+        "max_slippage_points": 30,
+        "retry_count": 2,
+        "retry_delay_ms": 500
+    },
+    "data": {
+        "cache_ttl_seconds": 5,
+        "market_data_server": {
+            "url": "http://127.0.0.1:9002"
+        }
+    },
+    "database": {
+        "name": "cthulu_demo_eurusd.db"
+    }
+}

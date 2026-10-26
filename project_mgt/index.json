@@ -1,0 +1,580 @@
+{
+  "project": {
+    "name": "Cthulu Trading System",
+    "codename": "EVOQUE",
+    "version": "5.3.0",
+    "repository": "https://github.com/amuzetnoM/cthulu",
+    "license": "AGPL-3.0-or-later",
+    "description": "Autonomous multi-strategy trading system for MetaTrader 5 featuring AI/ML capabilities, comprehensive risk management, and production-grade observability",
+    "status": "STABLE",
+    "last_updated": "2026-01-17",
+    "organization": "Artifact Virtual",
+    "website": "https://artifactvirtual.com",
+    "huggingface": "https://huggingface.co/amuzetnoM/CTHULU"
+  },
+  "documentation": {
+    "primary": [
+      {
+        "file": "readme.md",
+        "title": "Project Index",
+        "description": "Main entry point with quick reference, installation, and component overview",
+        "category": "overview"
+      },
+      {
+        "file": "OVERVIEW.md",
+        "title": "Complete System Overview",
+        "description": "Comprehensive system architecture, data flows, and technical specifications",
+        "category": "architecture"
+      }
+    ],
+    "core_docs": [
+      {
+        "file": "docs/01_INTRODUCTION.md",
+        "title": "Introduction & User Guide",
+        "description": "System overview and comprehensive user documentation",
+        "category": "getting_started"
+      },
+      {
+        "file": "docs/02_QUICKSTART.md",
+        "title": "Quick Start Guide",
+        "description": "Installation and first-time setup instructions",
+        "category": "getting_started"
+      },
+      {
+        "file": "docs/03_USAGE.md",
+        "title": "Usage & Terms",
+        "description": "Terms of use and basic operational procedures",
+        "category": "operations"
+      },
+      {
+        "file": "docs/04_ARCHITECTURE.md",
+        "title": "System Architecture",
+        "description": "Technical architecture with comprehensive diagrams and data flows",
+        "category": "architecture"
+      },
+      {
+        "file": "docs/05_FEATURES_GUIDE.md",
+        "title": "Features Guide",
+        "description": "Complete feature documentation and SAFE engine overview",
+        "category": "features"
+      },
+      {
+        "file": "docs/06_MINDSETS.md",
+        "title": "Trading Mindsets",
+        "description": "Trading profiles: Conservative, Balanced, Aggressive, Ultra-Aggressive",
+        "category": "configuration"
+      },
+      {
+        "file": "docs/07_RISK.md",
+        "title": "Risk Management",
+        "description": "Risk configuration and stop-loss strategies",
+        "category": "risk"
+      },
+      {
+        "file": "docs/08_POSITION_MANAGEMENT.md",
+        "title": "Position Management",
+        "description": "Profit scaling, lifecycle, and external trade adoption",
+        "category": "trading"
+      },
+      {
+        "file": "docs/09_DEPLOYMENT.md",
+        "title": "Deployment Guide",
+        "description": "Production deployment strategies (Docker, systemd, Windows)",
+        "category": "deployment"
+      },
+      {
+        "file": "docs/10_OBSERVABILITY.md",
+        "title": "Observability",
+        "description": "Metrics, monitoring, and Prometheus setup",
+        "category": "monitoring"
+      },
+      {
+        "file": "docs/11_BACKTESTING.md",
+        "title": "Backtesting Framework",
+        "description": "Strategy validation and historical testing",
+        "category": "testing"
+      },
+      {
+        "file": "docs/12_ML-RL.md",
+        "title": "Machine Learning & RL",
+        "description": "ML/RL integration philosophy and implementation",
+        "category": "ai_ml"
+      },
+      {
+        "file": "docs/13_PERFORMANCE_TUNING.md",
+        "title": "Performance Tuning",
+        "description": "Optimization and benchmarking strategies",
+        "category": "performance"
+      },
+      {
+        "file": "docs/14_ADVISORY.md",
+        "title": "Advisory Modes",
+        "description": "Testing modes and paper trading",
+        "category": "testing"
+      },
+      {
+        "file": "docs/16_SECURITY.md",
+        "title": "Security Guide",
+        "description": "Security guidelines and best practices",
+        "category": "security"
+      },
+      {
+        "file": "docs/17_MATHEMATICS.md",
+        "title": "Mathematical Foundations",
+        "description": "Mathematical foundations for risk and sizing calculations",
+        "category": "technical"
+      },
+      {
+        "file": "docs/18_HECKTOR.md",
+        "title": "Hecktor Integration",
+        "description": "Vector database integration for pattern recognition",
+        "category": "ai_ml"
+      },
+      {
+        "file": "docs/19_PRIVACY_POLICY.md",
+        "title": "Privacy Policy",
+        "description": "Data handling and privacy practices",
+        "category": "legal"
+      },
+      {
+        "file": "docs/Changelog/CHANGELOG.md",
+        "title": "Changelog",
+        "description": "Complete version history and release notes",
+        "category": "maintenance"
+      }
+    ],
+    "project_management": [
+      {
+        "file": "project_mgt/index.json",
+        "title": "Project Index",
+        "description": "Central index of all project components and documentation",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/context.json",
+        "title": "System Context",
+        "description": "Current operational state and system context",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/config.json",
+        "title": "Configuration Reference",
+        "description": "Consolidated configuration documentation",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/plan.json",
+        "title": "Development Plan",
+        "description": "Development priorities and task breakdown",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/roadmap.json",
+        "title": "2026 Roadmap",
+        "description": "Strategic roadmap with quarterly milestones",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/system_map.json",
+        "title": "System Architecture Map",
+        "description": "Complete system architecture and module relationships",
+        "category": "management"
+      },
+      {
+        "file": "project_mgt/system_status.json",
+        "title": "System Status",
+        "description": "Current system health, metrics, and operational state",
+        "category": "management"
+      }
+    ]
+  },
+  "modules": {
+    "core_trading": [
+      {
+        "name": "core",
+        "path": "core/",
+        "description": "Core orchestration layer (bootstrap, trading loop, shutdown)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "strategy",
+        "path": "strategy/",
+        "description": "Trading strategies (7 active types with fallback system)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "indicators",
+        "path": "indicators/",
+        "description": "Technical indicators (12 types with runtime management)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "cognition",
+        "path": "cognition/",
+        "description": "AI/ML intelligence layer (regime detection, predictions, ML exits)",
+        "status": "stable",
+        "readme": "cognition/README.md"
+      },
+      {
+        "name": "execution",
+        "path": "execution/",
+        "description": "Order execution engine with MT5 integration",
+        "status": "stable",
+        "readme": null
+      }
+    ],
+    "risk_position": [
+      {
+        "name": "risk",
+        "path": "risk/",
+        "description": "Risk management and position sizing (adaptive, kelly, drawdown protection)",
+        "status": "stable",
+        "readme": "risk/README.md"
+      },
+      {
+        "name": "position",
+        "path": "position/",
+        "description": "Position lifecycle and profit scaling management",
+        "status": "stable",
+        "readme": "position/README.md"
+      },
+      {
+        "name": "exit",
+        "path": "exit/",
+        "description": "Exit strategies (trailing stop, time-based, profit target, adverse movement)",
+        "status": "stable",
+        "readme": null
+      }
+    ],
+    "infrastructure": [
+      {
+        "name": "connector",
+        "path": "connector/",
+        "description": "MetaTrader 5 connector and session management",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "persistence",
+        "path": "persistence/",
+        "description": "Database layer for trades, signals, and metrics (SQLite WAL)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "utils",
+        "path": "utils/",
+        "description": "Circuit breakers, rate limiters, caching, retry logic",
+        "status": "stable",
+        "readme": "utils/README.md"
+      },
+      {
+        "name": "sentinel",
+        "path": "sentinel/",
+        "description": "System monitoring and health checks",
+        "status": "stable",
+        "readme": "sentinel/README.md"
+      }
+    ],
+    "observability": [
+      {
+        "name": "monitoring",
+        "path": "monitoring/",
+        "description": "Trade monitoring and metrics collection",
+        "status": "stable",
+        "readme": "monitoring/README.md"
+      },
+      {
+        "name": "observability",
+        "path": "observability/",
+        "description": "Structured logging, Prometheus metrics, runbooks",
+        "status": "stable",
+        "readme": "observability/README.md"
+      },
+      {
+        "name": "rpc",
+        "path": "rpc/",
+        "description": "RPC server for external integrations",
+        "status": "stable",
+        "readme": "rpc/README.md"
+      }
+    ],
+    "ai_ml": [
+      {
+        "name": "ML_RL",
+        "path": "ML_RL/",
+        "description": "ML/RL model training and validation pipeline",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "model/arch_2.0",
+        "path": "model/arch_2.0/",
+        "description": "CTHULU TNT v2.0 - Trading-Native Transformer architecture with MoE",
+        "status": "active_development",
+        "readme": "model/README.md"
+      },
+      {
+        "name": "backtesting",
+        "path": "backtesting/",
+        "description": "Strategy validation and historical testing framework",
+        "status": "stable",
+        "readme": "backtesting/README.md"
+      },
+      {
+        "name": "training",
+        "path": "training/",
+        "description": "ML/RL model training and validation utilities",
+        "status": "stable",
+        "readme": "training/README.md"
+      },
+      {
+        "name": "integrations",
+        "path": "integrations/",
+        "description": "External integrations (Hektor vector DB, Discord, ML export)",
+        "status": "stable",
+        "readme": null
+      }
+    ],
+    "interfaces": [
+      {
+        "name": "ui",
+        "path": "ui/",
+        "description": "User interfaces (Tkinter desktop GUI, web components)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "ui_server",
+        "path": "ui_server/",
+        "description": "Separate UI server application",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "config",
+        "path": "config/",
+        "description": "Configuration system and setup wizard",
+        "status": "stable",
+        "readme": null
+      }
+    ],
+    "deployment": [
+      {
+        "name": "deployment",
+        "path": "deployment/",
+        "description": "Production deployment configurations",
+        "status": "stable",
+        "readme": "deployment/README.md"
+      },
+      {
+        "name": "configs",
+        "path": "configs/",
+        "description": "Configuration templates and mindset presets",
+        "status": "stable",
+        "readme": "configs/mindsets/README.md"
+      }
+    ],
+    "testing": [
+      {
+        "name": "tests",
+        "path": "tests/",
+        "description": "Test suite (85+ tests, 95% coverage)",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "audit",
+        "path": "audit/",
+        "description": "Security audits and compliance reports",
+        "status": "stable",
+        "readme": "audit/README.md"
+      }
+    ],
+    "utilities": [
+      {
+        "name": "scripts",
+        "path": "scripts/",
+        "description": "Helper scripts for backtesting, training, and utilities",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "tools",
+        "path": "tools/",
+        "description": "Analysis and visualization tools",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "advisory",
+        "path": "advisory/",
+        "description": "Advisory and ghost trading modes",
+        "status": "stable",
+        "readme": "advisory/README.md"
+      },
+      {
+        "name": "news",
+        "path": "news/",
+        "description": "News ingestion and market data feeds",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "ops",
+        "path": "ops/",
+        "description": "Operational tools and guardrails",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "market",
+        "path": "market/",
+        "description": "Market data providers and tick management",
+        "status": "stable",
+        "readme": null
+      },
+      {
+        "name": "data",
+        "path": "data/",
+        "description": "Data layer utilities",
+        "status": "stable",
+        "readme": null
+      }
+    ]
+  },
+  "technology_stack": {
+    "language": {
+      "name": "Python",
+      "version": "3.10+",
+      "description": "Primary development language"
+    },
+    "trading_platform": {
+      "name": "MetaTrader 5",
+      "api": "MetaTrader5 Python API",
+      "description": "Broker integration for order execution"
+    },
+    "data_processing": [
+      {
+        "name": "Pandas",
+        "purpose": "Time-series data analysis"
+      },
+      {
+        "name": "NumPy",
+        "purpose": "Numerical computing"
+      }
+    ],
+    "storage": [
+      {
+        "name": "SQLite",
+        "mode": "WAL (Write-Ahead Logging)",
+        "purpose": "Persistent trade database"
+      }
+    ],
+    "ml_frameworks": [
+      {
+        "name": "Scikit-optimize",
+        "purpose": "Hyperparameter optimization"
+      },
+      {
+        "name": "Scipy",
+        "purpose": "Scientific computing"
+      }
+    ],
+    "configuration": [
+      {
+        "name": "Pydantic",
+        "version": "v2",
+        "purpose": "Schema validation"
+      },
+      {
+        "name": "PyYAML",
+        "purpose": "YAML configuration"
+      }
+    ],
+    "web_api": [
+      {
+        "name": "Flask",
+        "purpose": "HTTP API server"
+      },
+      {
+        "name": "Flask-SocketIO",
+        "purpose": "WebSocket real-time updates"
+      }
+    ],
+    "monitoring": [
+      {
+        "name": "Prometheus",
+        "purpose": "Metrics collection"
+      },
+      {
+        "name": "Structlog",
+        "purpose": "Structured logging"
+      }
+    ],
+    "visualization": [
+      {
+        "name": "Tkinter",
+        "purpose": "Desktop GUI"
+      },
+      {
+        "name": "Flask",
+        "purpose": "Web-based dashboards"
+      }
+    ],
+    "async": [
+      {
+        "name": "Eventlet",
+        "purpose": "Concurrent operations"
+      }
+    ],
+    "ai_integrations": [
+      {
+        "name": "Hektor Vector Studio",
+        "purpose": "Vector database for pattern recognition"
+      },
+      {
+        "name": "Ollama",
+        "purpose": "Local LLM for AI analysis"
+      }
+    ]
+  },
+  "key_metrics": {
+    "version": "5.3.0",
+    "codename": "EVOQUE",
+    "total_codebase_lines": 3600,
+    "strategies_count": 7,
+    "indicators_count": 12,
+    "exit_strategies_count": 4,
+    "risk_profiles_count": 4,
+    "ml_models_count": 4,
+    "test_count": 243,
+    "test_coverage_percent": 95,
+    "uptime_percent": 98.5,
+    "last_update": "2026-02-01",
+    "license": "AGPL-3.0-or-later",
+    "tnt_v2": {
+      "status": "active_development",
+      "parameters": "~850K",
+      "architecture": "Sparse MoE Transformer",
+      "features": ["Multi-horizon prediction", "Bayesian confidence", "Expert routing"]
+    }
+  },
+  "quick_links": {
+    "repository": "https://github.com/amuzetnoM/cthulu",
+    "huggingface": "https://huggingface.co/amuzetnoM/CTHULU",
+    "organization": "https://artifactvirtual.com",
+    "issues": "https://github.com/amuzetnoM/cthulu/issues",
+    "documentation": "docs/",
+    "changelog": "docs/Changelog/CHANGELOG.md",
+    "license": "LICENSE"
+  },
+  "generated": {
+    "timestamp": "2026-01-27T11:17:55.842Z",
+    "version": "1.0.0",
+    "tool": "Cthulu Project Management Documentation Generator"
+  }
+}

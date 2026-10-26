@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cthulu v5.1.0 APEX - Complete System Architecture Map">
+    <title>System Architecture | Cthulu v5.1.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --void: #000000;
+            --deep: #050508;
+            --surface: #0a0a0f;
+            --elevated: #12121a;
+            --border: #1a1a25;
+            --muted: #4a4a5a;
+            --text: #e0e0e8;
+            --bright: #ffffff;
+            --accent: #00ff88;
+            --accent-dim: #00cc6a;
+            --warning: #ffaa00;
+            --danger: #ff4444;
+            --info: #00aaff;
+            --purple: #9b59b6;
+            --glow: rgba(0, 255, 136, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--void);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 136, 0.01) 2px,
+                    rgba(0, 255, 136, 0.01) 4px);
+            z-index: 9999;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-decoration: none;
+        }
+
+        .header-logo {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            display: inline-block;
+            margin-right: 0.5rem;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+        }
+
+        .version-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--accent);
+            color: var(--void);
+            border-radius: 2px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 5rem 2rem 4rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--bright);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 1rem 1.5rem;
+            background: var(--elevated);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            font-size: 1rem;
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        .mermaid {
+            background: var(--elevated);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .color-cognition {
+            background: var(--purple);
+        }
+
+        .color-risk {
+            background: var(--danger);
+        }
+
+        .color-exit {
+            background: var(--warning);
+        }
+
+        .color-execution {
+            background: var(--accent);
+        }
+
+        .color-strategy {
+            background: var(--info);
+        }
+
+        .color-entry {
+            background: #00d4ff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: var(--elevated);
+        }
+
+        tr:hover {
+            background: var(--elevated);
+        }
+
+        .status-operational {
+            color: var(--accent);
+        }
+
+        .status-new {
+            color: #00d4ff;
+        }
+
+        .status-enhanced {
+            color: var(--warning);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            background: var(--elevated);
+            padding: 0.2rem 0.5rem;
+            border-radius: 2px;
+            color: var(--text);
+        }
+
+        .flow-note {
+            background: var(--elevated);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .flow-note.warning {
+            border-left-color: var(--warning);
+        }
+
+        .flow-note.danger {
+            border-left-color: var(--danger);
+        }
+
+        .flow-note.info {
+            border-left-color: var(--info);
+        }
+
+        .flow-note strong {
+            color: var(--bright);
+        }
+
+        pre {
+            background: var(--elevated);
+            padding: 1.25rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-left {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .footer-left strong {
+            color: var(--accent);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .legend {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00ff88',
+                primaryTextColor: '#e0e0e8',
+                primaryBorderColor: '#1a1a25',
+                lineColor: '#00ff88',
+                secondaryColor: '#0a0a0f',
+                tertiaryColor: '#12121a',
+                background: '#000000',
+                mainBkg: '#0a0a0f',
+                nodeBkg: '#0a0a0f',
+                nodeBorder: '#00ff88',
+                clusterBkg: '#12121a',
+                clusterBorder: '#1a1a25',
+                titleColor: '#00ff88',
+                edgeLabelBackground: '#0a0a0f'
+            },
+            flowchart: { htmlLabels: true, curve: 'basis' }
+        });
+    </script>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+
+    <nav>
+        <div class="nav-left">
+            <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+                <img class="header-logo" src="../assets/cthulu-white.png" alt="Cthulu logo">
+                <span class="logo">CTHULU</span>
+            </a>
+            <span class="version-tag">v5.1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="architecture.html" class="active">Architecture</a></li>
+            <li><a href="roadmap.html">Roadmap</a></li>
+            <li><a href="https://github.com/amuzetnoM/cthulu" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">System Architecture</h1>
+            <p class="page-subtitle">Cthulu v5.1.0 APEX | Complete Architecture Map</p>
+        </div>
+
+        <!-- Main Architecture -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9670;</span>
+                Complete System Architecture
+            </div>
+            <div class="section-content">
+                <div class="mermaid">
+                    flowchart TB
+                    subgraph ENTRY["Entry Layer"]
+                    MAIN["__main__.py"]
+                    WIZ["wizard.py"]
+                    CLI["CLI Args"]
+                    end
+
+                    subgraph CORE["Core Engine"]
+                    BOOT["bootstrap.py"]
+                    LOOP["trading_loop.py"]
+                    SHUT["shutdown.py"]
+                    end
+
+                    subgraph COGNITION["Cognition Engine"]
+                    COG_ENG["engine.py"]
+                    REGIME["regime_classifier.py"]
+                    PREDICTOR["price_predictor.py"]
+                    EXIT_ORACLE["exit_oracle.py"]
+                    ENTRY_CONF["entry_confluence.py"]
+                    end
+
+                    subgraph STRATEGY["Strategy Layer"]
+                    SEL["strategy_selector.py"]
+                    STRATS["EMA|SMA|Momentum|Scalping|Trend"]
+                    end
+
+                    subgraph RISK["Risk Management"]
+                    EVAL["evaluator.py"]
+                    ADAPT["adaptive_*"]
+                    DYN["dynamic_sltp.py"]
+                    end
+
+                    subgraph EXIT["Exit System"]
+                    COORD["coordinator.py"]
+                    CONFLUENCE["confluence_exit_manager.py"]
+                    EXITS["trailing|time|profit"]
+                    end
+
+                    subgraph EXECUTION["Execution"]
+                    ENGINE["engine.py"]
+                    MT5["mt5_connector.py"]
+                    end
+
+                    ENTRY --> CORE
+                    CORE --> COGNITION
+                    CORE --> STRATEGY
+                    COGNITION -.-> STRATEGY
+                    LOOP --> RISK
+                    RISK --> EXIT
+                    EXIT --> EXECUTION
+                    EXECUTION --> MT5
+                    ENTRY_CONF -.->|quality gate| EXECUTION
+
+                    style COGNITION fill:#9b59b6,stroke:#8e44ad,color:#fff
+                    style RISK fill:#ff4444,stroke:#cc0000,color:#fff
+                    style EXIT fill:#ffaa00,stroke:#cc8800,color:#000
+                    style EXECUTION fill:#00ff88,stroke:#00cc6a,color:#000
+                    style STRATEGY fill:#00aaff,stroke:#0088cc,color:#fff
+                    style ENTRY_CONF fill:#00d4ff,stroke:#00a8cc,color:#000
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color color-cognition"></div> Cognition/AI Layer
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-risk"></div> Risk Management
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-exit"></div> Exit System
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-execution"></div> Execution Engine
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-strategy"></div> Strategy Layer
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-entry"></div> Entry Confluence
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signal Flow -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9672;</span>
+                Signal-to-Execution Flow
+            </div>
+            <div class="section-content">
+                <div class="flow-note info">
+                    <strong>Entry Confluence Filter:</strong> Quality gate that analyzes entry timing, price levels,
+                    and momentum alignment BEFORE execution. Prevents blind entries that turn winning signals into
+                    losers.
+                </div>
+                <div class="mermaid">
+                    flowchart LR
+                    S1["Strategy Signal"] --> S2["Cognition Enhancement"]
+                    S2 --> Q1["Entry Confluence Filter"]
+                    Q1 --> Q2{"Quality?"}
+                    Q2 -->|PREMIUM/GOOD| R1["Risk Approval"]
+                    Q2 -->|MARGINAL| R2["Reduced Size"]
+                    Q2 -->|POOR| Q3["Queue for Better"]
+                    Q2 -->|REJECT| X["Rejected"]
+                    R1 --> E1["Execute"]
+                    R2 --> E1
+                    Q3 -.->|price reached| Q1
+
+                    style Q1 fill:#00d4ff,stroke:#00a8cc,color:#000
+                    style X fill:#ff4444,stroke:#cc0000,color:#fff
+                </div>
+
+                <div class="flow-note">
+                    <strong>Entry Confluence Scoring:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        <li><strong>Level Score (30%):</strong> S/R, round numbers, EMAs, previous session levels</li>
+                        <li><strong>Momentum Score (20%):</strong> Bar momentum, RSI confirmation</li>
+                        <li><strong>Timing Score (25%):</strong> Range position, extension from levels</li>
+                        <li><strong>Structure Score (25%):</strong> Higher highs/lows alignment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit Flow -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9674;</span>
+                Exit Decision Flow
+            </div>
+            <div class="section-content">
+                <div class="mermaid">
+                    flowchart TB
+                    P["Position"] --> EVAL["Exit Strategies"]
+                    EVAL --> C["Confluence Exit Analysis"]
+                    C --> D{"Score?"}
+                    D -->|"< 0.55"| HOLD["HOLD"] D -->|"0.55-0.74"| SCALE["SCALE_OUT"]
+                        D -->|"0.75-0.89"| CLOSE["CLOSE_NOW"]
+                        D -->|">= 0.90"| EMERG["EMERGENCY"]
+                        SCALE --> X["Execute Exit"]
+                        CLOSE --> X
+                        EMERG --> X
+
+                        style C fill:#ffaa00,stroke:#cc8800,color:#000
+                        style EMERG fill:#ff4444,stroke:#cc0000,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <!-- Module Matrix -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9632;</span>
+                Module Integration Matrix
+            </div>
+            <div class="section-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>File</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Entry Confluence</td>
+                            <td><code>cognition/entry_confluence.py</code></td>
+                            <td>Quality gate for trade entries</td>
+                            <td class="status-new">NEW</td>
+                        </tr>
+                        <tr>
+                            <td>Cognition Engine</td>
+                            <td><code>cognition/engine.py</code></td>
+                            <td>AI/ML orchestration</td>
+                            <td class="status-enhanced">ENHANCED</td>
+                        </tr>
+                        <tr>
+                            <td>Trading Loop</td>
+                            <td><code>core/trading_loop.py</code></td>
+                            <td>Main loop with entry confluence</td>
+                            <td class="status-enhanced">ENHANCED</td>
+                        </tr>
+                        <tr>
+                            <td>Confluence Exit</td>
+                            <td><code>exit/confluence_exit_manager.py</code></td>
+                            <td>Multi-indicator exit signals</td>
+                            <td class="status-operational">OPERATIONAL</td>
+                        </tr>
+                        <tr>
+                            <td>Risk Evaluator</td>
+                            <td><code>risk/evaluator.py</code></td>
+                            <td>Unified risk approval</td>
+                            <td class="status-operational">OPERATIONAL</td>
+                        </tr>
+                        <tr>
+                            <td>Strategy Selector</td>
+                            <td><code>strategy/strategy_selector.py</code></td>
+                            <td>Dynamic strategy selection</td>
+                            <td class="status-operational">OPERATIONAL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Entry Confluence Detail -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9733;</span>
+                Entry Confluence Filter Detail
+            </div>
+            <div class="section-content">
+                <div class="flow-note danger">
+                    <strong>Problem Solved:</strong> System generated signals but executed at arbitrary
+                    price levels. Timing between signal generation and execution caused trades to start stressed.
+                </div>
+                <div class="mermaid">
+                    flowchart TB
+                    subgraph DETECT["Level Detection"]
+                    L1["Swing S/R"]
+                    L2["Round Numbers"]
+                    L3["Prev Session H/L"]
+                    L4["EMA Levels"]
+                    end
+
+                    subgraph SCORE["Scoring"]
+                    S1["Level: 30%"]
+                    S2["Momentum: 20%"]
+                    S3["Timing: 25%"]
+                    S4["Structure: 25%"]
+                    end
+
+                    subgraph QUALITY["Classification"]
+                    Q1["PREMIUM >= 85"]
+                    Q2["GOOD >= 70"]
+                    Q3["MARGINAL >= 30"]
+                    Q4["POOR >= 20"]
+                    Q5["REJECT < 20"] end DETECT --> SCORE --> QUALITY
+
+                        Q1 -->|mult=1.0| EXEC["Execute"]
+                        Q2 -->|mult=0.85| EXEC
+                        Q3 -->|mult=0.6| EXEC
+                        Q4 --> WAIT["Wait/Queue"]
+                        Q5 --> SKIP["Skip"]
+
+                        style Q1 fill:#00ff88
+                        style Q5 fill:#ff4444
+                </div>
+            </div>
+        </div>
+
+        <!-- Config Reference -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">&#9881;</span>
+                Configuration Reference
+            </div>
+            <div class="section-content">
+                <div class="flow-note">
+                    <strong>Entry Confluence Config:</strong>
+                </div>
+                <pre>{
+  "entry_confluence": {
+    "min_score_to_enter": 30,
+    "min_score_for_full_size": 60,
+    "enable_wait_mode": true,
+    "max_wait_bars": 5,
+    "level_weight": 0.30,
+    "momentum_weight": 0.20,
+    "timing_weight": 0.25,
+    "structure_weight": 0.25
+  }
+}</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <strong>Cthulu</strong> v5.1.0 | Adaptive Trading Intelligence<br>
+                MIT License | Educational purposes only | Trade at your own risk
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Dashboard</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="roadmap.html">Roadmap</a>
+                <a href="https://github.com/amuzetnoM/cthulu" target="_blank" rel="noopener">GitHub</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

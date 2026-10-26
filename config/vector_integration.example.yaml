@@ -1,0 +1,9 @@
+# Example vector integration config for Cthulu
+vector_studio:
+  enabled: true
+  database_path: ./vectors/cthulu
+  dimension: 512
+  async_writes: true
+  fallback_on_failure: true
+  batch_size: 100
+  retry_attempts: 3

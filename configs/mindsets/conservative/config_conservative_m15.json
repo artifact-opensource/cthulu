@@ -1,0 +1,115 @@
+{
+  "_comment": "Conservative profile, M15 timeframe - Precision capital preservation",
+  "mt5": {
+    "login": "${MT5_LOGIN}",
+    "password": "CHANGE_ME",
+    "server": "${MT5_SERVER}",
+    "timeout": 60000,
+    "path": "${MT5_PATH}"
+  },
+  "risk": {
+    "max_position_size": 0.1,
+    "default_position_size": 0.01,
+    "max_daily_loss": 25.0,
+    "max_positions_per_symbol": 1,
+    "max_total_positions": 2,
+    "position_size_pct": 1.0,
+    "use_kelly_sizing": false,
+    "emergency_stop_loss_pct": 2.0,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 1.5
+  },
+  "trading": {
+    "symbol": "BTCUSD#",
+    "timeframe": "TIMEFRAME_M15",
+    "poll_interval": 60,
+    "lookback_bars": 750
+  },
+  "strategy": {
+    "type": "sma_crossover",
+    "params": {
+      "fast_period": 20,
+      "slow_period": 50,
+      "atr_period": 14,
+      "atr_multiplier": 2.0,
+      "risk_reward_ratio": 2.0,
+      "symbol": "BTCUSD#"
+    }
+  },
+  "confidence_threshold": 0.8,
+  "orphan_trades": {
+    "enabled": true,
+    "adopt_symbols": [
+      "BTCUSD#"
+    ],
+    "ignore_symbols": [],
+    "apply_exit_strategies": true,
+    "max_adoption_age_hours": 0,
+    "log_only": false
+  },
+  "exit_strategies": [
+    {
+      "type": "trailing_stop",
+      "enabled": true,
+      "params": {
+        "atr_multiplier": 2.5,
+        "activation_pct": 0.3
+      }
+    },
+    {
+      "type": "time_based",
+      "enabled": true,
+      "params": {
+        "max_hold_hours": 24.0,
+        "close_before_weekend": true
+      }
+    }
+  ],
+  "indicators": [
+    {
+      "type": "rsi",
+      "params": {
+        "period": 14
+      }
+    },
+    {
+      "type": "macd",
+      "params": {
+        "fast_period": 12,
+        "slow_period": 26,
+        "signal_period": 9
+      }
+    },
+    {
+      "type": "adx",
+      "params": {
+        "period": 14
+      }
+    }
+  ],
+  "database": {
+    "path": "cthulu_conservative.db"
+  },
+  "rpc": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8278
+  },
+  "dynamic_sltp": {
+    "enabled": true,
+    "base_sl_atr_mult": 3.0,
+    "base_tp_atr_mult": 6.0,
+    "breakeven_activation_pct": 0.3,
+    "breakeven_buffer_pct": 0.05,
+    "partial_tp_enabled": false,
+    "trail_activation_pct": 0.5,
+    "trail_distance_atr_mult": 2.5
+  },
+  "adaptive_drawdown": {
+    "enabled": true,
+    "trailing_lock_pct": 0.3,
+    "survival_threshold_pct": 30.0,
+    "critical_threshold_pct": 20.0,
+    "danger_threshold_pct": 10.0
+  }
+}

@@ -1,0 +1,4407 @@
+<?xml version="1.0" ?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.6" serialNumber="urn:uuid:cb42e920-e5cf-4224-840f-c6280fdedfb0" version="1">
+  <metadata>
+    <timestamp>2026-01-01T18:39:37.912781+00:00</timestamp>
+    <tools>
+      <components>
+        <component type="application">
+          <group>CycloneDX</group>
+          <name>cyclonedx-py</name>
+          <version>7.2.1</version>
+          <description>CycloneDX Software Bill of Materials (SBOM) generator for Python projects and environments</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-bom/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-bom-tool.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python/</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+        <component type="library">
+          <group>CycloneDX</group>
+          <name>cyclonedx-python-lib</name>
+          <version>11.6.0</version>
+          <description>Python library for CycloneDX</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-python-lib/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-python-library.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+      </components>
+    </tools>
+  </metadata>
+  <components>
+    <component type="library" bom-ref="Authlib==1.6.6">
+      <name>Authlib</name>
+      <version>1.6.6</version>
+      <description>The ultimate Python library in building OAuth and OpenID Connect servers and clients.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/authlib@1.6.6</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://docs.authlib.org/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/authlib/authlib/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://authlib.org/plans</url>
+          <comment>from packaging metadata Project-URL: Purchase</comment>
+        </reference>
+        <reference type="other">
+          <url>https://blog.authlib.org/</url>
+          <comment>from packaging metadata Project-URL: Blog</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/authlib/authlib</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/lepture</url>
+          <comment>from packaging metadata Project-URL: Donate</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="Automat==22.10.0">
+      <name>Automat</name>
+      <version>22.10.0</version>
+      <description>Self-service finite-state machines for the programmer on the go.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/automat@22.10.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/glyph/Automat</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="Babel==2.10.3">
+      <name>Babel</name>
+      <version>2.10.3</version>
+      <description>Internationalization utilities</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/babel@2.10.3</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/python-babel/babel</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://babel.pocoo.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="CacheControl==0.14.4">
+      <name>CacheControl</name>
+      <version>0.14.4</version>
+      <description>httplib2 caching for requests</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/cachecontrol@0.14.4</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/psf/cachecontrol/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/psf/cachecontrol</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pypi.org/project/CacheControl/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">filecache</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="Jinja2==3.1.2">
+      <name>Jinja2</name>
+      <version>3.1.2</version>
+      <description>A very fast and expressive template engine.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jinja2@3.1.2</purl>
+      <externalReferences>
+        <reference type="chat">
+          <url>https://discord.gg/pallets</url>
+          <comment>from packaging metadata Project-URL: Chat</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://jinja.palletsprojects.com/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pallets/jinja/issues/</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pallets/jinja/</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://palletsprojects.com/donate</url>
+          <comment>from packaging metadata Project-URL: Donate</comment>
+        </reference>
+        <reference type="other">
+          <url>https://twitter.com/PalletsTeam</url>
+          <comment>from packaging metadata Project-URL: Twitter</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://jinja.palletsprojects.com/changes/</url>
+          <comment>from packaging metadata Project-URL: Changes</comment>
+        </reference>
+        <reference type="website">
+          <url>https://palletsprojects.com/p/jinja/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="MarkupSafe==2.1.5">
+      <name>MarkupSafe</name>
+      <version>2.1.5</version>
+      <description>Safely add untrusted strings to HTML/XML markup.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/markupsafe@2.1.5</purl>
+      <externalReferences>
+        <reference type="chat">
+          <url>https://discord.gg/pallets</url>
+          <comment>from packaging metadata Project-URL: Chat</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://markupsafe.palletsprojects.com/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pallets/markupsafe/issues/</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pallets/markupsafe/</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://palletsprojects.com/donate</url>
+          <comment>from packaging metadata Project-URL: Donate</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://markupsafe.palletsprojects.com/changes/</url>
+          <comment>from packaging metadata Project-URL: Changes</comment>
+        </reference>
+        <reference type="website">
+          <url>https://palletsprojects.com/p/markupsafe/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="PyGObject==3.48.2">
+      <name>PyGObject</name>
+      <version>3.48.2</version>
+      <description>Python bindings for GObject Introspection</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pygobject@3.48.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://gnome.pages.gitlab.gnome.org/pygobject</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="PyHamcrest==2.1.0">
+      <name>PyHamcrest</name>
+      <version>2.1.0</version>
+      <description>Hamcrest framework for matcher objects</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyhamcrest@2.1.0</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/hamcrest/PyHamcrest/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/hamcrest/PyHamcrest/</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/hamcrest/PyHamcrest/blob/main/CHANGELOG.rst</url>
+          <comment>from packaging metadata Project-URL: History</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="PyJWT==2.7.0">
+      <name>PyJWT</name>
+      <version>2.7.0</version>
+      <description>JSON Web Token implementation in Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyjwt@2.7.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/jpadilla/pyjwt</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="PyYAML==6.0.1">
+      <name>PyYAML</name>
+      <version>6.0.1</version>
+      <description>YAML parser and emitter for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyyaml@6.0.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/project/PyYAML/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://pyyaml.org/wiki/PyYAMLDocumentation</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/yaml/pyyaml/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>http://lists.sourceforge.net/lists/listinfo/yaml-core</url>
+          <comment>from packaging metadata Project-URL: Mailing lists</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/yaml/pyyaml</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/yaml/pyyaml/actions</url>
+          <comment>from packaging metadata Project-URL: CI</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pyyaml.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="Pygments==2.17.2">
+      <name>Pygments</name>
+      <version>2.17.2</version>
+      <description>Pygments is a syntax highlighting package written in Python.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-2-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pygments@2.17.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pygments.org/docs</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pygments/pygments/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pygments/pygments</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/pygments/pygments/blob/master/CHANGES</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pygments.org</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="Twisted==24.3.0">
+      <name>Twisted</name>
+      <version>24.3.0</version>
+      <description>An asynchronous networking framework written in Python</description>
+      <purl>pkg:pypi/twisted@24.3.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://docs.twistedmatrix.com/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://twistedmatrix.com/trac/report</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/twisted/twisted</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://twitter.com/twistedmatrix</url>
+          <comment>from packaging metadata Project-URL: Twitter</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/twisted/twisted/blob/HEAD/NEWS.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://twistedmatrix.com/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="WALinuxAgent==2.11.1.4">
+      <name>WALinuxAgent</name>
+      <version>2.11.1.4</version>
+      <purl>pkg:pypi/walinuxagent@2.11.1.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/Azure/WALinuxAgent</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="annotated-types==0.7.0">
+      <name>annotated-types</name>
+      <version>0.7.0</version>
+      <description>Reusable constraint types to use with typing.Annotated</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/annotated-types@0.7.0</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/annotated-types/annotated-types</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/annotated-types/annotated-types/releases</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/annotated-types/annotated-types</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="anyio==4.12.0">
+      <name>anyio</name>
+      <version>4.12.0</version>
+      <description>High-level concurrency and networking framework on top of asyncio or Trio</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/anyio@4.12.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://anyio.readthedocs.io/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/agronholm/anyio/issues</url>
+          <comment>from packaging metadata Project-URL: Issue tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/agronholm/anyio</url>
+          <comment>from packaging metadata Project-URL: Source code</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://anyio.readthedocs.io/en/stable/versionhistory.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="argcomplete==3.6.3">
+      <name>argcomplete</name>
+      <version>3.6.3</version>
+      <description>Bash tab completion for argparse</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/argcomplete@3.6.3</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://kislyuk.github.io/argcomplete</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/kislyuk/argcomplete/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/kislyuk/argcomplete</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/kislyuk/argcomplete/blob/develop/Changes.rst</url>
+          <comment>from packaging metadata Project-URL: Change Log</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/kislyuk/argcomplete</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="arrow==1.4.0">
+      <name>arrow</name>
+      <version>1.4.0</version>
+      <description>Better dates &amp; times for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/arrow@1.4.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://arrow.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/arrow-py/arrow/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/arrow-py/arrow</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="astroid==4.0.2">
+      <name>astroid</name>
+      <version>4.0.2</version>
+      <description>An abstract syntax tree for Python with inference support.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>LGPL-2.1-or-later</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/astroid@4.0.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pylint.readthedocs.io/projects/astroid/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Docs</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pylint-dev/astroid/issues</url>
+          <comment>from packaging metadata Project-URL: Bug tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://discord.gg/Egy6P8AMB5</url>
+          <comment>from packaging metadata Project-URL: Discord server</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pylint-dev/astroid</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="attrs==23.2.0">
+      <name>attrs</name>
+      <version>23.2.0</version>
+      <description>Classes Without Boilerplate</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/attrs@23.2.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://www.attrs.org/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/hynek</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-attrs?utm_source=pypi-attrs&amp;utm_medium=pypi</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://www.attrs.org/en/stable/changelog.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/python-attrs/attrs</url>
+          <comment>from packaging metadata Project-URL: GitHub</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="bandit==1.9.2">
+      <name>bandit</name>
+      <version>1.9.2</version>
+      <description>Security oriented static analyser for python code.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/bandit@1.9.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://bandit.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/PyCQA/bandit/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://discord.gg/qYxpadCgkx</url>
+          <comment>from packaging metadata Project-URL: Discord</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/PyCQA/bandit</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/PyCQA/bandit/releases</url>
+          <comment>from packaging metadata Project-URL: Release Notes</comment>
+        </reference>
+        <reference type="other">
+          <url>https://psfmember.org/civicrm/contribute/transact/?reset=1&amp;id=42</url>
+          <comment>from packaging metadata Project-URL: Sponsor</comment>
+        </reference>
+        <reference type="website">
+          <url>https://bandit.readthedocs.io/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="bcc==0.29.1">
+      <name>bcc</name>
+      <version>0.29.1</version>
+      <description>BPF Loader Library</description>
+      <purl>pkg:pypi/bcc@0.29.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/iovisor/bcc</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="bcrypt==3.2.2">
+      <name>bcrypt</name>
+      <version>3.2.2</version>
+      <description>Modern password hashing for your software and your servers</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/bcrypt@3.2.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pyca/bcrypt/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="blinker==1.7.0">
+      <name>blinker</name>
+      <version>1.7.0</version>
+      <description>Fast, simple object-to-object and broadcast signaling</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/blinker@1.7.0</purl>
+      <externalReferences>
+        <reference type="chat">
+          <url>https://discord.gg/pallets</url>
+          <comment>from packaging metadata Project-URL: Chat</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://blinker.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pallets-eco/blinker/issues/</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pallets-eco/blinker/</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="website">
+          <url>https://blinker.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="boolean.py==5.0">
+      <name>boolean.py</name>
+      <version>5.0</version>
+      <description>Define boolean algebras, create and parse boolean expressions and create custom boolean DSL.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-2-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/boolean.py@5.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/bastikr/boolean.py</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="boto3==1.34.46">
+      <name>boto3</name>
+      <version>1.34.46</version>
+      <description>The AWS SDK for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/boto3@1.34.46</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://boto3.amazonaws.com/v1/documentation/api/latest/index.html</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/boto/boto3</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/boto/boto3</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="botocore==1.34.46">
+      <name>botocore</name>
+      <version>1.34.46</version>
+      <description>Low-level, data-driven core of boto 3.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/botocore@1.34.46</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/boto/botocore</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">crt</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="certifi==2023.11.17">
+      <name>certifi</name>
+      <version>2023.11.17</version>
+      <description>Python package for providing Mozilla's CA Bundle.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MPL-2.0</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/certifi@2023.11.17</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/certifi/python-certifi</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/certifi/python-certifi</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="chardet==5.2.0">
+      <name>chardet</name>
+      <version>5.2.0</version>
+      <description>Universal encoding detector for Python 3</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/chardet@5.2.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://chardet.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/chardet/chardet/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/chardet/chardet</url>
+          <comment>from packaging metadata Project-URL: GitHub Project</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/chardet/chardet</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="click==8.1.6">
+      <name>click</name>
+      <version>8.1.6</version>
+      <description>Composable command line interface toolkit</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/click@8.1.6</purl>
+      <externalReferences>
+        <reference type="chat">
+          <url>https://discord.gg/pallets</url>
+          <comment>from packaging metadata Project-URL: Chat</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://click.palletsprojects.com/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pallets/click/issues/</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pallets/click/</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://palletsprojects.com/donate</url>
+          <comment>from packaging metadata Project-URL: Donate</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://click.palletsprojects.com/changes/</url>
+          <comment>from packaging metadata Project-URL: Changes</comment>
+        </reference>
+        <reference type="website">
+          <url>https://palletsprojects.com/p/click/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="cloud-init==25.1.4">
+      <name>cloud-init</name>
+      <version>25.1.4</version>
+      <description>Cloud instance initialization magic</description>
+      <purl>pkg:pypi/cloud-init@25.1.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>http://launchpad.net/cloud-init/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="colorama==0.4.6">
+      <name>colorama</name>
+      <version>0.4.6</version>
+      <description>Cross-platform colored terminal text.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/colorama@0.4.6</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/tartley/colorama</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="command-not-found==0.3">
+      <name>command-not-found</name>
+      <version>0.3</version>
+      <description>UNKNOWN</description>
+      <purl>pkg:pypi/command-not-found@0.3</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>UNKNOWN</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="configobj==5.0.8">
+      <name>configobj</name>
+      <version>5.0.8</version>
+      <description>Config file reading, writing and validation.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/configobj@5.0.8</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/DiffSK/configobj</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="constantly==23.10.4">
+      <name>constantly</name>
+      <version>23.10.4</version>
+      <description>Symbolic constants in Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/constantly@23.10.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/twisted/constantly</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="cryptography==41.0.7">
+      <name>cryptography</name>
+      <version>41.0.7</version>
+      <description>cryptography is a package which provides cryptographic recipes and primitives to Python developers.</description>
+      <licenses>
+        <expression acknowledgement="declared">Apache-2.0 OR BSD-3-Clause</expression>
+      </licenses>
+      <purl>pkg:pypi/cryptography@41.0.7</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://cryptography.io/</url>
+          <comment>from packaging metadata Project-URL: documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pyca/cryptography/issues</url>
+          <comment>from packaging metadata Project-URL: issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pyca/cryptography/</url>
+          <comment>from packaging metadata Project-URL: source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://cryptography.io/en/latest/changelog/</url>
+          <comment>from packaging metadata Project-URL: changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pyca/cryptography</url>
+          <comment>from packaging metadata Project-URL: homepage</comment>
+        </reference>
+      </externalReferences>
+      <evidence>
+        <licenses>
+          <license acknowledgement="declared">
+            <name>License :: OSI Approved :: Apache Software License</name>
+          </license>
+          <license acknowledgement="declared">
+            <name>License :: OSI Approved :: BSD License</name>
+          </license>
+        </licenses>
+      </evidence>
+    </component>
+    <component type="library" bom-ref="cyclonedx-bom==7.2.1">
+      <name>cyclonedx-bom</name>
+      <version>7.2.1</version>
+      <description>CycloneDX Software Bill of Materials (SBOM) generator for Python projects and environments</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/cyclonedx-bom@7.2.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://cyclonedx-bom-tool.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/CycloneDX/cyclonedx-python/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://owasp.org/donate/?reponame=www-project-cyclonedx&amp;title=OWASP+CycloneDX</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/CycloneDX/cyclonedx-python/releases</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/CycloneDX/cyclonedx-python/</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/CycloneDX/cyclonedx-python/#readme</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="cyclonedx-python-lib==11.6.0">
+      <name>cyclonedx-python-lib</name>
+      <version>11.6.0</version>
+      <description>Python library for CycloneDX</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/cyclonedx-python-lib@11.6.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://cyclonedx-python-library.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/CycloneDX/cyclonedx-python-lib/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://owasp.org/donate/?reponame=www-project-cyclonedx&amp;title=OWASP+CycloneDX</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/CycloneDX/cyclonedx-python-lib/releases</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/CycloneDX/cyclonedx-python-lib</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/CycloneDX/cyclonedx-python-lib/#readme</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">validation</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="dbus-python==1.3.2">
+      <name>dbus-python</name>
+      <version>1.3.2</version>
+      <description>Python bindings for libdbus</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/dbus-python@1.3.2</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>http://dbus.freedesktop.org/releases/dbus-python/</url>
+          <comment>from packaging metadata Project-URL: Download</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://gitlab.freedesktop.org/dbus/dbus-python/-/issues</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://gitlab.freedesktop.org/dbus/dbus-python/</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>http://www.freedesktop.org/wiki/Software/DBusBindings/#python</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+        <reference type="website">
+          <url>http://www.freedesktop.org/wiki/Software/DBusBindings/#python</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="defusedxml==0.7.1">
+      <name>defusedxml</name>
+      <version>0.7.1</version>
+      <description>XML bomb protection for Python stdlib modules</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Python-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/defusedxml@0.7.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.python.org/pypi/defusedxml</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/tiran/defusedxml</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="dill==0.4.0">
+      <name>dill</name>
+      <version>0.4.0</version>
+      <description>serialize all of Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/dill@0.4.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/project/dill/#files</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="documentation">
+          <url>http://dill.rtfd.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/uqfoundation/dill/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/uqfoundation/dill</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/uqfoundation/dill</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="distro==1.9.0">
+      <name>distro</name>
+      <version>1.9.0</version>
+      <description>Distro - an OS platform information API</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/distro@1.9.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/python-distro/distro</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="distro-info==1.7+build1">
+      <name>distro-info</name>
+      <version>1.7+build1</version>
+      <purl>pkg:pypi/distro-info@1.7%2Bbuild1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://salsa.debian.org/debian/distro-info</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="dparse==0.6.4">
+      <name>dparse</name>
+      <version>0.6.4</version>
+      <description>A parser for Python dependency files</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/dparse@0.6.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pyupio/dparse</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="filelock==3.20.1">
+      <name>filelock</name>
+      <version>3.20.1</version>
+      <description>A platform independent file lock.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Unlicense</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/filelock@3.20.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://py-filelock.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/tox-dev/py-filelock/issues</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/tox-dev/py-filelock</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/tox-dev/py-filelock</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="fqdn==1.5.1">
+      <name>fqdn</name>
+      <version>1.5.1</version>
+      <description>Validates fully-qualified domain names against RFC 1123, so that they are acceptable to modern bowsers</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/fqdn@1.5.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/ypcrts/fqdn</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="h11==0.16.0">
+      <name>h11</name>
+      <version>0.16.0</version>
+      <description>A pure-Python, bring-your-own-I/O implementation of HTTP/1.1</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/h11@0.16.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/python-hyper/h11</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="httpcore==1.0.9">
+      <name>httpcore</name>
+      <version>1.0.9</version>
+      <description>A minimal low-level HTTP client.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/httpcore@1.0.9</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://www.encode.io/httpcore</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/encode/httpcore</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://www.encode.io/httpcore/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="httplib2==0.20.4">
+      <name>httplib2</name>
+      <version>0.20.4</version>
+      <description>A comprehensive HTTP client library.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/httplib2@0.20.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/httplib2/httplib2</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="httpx==0.28.1">
+      <name>httpx</name>
+      <version>0.28.1</version>
+      <description>The next generation HTTP client.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/httpx@0.28.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://www.python-httpx.org</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/encode/httpx</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/encode/httpx/blob/master/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/encode/httpx</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="hyperlink==21.0.0">
+      <name>hyperlink</name>
+      <version>21.0.0</version>
+      <description>A featureful, immutable, and correct URL for Python.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/hyperlink@21.0.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/python-hyper/hyperlink</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="idna==3.6">
+      <name>idna</name>
+      <version>3.6</version>
+      <description>Internationalized Domain Names in Applications (IDNA)</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/idna@3.6</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/kjd/idna/issues</url>
+          <comment>from packaging metadata Project-URL: Issue tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/kjd/idna</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/kjd/idna/blob/master/HISTORY.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="incremental==22.10.0">
+      <name>incremental</name>
+      <version>22.10.0</version>
+      <description>&quot;A small library that versions your Python projects.&quot;</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/incremental@22.10.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/twisted/incremental</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="isoduration==20.11.0">
+      <name>isoduration</name>
+      <version>20.11.0</version>
+      <description>Operations with ISO 8601 durations</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>ISC</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/isoduration@20.11.0</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/bolsote/isoduration/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Reports</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/bolsote/isoduration/blob/master/CHANGELOG</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/bolsote/isoduration</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/bolsote/isoduration</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="isort==7.0.0">
+      <name>isort</name>
+      <version>7.0.0</version>
+      <description>A Python utility / library to sort Python imports.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/isort@7.0.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pycqa.github.io/isort/index.html</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/PyCQA/isort/releases</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/PyCQA/isort</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pycqa.github.io/isort/index.html</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jmespath==1.0.1">
+      <name>jmespath</name>
+      <version>1.0.1</version>
+      <description>JSON Matching Expressions</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jmespath@1.0.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/jmespath/jmespath.py</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="joblib==1.5.3">
+      <name>joblib</name>
+      <version>1.5.3</version>
+      <description>Lightweight pipelining with Python functions</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/joblib@1.5.3</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/joblib/joblib</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://joblib.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jschema-to-python==1.2.3">
+      <name>jschema-to-python</name>
+      <version>1.2.3</version>
+      <description>Generate source code for Python classes from a JSON schema.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jschema-to-python@1.2.3</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/microsoft/jschema-to-python</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jsonpatch==1.32">
+      <name>jsonpatch</name>
+      <version>1.32</version>
+      <description>Apply JSON-Patches (RFC 6902) </description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonpatch@1.32</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://python-json-patch.readthedocs.org/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://coveralls.io/r/stefankoegl/python-json-patch</url>
+          <comment>from packaging metadata Project-URL: Test Coverage</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/stefankoegl/python-json-patch</url>
+          <comment>from packaging metadata Project-URL: Website</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pypi.org/pypi/jsonpatch</url>
+          <comment>from packaging metadata Project-URL: PyPI</comment>
+        </reference>
+        <reference type="other">
+          <url>https://travis-ci.org/stefankoegl/python-json-patch</url>
+          <comment>from packaging metadata Project-URL: Tests</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/stefankoegl/python-json-patch.git</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/stefankoegl/python-json-patch</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jsonpickle==4.1.1">
+      <name>jsonpickle</name>
+      <version>4.1.1</version>
+      <description>jsonpickle encodes/decodes any Python object to/from JSON</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonpickle@4.1.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://jsonpickle.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/jsonpickle/jsonpickle</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://jsonpickle.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jsonpointer==2.0">
+      <name>jsonpointer</name>
+      <version>2.0</version>
+      <description>Identify specific nodes in a JSON document (RFC 6901) </description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonpointer@2.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/stefankoegl/python-json-pointer</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jsonschema==4.10.3">
+      <name>jsonschema</name>
+      <version>4.10.3</version>
+      <description>An implementation of JSON Schema validation for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonschema@4.10.3</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://python-jsonschema.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python-jsonschema/jsonschema/issues/</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python-jsonschema/jsonschema</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/Julian</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-jsonschema?utm_source=pypi-jsonschema&amp;utm_medium=referral&amp;utm_campaign=pypi-link</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/python-jsonschema/jsonschema/blob/main/CHANGELOG.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python-jsonschema/jsonschema</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">format-nongpl</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="jsonschema==4.25.1">
+      <name>jsonschema</name>
+      <version>4.25.1</version>
+      <description>An implementation of JSON Schema validation for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonschema@4.25.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://python-jsonschema.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python-jsonschema/jsonschema/issues/</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python-jsonschema/jsonschema</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/Julian</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-jsonschema?utm_source=pypi-jsonschema&amp;utm_medium=referral&amp;utm_campaign=pypi-link</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/python-jsonschema/jsonschema/blob/main/CHANGELOG.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python-jsonschema/jsonschema</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="jsonschema-specifications==2025.9.1">
+      <name>jsonschema-specifications</name>
+      <version>2025.9.1</version>
+      <description>The JSON Schema meta-schemas and vocabularies, exposed as a Registry</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/jsonschema-specifications@2025.9.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://jsonschema-specifications.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python-jsonschema/jsonschema-specifications/issues/</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python-jsonschema/jsonschema-specifications</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/Julian</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-jsonschema-specifications?utm_source=pypi-jsonschema-specifications&amp;utm_medium=referral&amp;utm_campaign=pypi-link</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python-jsonschema/jsonschema-specifications</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="lark==1.3.1">
+      <name>lark</name>
+      <version>1.3.1</version>
+      <description>a modern parsing library</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/lark@1.3.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://github.com/lark-parser/lark/tarball/master</url>
+          <comment>from packaging metadata Project-URL: Download</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/lark-parser/lark</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="launchpadlib==1.11.0">
+      <name>launchpadlib</name>
+      <version>1.11.0</version>
+      <description>Script Launchpad through its web services interfaces.  Officially supported.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/launchpadlib@1.11.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://launchpad.net/launchpadlib/+download</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://launchpadlib.readthedocs.io/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://bugs.launchpad.net/launchpadlib</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://code.launchpad.net/launchpadlib</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://help.launchpad.net/API/launchpadlib</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="lazr.restfulclient==0.14.6">
+      <name>lazr.restfulclient</name>
+      <version>0.14.6</version>
+      <description>A programmable client library that takes advantage of the commonalities among</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/lazr.restfulclient@0.14.6</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://launchpad.net/lazr.restfulclient/+download</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="documentation">
+          <url>https://lazrrestfulclient.readthedocs.io/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://bugs.launchpad.net/lazr.restfulclient</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://code.launchpad.net/lazr.restfulclient</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://launchpad.net/lazr.restfulclient</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="lazr.uri==1.0.6">
+      <name>lazr.uri</name>
+      <version>1.0.6</version>
+      <description>A self-contained, easily reusable library for parsing, manipulating,</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/lazr.uri@1.0.6</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://launchpad.net/lazr.uri/+download</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://launchpad.net/lazr.uri</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="librt==0.7.5">
+      <name>librt</name>
+      <version>0.7.5</version>
+      <description>Mypyc runtime library</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/librt@0.7.5</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/mypyc/mypyc/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/mypyc/librt</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="license-expression==30.4.4">
+      <name>license-expression</name>
+      <version>30.4.4</version>
+      <description>license-expression is a comprehensive utility library to parse, compare, simplify and normalize license expressions (such as SPDX license expressions) using boolean logic.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/license-expression@30.4.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/aboutcode-org/license-expression</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="lxml==6.0.2">
+      <name>lxml</name>
+      <version>6.0.2</version>
+      <description>Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/lxml@6.0.2</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://bugs.launchpad.net/lxml</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/lxml/lxml</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://lxml.de/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mando==0.7.1">
+      <name>mando</name>
+      <version>0.7.1</version>
+      <description>Create Python CLI apps with little to no effort at all!</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mando@0.7.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.python.org/mando/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://mando.readthedocs.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="markdown-it-py==3.0.0">
+      <name>markdown-it-py</name>
+      <version>3.0.0</version>
+      <description>Python port of markdown-it. Markdown parsing, done right!</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/markdown-it-py@3.0.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://markdown-it-py.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/executablebooks/markdown-it-py</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="marshmallow==4.1.2">
+      <name>marshmallow</name>
+      <version>4.1.2</version>
+      <description>A lightweight library for converting complex datatypes to and from native Python datatypes.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/marshmallow@4.1.2</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/marshmallow-code/marshmallow/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/marshmallow-code/marshmallow</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://opencollective.com/marshmallow</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-marshmallow?utm_source=pypi-marshmallow&amp;utm_medium=pypi</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://marshmallow.readthedocs.io/en/latest/changelog.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mccabe==0.7.0">
+      <name>mccabe</name>
+      <version>0.7.0</version>
+      <description>McCabe checker, plugin for flake8</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mccabe@0.7.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pycqa/mccabe</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mdurl==0.1.2">
+      <name>mdurl</name>
+      <version>0.1.2</version>
+      <description>Markdown URL utilities</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mdurl@0.1.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/executablebooks/mdurl</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mercurial==6.7.2">
+      <name>mercurial</name>
+      <version>6.7.2</version>
+      <description>Fast scalable distributed SCM (revision control, version control) system</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU General Public License (GPL)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mercurial@6.7.2</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://mercurial-scm.org/release/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://mercurial-scm.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="msgpack==1.1.2">
+      <name>msgpack</name>
+      <version>1.1.2</version>
+      <description>MessagePack serializer</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/msgpack@1.1.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://msgpack-python.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/msgpack/msgpack-python/issues</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/msgpack/msgpack-python/blob/main/ChangeLog.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/msgpack/msgpack-python/</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://msgpack.org/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mypy==1.19.1">
+      <name>mypy</name>
+      <version>1.19.1</version>
+      <description>Optional static typing for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mypy@1.19.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://mypy.readthedocs.io/en/stable/index.html</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python/mypy/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/python/mypy/blob/master/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/python/mypy</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://www.mypy-lang.org/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="mypy_extensions==1.1.0">
+      <name>mypy_extensions</name>
+      <version>1.1.0</version>
+      <description>Type system extensions for programs checked with the mypy type checker.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/mypy-extensions@1.1.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/python/mypy_extensions</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="netaddr==0.8.0">
+      <name>netaddr</name>
+      <version>0.8.0</version>
+      <description>A network address manipulation library for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/netaddr@0.8.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/project/netaddr/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/drkjam/netaddr/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="netifaces==0.11.0">
+      <name>netifaces</name>
+      <version>0.11.0</version>
+      <description>Portable network interface information.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/netifaces@0.11.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/al45tair/netifaces</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="nltk==3.9.2">
+      <name>nltk</name>
+      <version>3.9.2</version>
+      <description>Natural Language Toolkit</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/nltk@3.9.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://www.nltk.org/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/nltk/nltk/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/nltk/nltk</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="website">
+          <url>https://www.nltk.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="oauthlib==3.2.2">
+      <name>oauthlib</name>
+      <version>3.2.2</version>
+      <description>A generic, spec-compliant, thorough implementation of the OAuth request-signing logic</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved</name>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/oauthlib@3.2.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/oauthlib/oauthlib</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="packageurl-python==0.17.6">
+      <name>packageurl-python</name>
+      <version>0.17.6</version>
+      <description>A purl aka. Package URL parser and builder</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/packageurl-python@0.17.6</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/package-url/packageurl-python</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="packaging==24.0">
+      <name>packaging</name>
+      <version>24.0</version>
+      <description>Core utilities for Python packages</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/packaging@24.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://packaging.pypa.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pypa/packaging</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pathspec==0.12.1">
+      <name>pathspec</name>
+      <version>0.12.1</version>
+      <description>Utility library for gitignore style pattern matching of file paths.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pathspec@0.12.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://python-path-specification.readthedocs.io/en/latest/index.html</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/cpburnz/python-pathspec/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/cpburnz/python-pathspec</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pbr==7.0.3">
+      <name>pbr</name>
+      <version>7.0.3</version>
+      <description>Python Build Reasonableness</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pbr@7.0.3</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://docs.openstack.org/pbr/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://bugs.launchpad.net/pbr/</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://opendev.org/openstack/pbr</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="website">
+          <url>https://docs.openstack.org/pbr/latest/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pexpect==4.9.0">
+      <name>pexpect</name>
+      <version>4.9.0</version>
+      <description>Pexpect allows easy control of interactive console applications.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>ISC</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pexpect@4.9.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pexpect.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pexpect/pexpect/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pexpect/pexpect</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pexpect.readthedocs.io/en/stable/history.html</url>
+          <comment>from packaging metadata Project-URL: History</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pexpect.readthedocs.io/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pip==24.0">
+      <name>pip</name>
+      <version>24.0</version>
+      <description>The PyPA recommended tool for installing Python packages.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pip@24.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pip.pypa.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pypa/pip</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://pip.pypa.io/en/stable/news/</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pip.pypa.io/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pip-api==0.0.34">
+      <name>pip-api</name>
+      <version>0.0.34</version>
+      <description>An unofficial, importable pip API</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pip-api@0.0.34</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>http://github.com/di/pip-api</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pip-requirements-parser==32.0.1">
+      <name>pip-requirements-parser</name>
+      <version>32.0.1</version>
+      <description>pip requirements parser - a mostly correct pip requirements parsing library because it uses pip's own code.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pip-requirements-parser@32.0.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/nexB/pip-requirements-parser</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pip_audit==2.10.0">
+      <name>pip_audit</name>
+      <version>2.10.0</version>
+      <description>A tool for scanning Python environments for known vulnerabilities</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pip-audit@2.10.0</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/pypa/pip-audit/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pypa/pip-audit</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pypi.org/project/pip-audit/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pipx==1.8.0">
+      <name>pipx</name>
+      <version>1.8.0</version>
+      <description>Install and Run Python Applications in Isolated Environments</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pipx@1.8.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pipx.pypa.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pypa/pipx/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pypa/pipx</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pipx.pypa.io/latest/changelog/</url>
+          <comment>from packaging metadata Project-URL: Release Notes</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pipx.pypa.io</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="platformdirs==4.5.1">
+      <name>platformdirs</name>
+      <version>4.5.1</version>
+      <description>A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/platformdirs@4.5.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://platformdirs.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/tox-dev/platformdirs/issues</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/tox-dev/platformdirs</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/tox-dev/platformdirs/releases</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/tox-dev/platformdirs</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ptyprocess==0.7.0">
+      <name>ptyprocess</name>
+      <version>0.7.0</version>
+      <description>Run a subprocess in a pseudo terminal</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>ISC</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/ptyprocess@0.7.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pexpect/ptyprocess</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="py-serializable==2.1.0">
+      <name>py-serializable</name>
+      <version>2.1.0</version>
+      <description>Library for serializing and deserializing Python Objects to and from JSON and XML.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/py-serializable@2.1.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://py-serializable.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/madpah/serializable/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/madpah/serializable</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/madpah/serializable#readme</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyOpenSSL==23.2.0">
+      <name>pyOpenSSL</name>
+      <version>23.2.0</version>
+      <description>Python wrapper module around the OpenSSL library</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyopenssl@23.2.0</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/pyca/pyopenssl</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://pyopenssl.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyasn1==0.4.8">
+      <name>pyasn1</name>
+      <version>0.4.8</version>
+      <description>ASN.1 types and codecs</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyasn1@0.4.8</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/etingof/pyasn1</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyasn1-modules==0.2.8">
+      <name>pyasn1-modules</name>
+      <version>0.2.8</version>
+      <description>A collection of ASN.1-based protocols modules.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-2-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyasn1-modules@0.2.8</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/etingof/pyasn1-modules</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pydantic==2.12.5">
+      <name>pydantic</name>
+      <version>2.12.5</version>
+      <description>Data validation using Python type hints</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pydantic@2.12.5</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://docs.pydantic.dev</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pydantic/pydantic</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/samuelcolvin</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://docs.pydantic.dev/latest/changelog/</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pydantic/pydantic</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pydantic_core==2.41.5">
+      <name>pydantic_core</name>
+      <version>2.41.5</version>
+      <description>Core functionality for Pydantic validation and serialization</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pydantic-core@2.41.5</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/pydantic/pydantic-core</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/samuelcolvin</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pydantic/pydantic-core</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pydantic/pydantic-core</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pylint==4.0.4">
+      <name>pylint</name>
+      <version>4.0.4</version>
+      <description>python code static checker</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>GPL-2.0-or-later</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pylint@4.0.4</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/pylint-dev/pylint/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://discord.com/invite/Egy6P8AMB5</url>
+          <comment>from packaging metadata Project-URL: Discord Server</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pylint-dev/pylint</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pylint.readthedocs.io/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Docs: User Guide</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pylint.readthedocs.io/en/latest/development_guide/contributor_guide/index.html</url>
+          <comment>from packaging metadata Project-URL: Docs: Contributor Guide</comment>
+        </reference>
+        <reference type="other">
+          <url>https://pylint.readthedocs.io/en/latest/whatsnew/3/</url>
+          <comment>from packaging metadata Project-URL: What's New</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pylint-dev/pylint</url>
+          <comment>from packaging metadata Project-URL: homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyparsing==3.1.1">
+      <name>pyparsing</name>
+      <version>3.1.1</version>
+      <description>pyparsing module - Classes and methods to define and execute parsing grammars</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyparsing@3.1.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pyparsing/pyparsing/</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyparted==3.12.0">
+      <name>pyparted</name>
+      <version>3.12.0</version>
+      <description>Python bindings for GNU parted</description>
+      <purl>pkg:pypi/pyparted@3.12.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/dcantrell/pyparted/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyrsistent==0.20.0">
+      <name>pyrsistent</name>
+      <version>0.20.0</version>
+      <description>Persistent/Functional/Immutable data structures</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyrsistent@0.20.0</purl>
+      <externalReferences>
+        <reference type="release-notes">
+          <url>https://pyrsistent.readthedocs.io/en/latest/changes.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/tobgu/pyrsistent/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pyserial==3.5">
+      <name>pyserial</name>
+      <version>3.5</version>
+      <description>Python Serial Port Extension</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pyserial@3.5</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pyserial/pyserial</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="python-apt==2.7.7+ubuntu5">
+      <name>python-apt</name>
+      <version>2.7.7+ubuntu5</version>
+      <description>Python bindings for APT</description>
+      <purl>pkg:pypi/python-apt@2.7.7%2Bubuntu5</purl>
+    </component>
+    <component type="library" bom-ref="python-dateutil==2.8.2">
+      <name>python-dateutil</name>
+      <version>2.8.2</version>
+      <description>Extensions to the standard Python datetime module</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/python-dateutil@2.8.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://dateutil.readthedocs.io/en/stable/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/dateutil/dateutil</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/dateutil/dateutil</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="python-debian==0.1.49+ubuntu2">
+      <name>python-debian</name>
+      <version>0.1.49+ubuntu2</version>
+      <description>Debian package related modules</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>GPL-2.0-or-later</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: DFSG approved</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/python-debian@0.1.49%2Bubuntu2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://salsa.debian.org/python-debian-team/python-debian</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="python-magic==0.4.27">
+      <name>python-magic</name>
+      <version>0.4.27</version>
+      <description>File type identification using libmagic</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/python-magic@0.4.27</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>http://github.com/ahupp/python-magic</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="pytz==2024.1">
+      <name>pytz</name>
+      <version>2024.1</version>
+      <description>World timezone definitions, modern and historical</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/pytz@2024.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/project/pytz/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>http://pythonhosted.org/pytz</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="radon==6.0.1">
+      <name>radon</name>
+      <version>6.0.1</version>
+      <description>Code Metrics in Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/radon@6.0.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.python.org/radon/</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/rubik/radon</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://radon.readthedocs.org/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="referencing==0.37.0">
+      <name>referencing</name>
+      <version>0.37.0</version>
+      <description>JSON Referencing + Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/referencing@0.37.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://referencing.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python-jsonschema/referencing/issues/</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python-jsonschema/referencing</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/Julian</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-referencing?utm_source=pypi-referencing&amp;utm_medium=referral&amp;utm_campaign=pypi-link</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://referencing.readthedocs.io/en/stable/changes/</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python-jsonschema/referencing</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="regex==2025.11.3">
+      <name>regex</name>
+      <version>2025.11.3</version>
+      <description>Alternative regular expression module, to replace re.</description>
+      <licenses>
+        <expression acknowledgement="declared">Apache-2.0 AND CNRI-Python</expression>
+      </licenses>
+      <purl>pkg:pypi/regex@2025.11.3</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/mrabarnett/mrab-regex</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requests==2.31.0">
+      <name>requests</name>
+      <version>2.31.0</version>
+      <description>Python HTTP for Humans.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/requests@2.31.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://requests.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/psf/requests</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://requests.readthedocs.io</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="rfc3339-validator==0.1.4">
+      <name>rfc3339-validator</name>
+      <version>0.1.4</version>
+      <description>A pure python RFC3339 validator</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/rfc3339-validator@0.1.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/naimetti/rfc3339-validator</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="rfc3986-validator==0.1.1">
+      <name>rfc3986-validator</name>
+      <version>0.1.1</version>
+      <description>Pure python rfc3986 validator</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/rfc3986-validator@0.1.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/naimetti/rfc3986-validator</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="rfc3987-syntax==1.1.0">
+      <name>rfc3987-syntax</name>
+      <version>1.1.0</version>
+      <description>Helper functions to syntactically validate strings according to RFC 3987.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/rfc3987-syntax@1.1.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://github.com/willynilly/rfc3987-syntax#readme</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/willynilly/rfc3987-syntax/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/willynilly/rfc3987-syntax</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/willynilly/rfc3987-syntax</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="rich==13.7.1">
+      <name>rich</name>
+      <version>13.7.1</version>
+      <description>Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/rich@13.7.1</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://rich.readthedocs.io/en/latest/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/Textualize/rich</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="rpds-py==0.30.0">
+      <name>rpds-py</name>
+      <version>0.30.0</version>
+      <description>Python bindings to Rust's persistent data structures (rpds)</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/rpds-py@0.30.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://rpds.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/crate-py/rpds/issues/</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/crate-py/rpds</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/orium/rpds</url>
+          <comment>from packaging metadata Project-URL: Upstream</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/Julian</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-rpds-py?utm_source=pypi-rpds-py&amp;utm_medium=referral&amp;utm_campaign=pypi-link</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/crate-py/rpds</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ruamel.yaml==0.19.0">
+      <name>ruamel.yaml</name>
+      <version>0.19.0</version>
+      <description>ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/ruamel.yaml@0.19.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://yaml.dev/doc/ruamel.yaml</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://sourceforge.net/p/ruamel-yaml/tickets/</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://sourceforge.net/p/ruamel-yaml/</url>
+          <comment>from packaging metadata Project-URL: Home</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ruamel.yaml.clibz==0.3.4">
+      <name>ruamel.yaml.clibz</name>
+      <version>0.3.4</version>
+      <description>C version of reader, parser and emitter for ruamel.yaml, compiled with Zig, derived from libyaml</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/ruamel.yaml.clibz@0.3.4</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://yaml.dev/doc/ruamel.yaml.clibz</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://sourceforge.net/p/ruamel-yaml-clibz/tickets/</url>
+          <comment>from packaging metadata Project-URL: Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://sourceforge.net/p/ruamel-yaml-clibz/code/ci/default/tree/</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://sourceforge.net/p/ruamel-yaml-clibz/</url>
+          <comment>from packaging metadata Project-URL: Home</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="s3transfer==0.10.1">
+      <name>s3transfer</name>
+      <version>0.10.1</version>
+      <description>An Amazon S3 Transfer Manager</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/s3transfer@0.10.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/boto/s3transfer</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="safety==3.7.0">
+      <name>safety</name>
+      <version>3.7.0</version>
+      <description>Scan dependencies for known vulnerabilities and licenses.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/safety@3.7.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://docs.safetycli.com/safety-docs</url>
+          <comment>from packaging metadata Project-URL: documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pyupio/safety/issues</url>
+          <comment>from packaging metadata Project-URL: issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pyupio/safety</url>
+          <comment>from packaging metadata Project-URL: source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/pyupio/safety/blob/main/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://safetycli.com</url>
+          <comment>from packaging metadata Project-URL: homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="safety-schemas==0.0.16">
+      <name>safety-schemas</name>
+      <version>0.0.16</version>
+      <description>Schemas for Safety tools</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/safety-schemas@0.0.16</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/pyupio/safety_schemas</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="sarif-om==1.0.4">
+      <name>sarif-om</name>
+      <version>1.0.4</version>
+      <description>Classes implementing the SARIF 2.1.0 object model.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/sarif-om@1.0.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/microsoft/sarif-python-om</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="service-identity==24.1.0">
+      <name>service-identity</name>
+      <version>24.1.0</version>
+      <description>Service identity verification for pyOpenSSL &amp; cryptography.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/service-identity@24.1.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://service-identity.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/hynek</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+        <reference type="other">
+          <url>https://mastodon.social/@hynek</url>
+          <comment>from packaging metadata Project-URL: Mastodon</comment>
+        </reference>
+        <reference type="other">
+          <url>https://tidelift.com/subscription/pkg/pypi-service-identity?utm_source=pypi-service-identity&amp;utm_medium=pypi</url>
+          <comment>from packaging metadata Project-URL: Tidelift</comment>
+        </reference>
+        <reference type="other">
+          <url>https://twitter.com/hynek</url>
+          <comment>from packaging metadata Project-URL: Twitter</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://service-identity.readthedocs.io/en/stable/changelog.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/pyca/service-identity</url>
+          <comment>from packaging metadata Project-URL: GitHub</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="setuptools==68.1.2">
+      <name>setuptools</name>
+      <version>68.1.2</version>
+      <description>Easily download, build, install, upgrade, and uninstall Python packages</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/setuptools@68.1.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://setuptools.pypa.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://setuptools.pypa.io/en/stable/history.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pypa/setuptools</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="shellingham==1.5.4">
+      <name>shellingham</name>
+      <version>1.5.4</version>
+      <description>Tool to Detect Surrounding Shell</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>ISC</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/shellingham@1.5.4</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/sarugaku/shellingham</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="six==1.16.0">
+      <name>six</name>
+      <version>1.16.0</version>
+      <description>Python 2 and 3 compatibility utilities</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/six@1.16.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/benjaminp/six</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="sortedcontainers==2.4.0">
+      <name>sortedcontainers</name>
+      <version>2.4.0</version>
+      <description>Sorted Containers -- Sorted List, Sorted Dict, Sorted Set</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/sortedcontainers@2.4.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>http://www.grantjenks.com/docs/sortedcontainers/</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="sos==4.8.2">
+      <name>sos</name>
+      <version>4.8.2</version>
+      <description>A set of tools to gather troubleshooting information from a system</description>
+      <purl>pkg:pypi/sos@4.8.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/sosreport/sos</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ssh-import-id==5.11">
+      <name>ssh-import-id</name>
+      <version>5.11</version>
+      <description>Authorize SSH public keys from trusted online identities</description>
+      <purl>pkg:pypi/ssh-import-id@5.11</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://launchpad.net/ssh-import-id</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="stevedore==5.6.0">
+      <name>stevedore</name>
+      <version>5.6.0</version>
+      <description>Manage dynamic plugins for Python applications</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/stevedore@5.6.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://opendev.org/openstack/stevedore</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://docs.openstack.org/stevedore</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="systemd-python==235">
+      <name>systemd-python</name>
+      <version>235</version>
+      <description>Python interface for libsystemd</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/systemd-python@235</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/systemd/python-systemd</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tenacity==9.1.2">
+      <name>tenacity</name>
+      <version>9.1.2</version>
+      <description>Retry code until it succeeds</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Apache Software License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/tenacity@9.1.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/jd/tenacity</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tomli==2.3.0">
+      <name>tomli</name>
+      <version>2.3.0</version>
+      <description>A lil' TOML parser</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/tomli@2.3.0</purl>
+      <externalReferences>
+        <reference type="release-notes">
+          <url>https://github.com/hukkin/tomli/blob/master/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/hukkin/tomli</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tomli_w==1.2.0">
+      <name>tomli_w</name>
+      <version>1.2.0</version>
+      <description>A lil' TOML writer</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/tomli-w@1.2.0</purl>
+      <externalReferences>
+        <reference type="release-notes">
+          <url>https://github.com/hukkin/tomli-w/blob/master/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/hukkin/tomli-w</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tomlkit==0.13.3">
+      <name>tomlkit</name>
+      <version>0.13.3</version>
+      <description>Style preserving TOML library</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/tomlkit@0.13.3</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/sdispater/tomlkit</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/sdispater/tomlkit</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tqdm==4.67.1">
+      <name>tqdm</name>
+      <version>4.67.1</version>
+      <description>Fast, Extensible Progress Meter</description>
+      <licenses>
+        <expression acknowledgement="declared">MPL-2.0 AND MIT</expression>
+      </licenses>
+      <purl>pkg:pypi/tqdm@4.67.1</purl>
+      <externalReferences>
+        <reference type="other">
+          <url>https://github.com/tqdm/tqdm/wiki</url>
+          <comment>from packaging metadata Project-URL: wiki</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://tqdm.github.io/releases</url>
+          <comment>from packaging metadata Project-URL: changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/tqdm/tqdm</url>
+          <comment>from packaging metadata Project-URL: repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://tqdm.github.io</url>
+          <comment>from packaging metadata Project-URL: homepage</comment>
+        </reference>
+      </externalReferences>
+      <evidence>
+        <licenses>
+          <license acknowledgement="declared">
+            <id>MIT</id>
+          </license>
+          <license acknowledgement="declared">
+            <name>License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)</name>
+          </license>
+        </licenses>
+      </evidence>
+    </component>
+    <component type="library" bom-ref="typer==0.21.0">
+      <name>typer</name>
+      <version>0.21.0</version>
+      <description>Typer, build great CLIs. Easy to code. Based on Python type hints.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/typer@0.21.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://typer.tiangolo.com</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/fastapi/typer/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://typer.tiangolo.com/release-notes/</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/fastapi/typer</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/fastapi/typer</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="typing-inspection==0.4.2">
+      <name>typing-inspection</name>
+      <version>0.4.2</version>
+      <description>Runtime typing introspection tools</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/typing-inspection@0.4.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://pydantic.github.io/typing-inspection/dev/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pydantic/typing-inspection</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/pydantic/typing-inspection/blob/main/HISTORY.md</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/pydantic/typing-inspection</url>
+          <comment>from packaging metadata Project-URL: Homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="typing_extensions==4.10.0">
+      <name>typing_extensions</name>
+      <version>4.10.0</version>
+      <description>Backported and Experimental Type Hints for Python 3.8+</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Python-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/typing-extensions@4.10.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://typing-extensions.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python/typing_extensions/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python/typing/discussions</url>
+          <comment>from packaging metadata Project-URL: Q &amp; A</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/python/typing_extensions/blob/main/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changes</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/python/typing_extensions</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python/typing_extensions</url>
+          <comment>from packaging metadata Project-URL: Home</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="typing_extensions==4.15.0">
+      <name>typing_extensions</name>
+      <version>4.15.0</version>
+      <description>Backported and Experimental Type Hints for Python 3.9+</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>PSF-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/typing-extensions@4.15.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://typing-extensions.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python/typing_extensions/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python/typing/discussions</url>
+          <comment>from packaging metadata Project-URL: Q &amp; A</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/python/typing_extensions/blob/main/CHANGELOG.md</url>
+          <comment>from packaging metadata Project-URL: Changes</comment>
+        </reference>
+        <reference type="vcs">
+          <url>https://github.com/python/typing_extensions</url>
+          <comment>from packaging metadata Project-URL: Repository</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python/typing_extensions</url>
+          <comment>from packaging metadata Project-URL: Home</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="tzdata==2025.3">
+      <name>tzdata</name>
+      <version>2025.3</version>
+      <description>Provider of IANA time zone data</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>Apache-2.0</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/tzdata@2025.3</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://tzdata.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/python/tzdata/issues</url>
+          <comment>from packaging metadata Project-URL: Bug Reports</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/python/tzdata</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="website">
+          <url>https://github.com/python/tzdata</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ubuntu-pro-client==8001">
+      <name>ubuntu-pro-client</name>
+      <version>8001</version>
+      <description>Manage Ubuntu Pro support entitlements</description>
+      <purl>pkg:pypi/ubuntu-pro-client@8001</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://ubuntu.com/support</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="ufw==0.36.2">
+      <name>ufw</name>
+      <version>0.36.2</version>
+      <description>front-end for Linux firewalling</description>
+      <purl>pkg:pypi/ufw@0.36.2</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://launchpad.net/ufw</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="uri-template==1.3.0">
+      <name>uri-template</name>
+      <version>1.3.0</version>
+      <description>RFC 6570 URI Template Processor</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/uri-template@1.3.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://gitlab.linss.com/open-source/python/uri-template</url>
+          <comment>from packaging metadata Project-URL: homepage</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="urllib3==2.0.7">
+      <name>urllib3</name>
+      <version>2.0.7</version>
+      <description>HTTP library with thread-safe connection pooling, file post, and more.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/urllib3@2.0.7</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://urllib3.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/urllib3/urllib3/issues</url>
+          <comment>from packaging metadata Project-URL: Issue tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/urllib3/urllib3</url>
+          <comment>from packaging metadata Project-URL: Code</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://github.com/urllib3/urllib3/blob/main/CHANGES.rst</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="userpath==1.9.2">
+      <name>userpath</name>
+      <version>1.9.2</version>
+      <description>Cross-platform tool for adding locations to the user PATH</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/userpath@1.9.2</purl>
+      <externalReferences>
+        <reference type="issue-tracker">
+          <url>https://github.com/ofek/userpath/issues</url>
+          <comment>from packaging metadata Project-URL: Issues</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/ofek/userpath</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/ofek/userpath/blob/master/HISTORY.rst</url>
+          <comment>from packaging metadata Project-URL: History</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/sponsors/ofek</url>
+          <comment>from packaging metadata Project-URL: Funding</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="vulture==2.14">
+      <name>vulture</name>
+      <version>2.14</version>
+      <description>Find dead code</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/vulture@2.14</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/jendrikseipp/vulture</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="wadllib==1.3.6">
+      <name>wadllib</name>
+      <version>1.3.6</version>
+      <description>Navigate HTTP resources using WADL files as guides.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/wadllib@1.3.6</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://launchpad.net/wadllib/+download</url>
+          <comment>from packaging metadata: Download-URL</comment>
+        </reference>
+        <reference type="website">
+          <url>https://launchpad.net/wadllib</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="webcolors==25.10.0">
+      <name>webcolors</name>
+      <version>25.10.0</version>
+      <description>A library for working with the color formats defined by HTML and CSS.</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>BSD-3-Clause</id>
+        </license>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/webcolors@25.10.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://webcolors.readthedocs.io</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/ubernostrum/webcolors</url>
+          <comment>from packaging metadata Project-URL: Source Code</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="wheel==0.42.0">
+      <name>wheel</name>
+      <version>0.42.0</version>
+      <description>A built-package format for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <id>MIT</id>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/wheel@0.42.0</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://wheel.readthedocs.io/</url>
+          <comment>from packaging metadata Project-URL: Documentation</comment>
+        </reference>
+        <reference type="issue-tracker">
+          <url>https://github.com/pypa/wheel/issues</url>
+          <comment>from packaging metadata Project-URL: Issue Tracker</comment>
+        </reference>
+        <reference type="other">
+          <url>https://github.com/pypa/wheel</url>
+          <comment>from packaging metadata Project-URL: Source</comment>
+        </reference>
+        <reference type="release-notes">
+          <url>https://wheel.readthedocs.io/en/stable/news.html</url>
+          <comment>from packaging metadata Project-URL: Changelog</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="zope.interface==6.1">
+      <name>zope.interface</name>
+      <version>6.1</version>
+      <description>Interfaces for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: Zope Public License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/zope.interface@6.1</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/zopefoundation/zope.interface</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="zstandard==0.22.0">
+      <name>zstandard</name>
+      <version>0.22.0</version>
+      <description>Zstandard bindings for Python</description>
+      <licenses>
+        <license acknowledgement="declared">
+          <name>License :: OSI Approved :: BSD License</name>
+        </license>
+      </licenses>
+      <purl>pkg:pypi/zstandard@0.22.0</purl>
+      <externalReferences>
+        <reference type="website">
+          <url>https://github.com/indygreg/python-zstandard</url>
+          <comment>from packaging metadata: Home-page</comment>
+        </reference>
+      </externalReferences>
+    </component>
+  </components>
+  <dependencies>
+    <dependency ref="Authlib==1.6.6">
+      <dependency ref="cryptography==41.0.7"/>
+    </dependency>
+    <dependency ref="Automat==22.10.0">
+      <dependency ref="Twisted==24.3.0"/>
+    </dependency>
+    <dependency ref="Babel==2.10.3"/>
+    <dependency ref="CacheControl==0.14.4">
+      <dependency ref="filelock==3.20.1"/>
+      <dependency ref="msgpack==1.1.2"/>
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="requests==2.31.0"/>
+    </dependency>
+    <dependency ref="Jinja2==3.1.2">
+      <dependency ref="Babel==2.10.3"/>
+    </dependency>
+    <dependency ref="MarkupSafe==2.1.5"/>
+    <dependency ref="PyGObject==3.48.2"/>
+    <dependency ref="PyHamcrest==2.1.0">
+      <dependency ref="PyYAML==6.0.1"/>
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="PyJWT==2.7.0">
+      <dependency ref="cryptography==41.0.7"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+      <dependency ref="zope.interface==6.1"/>
+    </dependency>
+    <dependency ref="PyYAML==6.0.1"/>
+    <dependency ref="Pygments==2.17.2">
+      <dependency ref="colorama==0.4.6"/>
+    </dependency>
+    <dependency ref="Twisted==24.3.0">
+      <dependency ref="Automat==22.10.0"/>
+      <dependency ref="PyGObject==3.48.2"/>
+      <dependency ref="PyHamcrest==2.1.0"/>
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="bcrypt==3.2.2"/>
+      <dependency ref="constantly==23.10.4"/>
+      <dependency ref="cryptography==41.0.7"/>
+      <dependency ref="hyperlink==21.0.0"/>
+      <dependency ref="idna==3.6"/>
+      <dependency ref="incremental==22.10.0"/>
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="pyOpenSSL==23.2.0"/>
+      <dependency ref="pyserial==3.5"/>
+      <dependency ref="service-identity==24.1.0"/>
+      <dependency ref="zope.interface==6.1"/>
+    </dependency>
+    <dependency ref="WALinuxAgent==2.11.1.4"/>
+    <dependency ref="annotated-types==0.7.0">
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="anyio==4.12.0">
+      <dependency ref="idna==3.6"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="argcomplete==3.6.3">
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="pexpect==4.9.0"/>
+      <dependency ref="wheel==0.42.0"/>
+    </dependency>
+    <dependency ref="arrow==1.4.0">
+      <dependency ref="python-dateutil==2.8.2"/>
+      <dependency ref="pytz==2024.1"/>
+      <dependency ref="tzdata==2025.3"/>
+    </dependency>
+    <dependency ref="astroid==4.0.2">
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="attrs==23.2.0">
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="zope.interface==6.1"/>
+    </dependency>
+    <dependency ref="bandit==1.9.2">
+      <dependency ref="PyYAML==6.0.1"/>
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="jschema-to-python==1.2.3"/>
+      <dependency ref="pylint==4.0.4"/>
+      <dependency ref="rich==13.7.1"/>
+      <dependency ref="sarif-om==1.0.4"/>
+      <dependency ref="stevedore==5.6.0"/>
+      <dependency ref="tomli==2.3.0"/>
+    </dependency>
+    <dependency ref="bcc==0.29.1"/>
+    <dependency ref="bcrypt==3.2.2">
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="blinker==1.7.0"/>
+    <dependency ref="boolean.py==5.0">
+      <dependency ref="isort==7.0.0"/>
+    </dependency>
+    <dependency ref="boto3==1.34.46">
+      <dependency ref="botocore==1.34.46"/>
+    </dependency>
+    <dependency ref="botocore==1.34.46"/>
+    <dependency ref="certifi==2023.11.17"/>
+    <dependency ref="chardet==5.2.0"/>
+    <dependency ref="click==8.1.6">
+      <dependency ref="colorama==0.4.6"/>
+    </dependency>
+    <dependency ref="cloud-init==25.1.4"/>
+    <dependency ref="colorama==0.4.6"/>
+    <dependency ref="command-not-found==0.3"/>
+    <dependency ref="configobj==5.0.8"/>
+    <dependency ref="constantly==23.10.4"/>
+    <dependency ref="cryptography==41.0.7">
+      <dependency ref="bcrypt==3.2.2"/>
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="cyclonedx-bom==7.2.1">
+      <dependency ref="chardet==5.2.0"/>
+      <dependency ref="cyclonedx-python-lib==11.6.0"/>
+      <dependency ref="packageurl-python==0.17.6"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="pip-requirements-parser==32.0.1"/>
+      <dependency ref="tomli==2.3.0"/>
+    </dependency>
+    <dependency ref="cyclonedx-python-lib==11.6.0">
+      <dependency ref="jsonschema==4.10.3"/>
+      <dependency ref="license-expression==30.4.4"/>
+      <dependency ref="lxml==6.0.2"/>
+      <dependency ref="packageurl-python==0.17.6"/>
+      <dependency ref="py-serializable==2.1.0"/>
+      <dependency ref="referencing==0.37.0"/>
+      <dependency ref="sortedcontainers==2.4.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="dbus-python==1.3.2"/>
+    <dependency ref="defusedxml==0.7.1"/>
+    <dependency ref="dill==0.4.0"/>
+    <dependency ref="distro-info==1.7+build1"/>
+    <dependency ref="distro==1.9.0"/>
+    <dependency ref="dparse==0.6.4">
+      <dependency ref="PyYAML==6.0.1"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="tomli==2.3.0"/>
+    </dependency>
+    <dependency ref="filelock==3.20.1"/>
+    <dependency ref="fqdn==1.5.1"/>
+    <dependency ref="h11==0.16.0"/>
+    <dependency ref="httpcore==1.0.9">
+      <dependency ref="anyio==4.12.0"/>
+      <dependency ref="certifi==2023.11.17"/>
+      <dependency ref="h11==0.16.0"/>
+    </dependency>
+    <dependency ref="httplib2==0.20.4">
+      <dependency ref="pyparsing==3.1.1"/>
+    </dependency>
+    <dependency ref="httpx==0.28.1">
+      <dependency ref="Pygments==2.17.2"/>
+      <dependency ref="anyio==4.12.0"/>
+      <dependency ref="certifi==2023.11.17"/>
+      <dependency ref="click==8.1.6"/>
+      <dependency ref="httpcore==1.0.9"/>
+      <dependency ref="idna==3.6"/>
+      <dependency ref="rich==13.7.1"/>
+      <dependency ref="zstandard==0.22.0"/>
+    </dependency>
+    <dependency ref="hyperlink==21.0.0"/>
+    <dependency ref="idna==3.6"/>
+    <dependency ref="incremental==22.10.0">
+      <dependency ref="Twisted==24.3.0"/>
+      <dependency ref="click==8.1.6"/>
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="isoduration==20.11.0">
+      <dependency ref="arrow==1.4.0"/>
+    </dependency>
+    <dependency ref="isort==7.0.0">
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="setuptools==68.1.2"/>
+    </dependency>
+    <dependency ref="jmespath==1.0.1"/>
+    <dependency ref="joblib==1.5.3"/>
+    <dependency ref="jschema-to-python==1.2.3">
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="jsonpickle==4.1.1"/>
+      <dependency ref="pbr==7.0.3"/>
+    </dependency>
+    <dependency ref="jsonpatch==1.32"/>
+    <dependency ref="jsonpickle==4.1.1">
+      <dependency ref="PyYAML==6.0.1"/>
+      <dependency ref="setuptools==68.1.2"/>
+    </dependency>
+    <dependency ref="jsonpointer==2.0"/>
+    <dependency ref="jsonschema-specifications==2025.9.1">
+      <dependency ref="referencing==0.37.0"/>
+    </dependency>
+    <dependency ref="jsonschema==4.10.3">
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="fqdn==1.5.1"/>
+      <dependency ref="idna==3.6"/>
+      <dependency ref="isoduration==20.11.0"/>
+      <dependency ref="jsonpointer==2.0"/>
+      <dependency ref="pyrsistent==0.20.0"/>
+      <dependency ref="rfc3339-validator==0.1.4"/>
+      <dependency ref="rfc3986-validator==0.1.1"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+      <dependency ref="uri-template==1.3.0"/>
+      <dependency ref="webcolors==25.10.0"/>
+    </dependency>
+    <dependency ref="jsonschema==4.25.1"/>
+    <dependency ref="lark==1.3.1">
+      <dependency ref="regex==2025.11.3"/>
+    </dependency>
+    <dependency ref="launchpadlib==1.11.0">
+      <dependency ref="httplib2==0.20.4"/>
+      <dependency ref="lazr.restfulclient==0.14.6"/>
+      <dependency ref="lazr.uri==1.0.6"/>
+      <dependency ref="six==1.16.0"/>
+      <dependency ref="wadllib==1.3.6"/>
+    </dependency>
+    <dependency ref="lazr.restfulclient==0.14.6">
+      <dependency ref="httplib2==0.20.4"/>
+    </dependency>
+    <dependency ref="lazr.uri==1.0.6"/>
+    <dependency ref="librt==0.7.5"/>
+    <dependency ref="license-expression==30.4.4">
+      <dependency ref="boolean.py==5.0"/>
+    </dependency>
+    <dependency ref="lxml==6.0.2"/>
+    <dependency ref="mando==0.7.1">
+      <dependency ref="six==1.16.0"/>
+    </dependency>
+    <dependency ref="markdown-it-py==3.0.0">
+      <dependency ref="PyYAML==6.0.1"/>
+      <dependency ref="mdurl==0.1.2"/>
+    </dependency>
+    <dependency ref="marshmallow==4.1.2">
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="mccabe==0.7.0"/>
+    <dependency ref="mdurl==0.1.2"/>
+    <dependency ref="mercurial==6.7.2"/>
+    <dependency ref="msgpack==1.1.2"/>
+    <dependency ref="mypy==1.19.1">
+      <dependency ref="librt==0.7.5"/>
+      <dependency ref="lxml==6.0.2"/>
+      <dependency ref="mypy_extensions==1.1.0"/>
+      <dependency ref="pathspec==0.12.1"/>
+      <dependency ref="pip==24.0"/>
+      <dependency ref="setuptools==68.1.2"/>
+      <dependency ref="tomli==2.3.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="mypy_extensions==1.1.0"/>
+    <dependency ref="netaddr==0.8.0"/>
+    <dependency ref="netifaces==0.11.0"/>
+    <dependency ref="nltk==3.9.2">
+      <dependency ref="click==8.1.6"/>
+      <dependency ref="joblib==1.5.3"/>
+      <dependency ref="pyparsing==3.1.1"/>
+      <dependency ref="regex==2025.11.3"/>
+      <dependency ref="requests==2.31.0"/>
+      <dependency ref="tqdm==4.67.1"/>
+    </dependency>
+    <dependency ref="oauthlib==3.2.2">
+      <dependency ref="PyJWT==2.7.0"/>
+      <dependency ref="blinker==1.7.0"/>
+      <dependency ref="cryptography==41.0.7"/>
+    </dependency>
+    <dependency ref="packageurl-python==0.17.6">
+      <dependency ref="isort==7.0.0"/>
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="setuptools==68.1.2"/>
+      <dependency ref="wheel==0.42.0"/>
+    </dependency>
+    <dependency ref="packaging==24.0"/>
+    <dependency ref="pathspec==0.12.1"/>
+    <dependency ref="pbr==7.0.3">
+      <dependency ref="setuptools==68.1.2"/>
+    </dependency>
+    <dependency ref="pexpect==4.9.0"/>
+    <dependency ref="pip-api==0.0.34">
+      <dependency ref="pip==24.0"/>
+    </dependency>
+    <dependency ref="pip-requirements-parser==32.0.1">
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="pyparsing==3.1.1"/>
+    </dependency>
+    <dependency ref="pip==24.0"/>
+    <dependency ref="pip_audit==2.10.0">
+      <dependency ref="CacheControl==0.14.4"/>
+      <dependency ref="cyclonedx-python-lib==11.6.0"/>
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="pip-api==0.0.34"/>
+      <dependency ref="pip-requirements-parser==32.0.1"/>
+      <dependency ref="platformdirs==4.5.1"/>
+      <dependency ref="requests==2.31.0"/>
+      <dependency ref="rich==13.7.1"/>
+      <dependency ref="tomli==2.3.0"/>
+      <dependency ref="tomli_w==1.2.0"/>
+    </dependency>
+    <dependency ref="pipx==1.8.0">
+      <dependency ref="argcomplete==3.6.3"/>
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="platformdirs==4.5.1"/>
+      <dependency ref="tomli==2.3.0"/>
+      <dependency ref="userpath==1.9.2"/>
+    </dependency>
+    <dependency ref="platformdirs==4.5.1">
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="ptyprocess==0.7.0"/>
+    <dependency ref="py-serializable==2.1.0">
+      <dependency ref="defusedxml==0.7.1"/>
+    </dependency>
+    <dependency ref="pyOpenSSL==23.2.0"/>
+    <dependency ref="pyasn1-modules==0.2.8"/>
+    <dependency ref="pyasn1==0.4.8"/>
+    <dependency ref="pydantic==2.12.5">
+      <dependency ref="annotated-types==0.7.0"/>
+      <dependency ref="pydantic_core==2.41.5"/>
+      <dependency ref="typing-inspection==0.4.2"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+      <dependency ref="tzdata==2025.3"/>
+    </dependency>
+    <dependency ref="pydantic_core==2.41.5">
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="pylint==4.0.4">
+      <dependency ref="astroid==4.0.2"/>
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="dill==0.4.0"/>
+      <dependency ref="isort==7.0.0"/>
+      <dependency ref="mccabe==0.7.0"/>
+      <dependency ref="platformdirs==4.5.1"/>
+      <dependency ref="tomli==2.3.0"/>
+      <dependency ref="tomlkit==0.13.3"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="pyparsing==3.1.1">
+      <dependency ref="Jinja2==3.1.2"/>
+    </dependency>
+    <dependency ref="pyparted==3.12.0"/>
+    <dependency ref="pyrsistent==0.20.0"/>
+    <dependency ref="pyserial==3.5"/>
+    <dependency ref="python-apt==2.7.7+ubuntu5"/>
+    <dependency ref="python-dateutil==2.8.2"/>
+    <dependency ref="python-debian==0.1.49+ubuntu2"/>
+    <dependency ref="python-magic==0.4.27"/>
+    <dependency ref="pytz==2024.1"/>
+    <dependency ref="radon==6.0.1">
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="mando==0.7.1"/>
+      <dependency ref="tomli==2.3.0"/>
+    </dependency>
+    <dependency ref="referencing==0.37.0">
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="rpds-py==0.30.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="regex==2025.11.3"/>
+    <dependency ref="requests==2.31.0">
+      <dependency ref="chardet==5.2.0"/>
+    </dependency>
+    <dependency ref="rfc3339-validator==0.1.4">
+      <dependency ref="six==1.16.0"/>
+    </dependency>
+    <dependency ref="rfc3986-validator==0.1.1"/>
+    <dependency ref="rfc3987-syntax==1.1.0">
+      <dependency ref="lark==1.3.1"/>
+    </dependency>
+    <dependency ref="rich==13.7.1">
+      <dependency ref="Pygments==2.17.2"/>
+      <dependency ref="markdown-it-py==3.0.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="rpds-py==0.30.0"/>
+    <dependency ref="ruamel.yaml.clibz==0.3.4"/>
+    <dependency ref="ruamel.yaml==0.19.0">
+      <dependency ref="mercurial==6.7.2"/>
+      <dependency ref="ruamel.yaml.clibz==0.3.4"/>
+    </dependency>
+    <dependency ref="s3transfer==0.10.1">
+      <dependency ref="botocore==1.34.46"/>
+    </dependency>
+    <dependency ref="safety-schemas==0.0.16">
+      <dependency ref="dparse==0.6.4"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="pydantic==2.12.5"/>
+      <dependency ref="ruamel.yaml==0.19.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="safety==3.7.0">
+      <dependency ref="Authlib==1.6.6"/>
+      <dependency ref="Jinja2==3.1.2"/>
+      <dependency ref="click==8.1.6"/>
+      <dependency ref="dparse==0.6.4"/>
+      <dependency ref="filelock==3.20.1"/>
+      <dependency ref="httpx==0.28.1"/>
+      <dependency ref="marshmallow==4.1.2"/>
+      <dependency ref="nltk==3.9.2"/>
+      <dependency ref="packaging==24.0"/>
+      <dependency ref="pydantic==2.12.5"/>
+      <dependency ref="requests==2.31.0"/>
+      <dependency ref="ruamel.yaml==0.19.0"/>
+      <dependency ref="safety-schemas==0.0.16"/>
+      <dependency ref="tenacity==9.1.2"/>
+      <dependency ref="tomli==2.3.0"/>
+      <dependency ref="tomlkit==0.13.3"/>
+      <dependency ref="typer==0.21.0"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="sarif-om==1.0.4">
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="pbr==7.0.3"/>
+    </dependency>
+    <dependency ref="service-identity==24.1.0">
+      <dependency ref="attrs==23.2.0"/>
+      <dependency ref="cryptography==41.0.7"/>
+      <dependency ref="idna==3.6"/>
+      <dependency ref="mypy==1.19.1"/>
+      <dependency ref="pyOpenSSL==23.2.0"/>
+      <dependency ref="pyasn1-modules==0.2.8"/>
+      <dependency ref="pyasn1==0.4.8"/>
+    </dependency>
+    <dependency ref="setuptools==68.1.2"/>
+    <dependency ref="shellingham==1.5.4"/>
+    <dependency ref="six==1.16.0"/>
+    <dependency ref="sortedcontainers==2.4.0"/>
+    <dependency ref="sos==4.8.2"/>
+    <dependency ref="ssh-import-id==5.11"/>
+    <dependency ref="stevedore==5.6.0"/>
+    <dependency ref="systemd-python==235"/>
+    <dependency ref="tenacity==9.1.2"/>
+    <dependency ref="tomli==2.3.0"/>
+    <dependency ref="tomli_w==1.2.0"/>
+    <dependency ref="tomlkit==0.13.3"/>
+    <dependency ref="tqdm==4.67.1">
+      <dependency ref="colorama==0.4.6"/>
+      <dependency ref="requests==2.31.0"/>
+    </dependency>
+    <dependency ref="typer==0.21.0">
+      <dependency ref="click==8.1.6"/>
+      <dependency ref="rich==13.7.1"/>
+      <dependency ref="shellingham==1.5.4"/>
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="typing-inspection==0.4.2">
+      <dependency ref="typing_extensions==4.10.0"/>
+    </dependency>
+    <dependency ref="typing_extensions==4.10.0"/>
+    <dependency ref="typing_extensions==4.15.0"/>
+    <dependency ref="tzdata==2025.3"/>
+    <dependency ref="ubuntu-pro-client==8001"/>
+    <dependency ref="ufw==0.36.2"/>
+    <dependency ref="uri-template==1.3.0">
+      <dependency ref="mypy==1.19.1"/>
+    </dependency>
+    <dependency ref="urllib3==2.0.7">
+      <dependency ref="certifi==2023.11.17"/>
+      <dependency ref="cryptography==41.0.7"/>
+      <dependency ref="idna==3.6"/>
+      <dependency ref="pyOpenSSL==23.2.0"/>
+      <dependency ref="zstandard==0.22.0"/>
+    </dependency>
+    <dependency ref="userpath==1.9.2">
+      <dependency ref="click==8.1.6"/>
+    </dependency>
+    <dependency ref="vulture==2.14">
+      <dependency ref="tomli==2.3.0"/>
+    </dependency>
+    <dependency ref="wadllib==1.3.6"/>
+    <dependency ref="webcolors==25.10.0"/>
+    <dependency ref="wheel==0.42.0">
+      <dependency ref="setuptools==68.1.2"/>
+    </dependency>
+    <dependency ref="zope.interface==6.1"/>
+    <dependency ref="zstandard==0.22.0"/>
+  </dependencies>
+</bom>

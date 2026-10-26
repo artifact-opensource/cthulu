@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cthulu Backtest Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            background: #f7f9fc
+        }
+
+        .card {
+            margin-bottom: 12px
+        }
+
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid #ddd
+        }
+
+        .summary {
+            font-size: 0.95rem
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mb-3">📊 Cthulu Backtest Reports</h1>
+        <p class="text-muted">Reports directory: <code>/backtesting/reports</code></p>
+
+        <div id="reports-list" class="row"></div>
+
+        <hr>
+        <div id="viewer" style="display:none">
+            <h4 id="viewer-title"></h4>
+            <div id="report-actions" class="mb-3"></div>
+            <div id="report-container"></div>
+        </div>
+    </div>
+
+    <script>
+        async function loadManifest() {
+            try {
+                const res = await fetch('/backtesting/reports/index.json');
+                if (!res.ok) throw new Error('No manifest');
+                const manifest = await res.json();
+                renderList(manifest);
+            } catch (e) {
+                document.getElementById('reports-list').innerHTML = '<div class="col-12"><div class="alert alert-warning">No reports found. Generate a report first.</div></div>'
+            }
+        }
+
+        function renderList(manifest) {
+            const container = document.getElementById('reports-list');
+            container.innerHTML = manifest.map(entry => {
+                const s = entry.summary || {};
+                return `
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">${entry.file}</h5>
+              <p class="card-text summary">
+                <strong>Format:</strong> ${entry.format.toUpperCase()}<br>
+                <strong>Total Return:</strong> ${Number(s.total_return).toFixed(2)}%<br>
+                <strong>Sharpe:</strong> ${Number(s.sharpe_ratio).toFixed(2)}<br>
+                <strong>Win Rate:</strong> ${(Number(s.win_rate) * 100).toFixed(1)}%<br>
+                <strong>Trades:</strong> ${s.total_trades}
+              </p>
+              <a href="#" class="btn btn-sm btn-primary" onclick="viewReport('${entry.file}','${entry.format}')">View</a>
+              <a href="/backtesting/reports/${entry.file}" target="_blank" class="btn btn-sm btn-outline-secondary">Open Raw</a>
+            </div>
+          </div>
+        </div>`
+            }).join('\n');
+        }
+
+        function viewReport(file, format) {
+            const viewer = document.getElementById('viewer');
+            viewer.style.display = 'block';
+            document.getElementById('viewer-title').textContent = file;
+            const container = document.getElementById('report-container');
+            container.innerHTML = '';
+
+            if (format === 'html') {
+                container.innerHTML = `<iframe src="/backtesting/reports/${file}"></iframe>`;
+            } else if (format === 'json') {
+                // Fetch metrics and visualise
+                fetch(`/backtesting/reports/${file}`).then(r => r.json()).then(j => {
+                    container.innerHTML = `
+            <canvas id="summaryChart" width="800" height="300"></canvas>
+            <pre class="mt-3">${JSON.stringify(j, null, 2)}</pre>
+          `;
+                    const ctx = document.getElementById('summaryChart').getContext('2d');
+                    const labels = ['Total Return', 'Sharpe', 'Win Rate', 'Trades'];
+                    const data = [j.metrics?.total_return || 0, j.metrics?.sharpe_ratio || 0, (j.metrics?.win_rate || 0) * 100, j.metrics?.total_trades || 0];
+                    new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Report Summary', data }] } });
+                }).catch(e => { container.innerHTML = '<div class="alert alert-danger">Failed to load JSON report.</div>' })
+            } else if (format === 'text' || format === 'csv') {
+                fetch(`/backtesting/reports/${file}`).then(r => r.text()).then(t => {
+                    container.innerHTML = `<pre class="border p-3 bg-white" style="max-height:70vh;overflow:auto">${escapeHtml(t)}</pre>`
+                })
+            } else {
+                container.innerHTML = '<div class="alert alert-secondary">Format not supported for inline view.</div>'
+            }
+        }
+
+        function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": "&#39;" })[c]) }
+
+        loadManifest();
+    </script>
+</body>
+
+</html>

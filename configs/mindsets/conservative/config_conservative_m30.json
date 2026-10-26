@@ -1,0 +1,50 @@
+{
+  "_comment": "Conservative profile, M30 timeframe",
+  "mt5": {
+    "login": 0,
+    "password": "CHANGE_ME",
+    "server": "FROM_ENV",
+    "timeout": 60000,
+    "path": "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+  },
+  "risk": {
+    "max_position_size": 0.2,
+    "default_position_size": 0.02,
+    "max_daily_loss": 30.0,
+    "max_positions_per_symbol": 1,
+    "max_total_positions": 2,
+    "position_size_pct": 1.5,
+    "use_kelly_sizing": false,
+    "emergency_stop_loss_pct": 4.0,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 2.0
+  },
+  "trading": {
+    "symbol": "EURUSD",
+    "timeframe": "TIMEFRAME_M30",
+    "poll_interval": 60,
+    "lookback_bars": 800
+  },
+  "strategy": {
+    "type": "sma_crossover",
+    "params": {
+      "fast_period": 20,
+      "slow_period": 50,
+      "symbol": "EURUSD"
+    }
+  },
+  "confidence_threshold": 0.75,
+  "orphan_trades": {
+    "enabled": true,
+    "adopt_symbols": [],
+    "ignore_symbols": [],
+    "apply_exit_strategies": true,
+    "max_adoption_age_hours": 0,
+    "log_only": false
+  },
+  "exit_strategies": [],
+  "indicators": [],
+  "database": {
+    "path": "cthulu.db"
+  }
+}

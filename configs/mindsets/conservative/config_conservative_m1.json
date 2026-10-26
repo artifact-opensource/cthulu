@@ -1,0 +1,135 @@
+{
+  "_comment": "MT5 credentials are loaded from .env file - see .env.example",
+  "mt5": {
+    "login": 0,
+    "password": "CHANGE_ME",
+    "server": "FROM_ENV",
+    "timeout": 60000,
+    "path": "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+  },
+  "risk": {
+    "max_position_size": 0.5,
+    "default_position_size": 0.01,
+    "max_daily_loss": 5.0,
+    "max_positions_per_symbol": 2,
+    "max_total_positions": 5,
+    "position_size_pct": 0.1,
+    "max_position_size_pct": 0.05,
+    "min_confidence": 0.6,
+    "use_kelly_sizing": false,
+    "emergency_stop_loss_pct": 2.5,
+    "circuit_breaker_enabled": true,
+    "circuit_breaker_threshold_pct": 3.0
+  },
+  "trading": {
+    "symbol": "XAUUSD",
+    "timeframe": "TIMEFRAME_M1",
+    "poll_interval": 5,
+    "lookback_bars": 500
+  },
+  "strategy": {
+    "type": "sma_crossover",
+    "params": {
+      "fast_period": 10,
+      "slow_period": 30,
+      "symbol": "XAUUSD"
+    }
+  },
+  "indicators": [
+    {
+      "type": "rsi",
+      "params": {
+        "period": 14
+      }
+    },
+    {
+      "type": "macd",
+      "params": {
+        "fast_period": 12,
+        "slow_period": 26,
+        "signal_period": 9
+      }
+    },
+    {
+      "type": "bollinger",
+      "params": {
+        "period": 20,
+        "std_dev": 2.0
+      }
+    },
+    {
+      "type": "adx",
+      "params": {
+        "period": 14
+      }
+    }
+  ],
+  "exit_strategies": [
+    {
+      "type": "adverse_movement",
+      "enabled": true,
+      "params": {
+        "movement_threshold_pct": 1.0,
+        "time_window_seconds": 60,
+        "consecutive_moves_required": 3
+      }
+    },
+    {
+      "type": "time_based",
+      "enabled": true,
+      "params": {
+        "max_hold_hours": 24.0,
+        "weekend_protection": true,
+        "friday_close_time": "16:00",
+        "eod_close": false
+      }
+    },
+    {
+      "type": "profit_target",
+      "enabled": true,
+      "params": {
+        "target_pct": 2.0,
+        "target_pips": null,
+        "partial_close_levels": [
+          {
+            "pct": 1.0,
+            "close_pct": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "type": "trailing_stop",
+      "enabled": true,
+      "params": {
+        "atr_multiplier": 2.0,
+        "activation_profit_pct": 0.5,
+        "min_distance_pips": 50
+      }
+    }
+  ],
+  "database": {
+    "path": "cthulu.db",
+    "backup_interval_hours": 24
+  },
+  "orphan_trades": {
+    "enabled": true,
+    "adopt_symbols": [
+      "GOLD#m"
+    ],
+    "ignore_symbols": [],
+    "apply_exit_strategies": true,
+    "max_adoption_age_hours": 0,
+    "log_only": false
+  },
+  "runtime": {
+    "dry_run": false,
+    "live_run": true,
+    "live_run_confirm_env": "LIVE_RUN_CONFIRM"
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/herald.log",
+    "format": "json"
+  }
+}

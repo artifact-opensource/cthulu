@@ -1,0 +1,5 @@
+{
+  "name": "Cthulu | Autonomous Trading Workspace",
+  "description": "A professional-grade interface for the Cthulu autonomous trading system. Features real-time market visualization, manual override controls, and adaptive AI insights powered by Gemini.",
+  "requestFramePermissions": []
+}

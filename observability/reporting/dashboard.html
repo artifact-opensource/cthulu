@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Cthulu Observability Dashboard</title>
+  <style>
+    body {
+      font-family: Segoe UI, Arial, sans-serif;
+      margin: 20px;
+      background: #0b0e11;
+      color: #e6e6e6
+    }
+
+    h1 {
+      margin-top: 0
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px
+    }
+
+    .card {
+      background: #12171f;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3)
+    }
+
+    .chart {
+      width: 100%;
+      height: 300px
+    }
+
+    .small {
+      font-size: 12px;
+      color: #9aa4b2
+    }
+
+    a {
+      color: #6ab0ff
+    }
+
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px
+    }
+
+    .kpi-card {
+      background: #0f141b;
+      border: 1px solid #1f2733;
+      border-radius: 8px;
+      padding: 10px
+    }
+
+    .kpi-title {
+      font-size: 12px;
+      color: #9aa4b2;
+      margin-bottom: 4px
+    }
+
+    .kpi-value {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 6px
+    }
+
+    .kpi-bar {
+      height: 6px;
+      background: #1a202b;
+      border-radius: 6px;
+      overflow: hidden
+    }
+
+    .kpi-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0a84ff, #2ecc71)
+    }
+
+    .spark {
+      width: 100%;
+      height: 36px;
+      margin-top: 8px
+    }
+
+    table#benchTable tbody tr:nth-child(odd) {
+      background: #11171f
+    }
+
+    table#benchTable tbody tr:hover {
+      background: #0e131a
+    }
+
+    \n
+  </style>
+</head>
+
+<body>
+  <h1>Cthulu Observability Dashboard</h1>
+  <div class="small">Auto-refresh every 5s · Data sources: metrics/comprehensive_metrics.csv,
+    metrics/indicator_metrics.csv,
+    metrics/system_health.csv</div>
+  <div class="grid">
+    <div class="card">
+      <h3>Account Balance</h3><canvas id="balanceChart" class="chart"></canvas>
+    </div>
+    <div class="card">
+      <h3>Win Rate</h3><canvas id="winRateChart" class="chart"></canvas>
+    </div>
+    <div class="card">
+      <h3>RSI</h3><canvas id="rsiChart" class="chart"></canvas>
+    </div>
+    <div class="card">
+      <h3>CPU Usage</h3><canvas id="cpuChart" class="chart"></canvas>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Raw Files</h3>
+    <ul>
+      <li><a href="/metrics/comprehensive_metrics.csv" target="_blank">comprehensive_metrics.csv</a>
+      </li>
+      <li><a href="/metrics/indicator_metrics.csv" target="_blank">indicator_metrics.csv</a></li>
+      <li><a href="/metrics/system_health.csv" target="_blank">system_health.csv</a></li>
+    </ul>
+  </div>
+  <script>
+    async function loadCSV(url) {
+      const res = await fetch(url + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + url);
+      const text = await res.text();
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) return { header: [], rows: [] };
+      const header = lines[0].split(',');
+      const rows = lines.slice(1).map(l => l.split(','));
+      return { header, rows };
+    }
+    function drawLine(canvasId, series, color) {
+      const c = document.getElementById(canvasId);
+      const ctx = c.getContext('2d');
+      const w = c.width = c.clientWidth; const h = c.height = c.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      const n = series.length; if (n < 2) { ctx.fillStyle = '#9aa4b2'; ctx.fillText('Waiting for data...', 12, 18); return; }
+      const minY = Math.min.apply(null, series.map(p => p.y));
+      const maxY = Math.max.apply(null, series.map(p => p.y));
+      const pad = 24;
+      ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath();
+      series.forEach((p, i) => {
+        const x = pad + i / (n - 1) * (w - pad * 2);
+        const y = h - pad - ((p.y - minY) / (maxY - minY + 1e-9)) * (h - pad * 2);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.fillStyle = '#9aa4b2';
+      ctx.fillText('min: ' + minY.toFixed(2), 8, h - 6);
+      ctx.fillText('max: ' + maxY.toFixed(2), w - 80, 16);
+    }
+    async function refresh() {
+      try {
+        const comp = await loadCSV('/metrics/comprehensive_metrics.csv');
+        const ti = comp.header.indexOf('timestamp');
+        const balIdx = comp.header.indexOf('account_balance');
+        const wrIdx = comp.header.indexOf('win_rate');
+        const balanceSeries = comp.rows.map(r => ({ x: r[ti], y: parseFloat(r[balIdx] || 0) }));
+        const winRateSeries = comp.rows.map(r => ({ x: r[ti], y: parseFloat(r[wrIdx] || 0) }));
+        drawLine('balanceChart', balanceSeries, '#0a84ff');
+        drawLine('winRateChart', winRateSeries, '#2ecc71');
+
+        const ind = await loadCSV('/metrics/indicator_metrics.csv');
+        const rsiIdx = ind.header.indexOf('rsi_value');
+        const its = ind.header.indexOf('timestamp');
+        const rsiSeries = ind.rows.map(r => ({ x: r[its], y: parseFloat(r[rsiIdx] || 0) }));
+        drawLine('rsiChart', rsiSeries, '#e67e22');
+
+        const sys = await loadCSV('/metrics/system_health.csv');
+        const cpuIdx = sys.header.indexOf('system_cpu_percent');
+        const stsIdx = sys.header.indexOf('timestamp');
+        const cpuSeries = sys.rows.map(r => ({ x: r[stsIdx], y: parseFloat(r[cpuIdx] || 0) }));
+        drawLine('cpuChart', cpuSeries, '#e74c3c');
+      } catch (e) { console.error(e); }
+    }
+    setInterval(refresh, 5000);
+    refresh();
+  </script>
+  <div class="card" style="margin-top:16px">
+    <h3>Benchmarking</h3>
+    <div id="benchGrid" class="bench-grid"></div>
+    <div class="card" style="margin-top:12px">
+      <h4>Snapshot Metrics</h4>
+      <table id="benchTable" style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:6px">Metric</th>
+            <th style="text-align:right;padding:6px">Value</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function clip01(x) { x = Number(x) || 0; return Math.max(0, Math.min(1, x)); }
+    function addKpi(grid, name, value, pct, spark) {
+      const card = document.createElement('div'); card.className = 'kpi-card';
+      const t = document.createElement('div'); t.className = 'kpi-title'; t.textContent = name; card.appendChild(t);
+      const v = document.createElement('div'); v.className = 'kpi-value'; v.textContent = value; card.appendChild(v);
+      const bar = document.createElement('div'); bar.className = 'kpi-bar'; const fill = document.createElement('div'); fill.className = 'kpi-fill'; fill.style.width = (clip01(pct) * 100) + '%'; bar.appendChild(fill); card.appendChild(bar);
+      if (spark && spark.length > 3) {
+        const cv = document.createElement('canvas'); cv.className = 'spark'; card.appendChild(cv);
+        const ctx = cv.getContext('2d'); const w = cv.width = cv.clientWidth; const h = cv.height = cv.clientHeight; const min = Math.min.apply(null, spark), max = Math.max.apply(null, spark); ctx.strokeStyle = '#6ab0ff'; ctx.lineWidth = 1.5; ctx.beginPath(); spark.forEach((y, i) => { const xx = i / (spark.length - 1) * w; const yy = h - ((y - min) / (max - min + 1e-9)) * h; if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy); }); ctx.stroke();
+      }
+      grid.appendChild(card);
+    }
+    async function computeBenchmarks() {
+      const comp = await loadCSV('/metrics/comprehensive_metrics.csv');
+      const ind = await loadCSV('/metrics/indicator_metrics.csv');
+      const sys = await loadCSV('/metrics/system_health.csv');
+      const H = comp.header, R = comp.rows; if (H.length === 0 || R.length < 2) { return }
+      function idx(nameList) { for (const n of nameList) { const i = H.indexOf(n); if (i !== -1) return i; } return -1 }
+      const eqIdx = idx(['account_equity', 'equity']); const balIdx = idx(['account_balance', 'balance']);
+      const wrIdx = idx(['win_rate']); const pfIdx = idx(['profit_factor']); const expIdx = idx(['expectancy']);
+      const eqSeries = R.map(r => Number(r[eqIdx] || r[balIdx] || 0)).filter(Number.isFinite);
+      let peak = -Infinity, maxDD = 0; for (const v of eqSeries) { if (v > peak) peak = v; if (peak > 0) { maxDD = Math.max(maxDD, (peak - v) / peak); } }
+      const rets = []; for (let i = 1; i < eqSeries.length; i++) { const prev = eqSeries[i - 1]; const cur = eqSeries[i]; if (prev > 0) { rets.push((cur - prev) / prev); } }
+      const mean = rets.reduce((a, b) => a + b, 0) / (rets.length || 1);
+      const dows = rets.filter(x => x < 0); const dmean = dows.reduce((a, b) => a + b, 0) / (dows.length || 1);
+      const dvar = dows.reduce((a, b) => a + (b - dmean) * (b - dmean), 0) / (dows.length || 1);
+      const std = Math.sqrt(rets.reduce((a, b) => a + (b - mean) * (b - mean), 0) / (rets.length || 1));
+      const sharpe = std > 0 ? mean / std * Math.sqrt(rets.length || 1) : 0;
+      const sortino = dvar > 0 ? mean / Math.sqrt(dvar) : 0;
+      const profitFactor = (function () { const wins = rets.filter(x => x > 0).reduce((a, b) => a + b, 0); const losses = rets.filter(x => x < 0).reduce((a, b) => a + Math.abs(b), 0); return losses > 0 ? wins / losses : (wins > 0 ? Infinity : 0); }());
+      const winRate = Number(R.at(-1)[wrIdx] || 0);
+      const expectancy = expIdx !== -1 ? Number(R.at(-1)[expIdx] || 0) : mean;
+      const grid = document.getElementById('benchGrid'); grid.innerHTML = '';
+      addKpi(grid, 'Win Rate', (winRate * 100).toFixed(2) + '%', winRate, eqSeries.slice(-40));
+      addKpi(grid, 'Profit Factor', isFinite(profitFactor) ? profitFactor.toFixed(2) : '∞', Math.min(1, (isFinite(profitFactor) ? profitFactor : 2) / 2), rets.slice(-60).map((x, i) => i ? rets[i - 1] + x : 0));
+      addKpi(grid, 'Sharpe', sharpe.toFixed(2), Math.min(1, sharpe / 1.5), rets.slice(-60));
+      addKpi(grid, 'Sortino', sortino.toFixed(2), Math.min(1, sortino / 2.0), rets.slice(-60));
+      addKpi(grid, 'Max Drawdown', (maxDD * 100).toFixed(2) + '%', Math.max(0, 1 - (maxDD / 0.20)), eqSeries.slice(-40));
+      const SH = sys.header, SR = sys.rows; const cpuIdx = SH.indexOf('system_cpu_percent'); const cpuAvg = SR.reduce((s, r) => s + Number(r[cpuIdx] || 0), 0) / (SR.length || 1);
+      addKpi(grid, 'CPU Avg', cpuAvg.toFixed(1) + '%', Math.min(1, cpuAvg / 85), SR.slice(-40).map(r => Number(r[cpuIdx] || 0)));
+      const tbody = document.querySelector('#benchTable tbody'); tbody.innerHTML = ''; const latest = R.at(-1);
+      H.forEach((col, i) => { if (col === 'timestamp') return; const tr = document.createElement('tr'); const td1 = document.createElement('td'); td1.style.padding = '6px'; td1.textContent = col; const td2 = document.createElement('td'); td2.style.padding = '6px'; td2.style.textAlign = 'right'; td2.textContent = latest[i]; tr.appendChild(td1); tr.appendChild(td2); tbody.appendChild(tr); });
+    }
+    setInterval(computeBenchmarks, 7000); computeBenchmarks();
+  </script>
+  <div class="card" style="margin-top:16px">
+    <div class="grid" id="compCharts"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="grid" id="indCharts"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="grid" id="sysCharts"></div>
+  </div>
+  <script>
+    const skipCols = new Set(['timestamp', 'symbol', 'timeframe', 'side', 'strategy_name']);
+    function isFiniteNum(v) { const n = Number(v); return Number.isFinite(n); }
+    async function genCharts(url, containerId) {
+      const cont = document.getElementById(containerId); if (!cont) { return; }
+      const { header, rows } = await loadCSV(url);
+      cont.innerHTML = ''; if (header.length === 0) { cont.innerHTML = '<div class="small">No data</div>'; return; }
+      const ti = header.indexOf('timestamp');
+      header.forEach((col, idx) => {
+        if (skipCols.has(col)) return;
+        const series = rows.map(r => ({ x: r[ti], y: parseFloat(r[idx] || '') })).filter(p => isFiniteNum(p.y));
+        if (series.length < 3) return;
+        const card = document.createElement('div'); card.className = 'card';
+        const cv = document.createElement('canvas'); cv.className = 'chart'; card.appendChild(cv);
+        cont.appendChild(card);
+        cv.id = 'chart_' + containerId + '_' + idx + '_' + Math.random().toString(36).slice(2);
+        drawLine(cv.id, series, '#6ab0ff');
+      });
+    }
+    async function refreshAll() {
+      await genCharts('/metrics/comprehensive_metrics.csv', 'compCharts');
+      await genCharts('/metrics/indicator_metrics.csv', 'indCharts');
+      await genCharts('/metrics/system_health.csv', 'sysCharts');
+    }
+    setInterval(refreshAll, 5000);
+    refreshAll();
+  </script>
+</body>
+
+</html>

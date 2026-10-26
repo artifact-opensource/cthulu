@@ -1,0 +1,96 @@
+{
+    "symbol": "GOLD#",
+    "timeframe": "M5",
+    "mode": "live",
+    "loop_interval": 30,
+    "mt5": {
+        "login": 0,
+        "password": "",
+        "server": "",
+        "path": "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+    },
+    "risk": {
+        "max_positions": 2,
+        "max_positions_per_symbol": 1,
+        "max_risk_per_trade": 0.01,
+        "min_balance_threshold": 100.0,
+        "default_lot_size": 0.01,
+        "max_lot_size": 0.1
+    },
+    "dynamic_sltp": {
+        "base_sl_atr": 2.0,
+        "base_tp_atr": 4.0,
+        "breakeven_trigger_atr": 1.0,
+        "trailing_trigger_atr": 1.5,
+        "trailing_lock_pct": 0.5
+    },
+    "entry_confluence": {
+        "enabled": true,
+        "min_score_to_enter": 50,
+        "min_score_for_full_size": 75,
+        "level_weight": 0.40,
+        "momentum_weight": 0.25,
+        "timing_weight": 0.20,
+        "structure_weight": 0.15
+    },
+    "session_orb": {
+        "enabled": true,
+        "range_duration": 30,
+        "confirm_bars": 1,
+        "min_range_size_atr": 0.5,
+        "max_range_size_atr": 3.0,
+        "sessions": ["london", "new_york"]
+    },
+    "order_blocks": {
+        "enabled": true,
+        "swing_lookback": 5,
+        "min_move_atr": 1.5,
+        "max_age_bars": 100,
+        "use_body_only": true
+    },
+    "adoption_policy": {
+        "enabled": true,
+        "min_trade_age_seconds": 0,
+        "apply_sltp_on_adopt": true,
+        "log_only": false
+    },
+    "strategy_selector": {
+        "enabled_strategies": [
+            "sma_crossover",
+            "ema_crossover",
+            "momentum_breakout",
+            "scalping"
+        ],
+        "regime_weight": 0.4,
+        "performance_weight": 0.35,
+        "confidence_weight": 0.25
+    },
+    "exit_strategies": {
+        "trailing_stop": {
+            "mode": "atr",
+            "atr_multiplier": 1.5,
+            "activation_profit_pips": 10,
+            "min_trail_distance": 5
+        },
+        "partial_profit": {
+            "levels": [
+                {"profit_pips": 20, "exit_portion": 0.5},
+                {"profit_pips": 40, "exit_portion": 0.25}
+            ]
+        },
+        "time_based": {
+            "max_hold_hours": 24,
+            "close_before_weekend": true
+        }
+    },
+    "adaptive_drawdown": {
+        "trailing_lock": 0.5,
+        "survival_threshold": 50.0,
+        "recovery_factor": 0.5
+    },
+    "execution": {
+        "max_slippage_points": 50,
+        "retry_count": 3,
+        "retry_delay_ms": 500
+    }
+}
