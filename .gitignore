@@ -384,3 +384,4 @@ model/arch_2.0/model/arch_2.0/training/test_metrics/metrics_20260201_180651_fina
 model/arch_2.0/model/arch_2.0/training/test_metrics/metrics_20260201_180756_final.json
 model/arch_2.0/model/arch_2.0/training/test_metrics/metrics_20260201_180832_final.json
 model/arch_2.0/HUGGINGFACE_README.md
+ML_RL/data/tier_optimizer/optimizer_state.json
