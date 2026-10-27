@@ -23,6 +23,7 @@ import os
 import tempfile
 import copy
 import re
+import math
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field, replace
@@ -59,15 +60,27 @@ class PositionSizeDecision:
     def compute_final(self, min_lot: float = 0.01, volume_step: float = 0.01) -> float:
         """Compute final size after all adjustments."""
         current = self.base_size
-        for reason, mult in self.adjustments:
-            current *= mult
-        
-        # Round to volume step
-        if volume_step > 0:
-            current = round(round(current / volume_step) * volume_step, 2)
-        
-        # Ensure minimum lot
-        self.final_size = max(min_lot, current)
+        if not math.isfinite(current) or current <= 0:
+            current = 0.0
+        else:
+            for _, multiplier in self.adjustments:
+                if not math.isfinite(multiplier) or multiplier < 0:
+                    current = 0.0
+                    break
+                current *= multiplier
+
+            # Sizing adjustments may reduce risk, but may not exceed the
+            # risk evaluator's approved base volume.
+            current = min(current, self.base_size)
+            if volume_step > 0 and math.isfinite(volume_step):
+                current = math.floor((current + volume_step * 1e-12) / volume_step) * volume_step
+            else:
+                current = 0.0
+
+            if not math.isfinite(min_lot) or min_lot <= 0 or current + 1e-12 < min_lot:
+                current = 0.0
+
+        self.final_size = round(current, 8)
         
         # Build reasoning string
         if self.adjustments:
@@ -445,6 +458,13 @@ class TradingLoop:
     @staticmethod
     def _symbol_key(symbol: str) -> str:
         return re.sub(r'[^A-Z0-9]', '', symbol.upper())
+
+    @staticmethod
+    def _should_accept_marginal_entry(config: Dict[str, Any], result: Any) -> bool:
+        return bool(
+            config.get('entry_confluence', {}).get('allow_marginal_entries', False)
+            and result.should_enter
+        )
 
     @staticmethod
     def _normalize_timeframe(timeframe: Any) -> Any:
@@ -856,7 +876,9 @@ class TradingLoop:
         try:
             from cthulu.cognition.entry_confluence import get_entry_confluence_filter
             
-            confluence_filter = get_entry_confluence_filter()
+            confluence_filter = get_entry_confluence_filter(
+                config=self.ctx.config.get('entry_confluence', {})
+            )
             current_price = float(df['close'].iloc[-1])
             current_bar = df.iloc[-1]
             
@@ -937,8 +959,26 @@ class TradingLoop:
                 self.ctx.logger.warning("No market data received, skipping cycle")
                 time.sleep(self.ctx.poll_interval)
                 return None
-            
-            df = self.ctx.data_layer.normalize_rates(rates, symbol=self.ctx.symbol)
+
+            selected_symbol = self.ctx.connector.ensure_symbol_selected(self.ctx.symbol)
+            if not selected_symbol:
+                self.ctx.logger.error(
+                    "Configured symbol %s is unavailable in MetaTrader 5",
+                    self.ctx.symbol
+                )
+                return None
+            if selected_symbol != self.ctx.symbol:
+                self.ctx.logger.info(
+                    "Resolved configured symbol %s to broker symbol %s",
+                    self.ctx.symbol, selected_symbol
+                )
+                self.ctx.symbol = selected_symbol
+                if self.ctx.strategy and isinstance(getattr(self.ctx.strategy, "config", None), dict):
+                    params = self.ctx.strategy.config.setdefault("params", {})
+                    if isinstance(params, dict):
+                        params["symbol"] = selected_symbol
+
+            df = self.ctx.data_layer.normalize_rates(rates, symbol=selected_symbol)
             self.ctx.logger.debug(f"Retrieved {len(df)} bars for {self.ctx.symbol}")
             return df
         
@@ -1478,6 +1518,9 @@ class TradingLoop:
                     signal = self.ctx.strategy.on_bar(current_bar)
             
             if signal:
+                # Strategies may carry a profile-level default symbol; the
+                # active child loop owns the broker-resolved instrument.
+                signal.symbol = self.ctx.symbol
                 self.ctx.logger.info(
                     f"Signal generated: {signal.side.name} {signal.symbol} "
                     f"(confidence: {signal.confidence:.2f})"
@@ -1547,6 +1590,7 @@ class TradingLoop:
         """
         if signal.side not in [SignalType.LONG, SignalType.SHORT]:
             return
+        signal.symbol = self.ctx.symbol
         
         try:
             # ==========================================================
@@ -1561,22 +1605,24 @@ class TradingLoop:
             balance = float(account_info.get('balance', 0)) if account_info else 0
             equity = float(account_info.get('equity', balance)) if account_info else balance
             
-            # CRITICAL: Get positions directly from MT5 for accurate count
+            # Use broker-resolved positions so suffixed symbols are counted consistently.
             try:
-                import MetaTrader5 as mt5
-                mt5_positions = mt5.positions_get(symbol=self.ctx.symbol)
-                current_positions = len(mt5_positions) if mt5_positions else 0
+                mt5_positions = self.ctx.connector.get_open_positions()
+                if mt5_positions is None:
+                    self.ctx.logger.error("Cannot verify open positions; blocking new entry")
+                    return
+                symbol_key = self._symbol_key(self.ctx.symbol)
+                symbol_positions = [
+                    position for position in mt5_positions
+                    if self._symbol_key(str(position.get('symbol', ''))) == symbol_key
+                ]
+                current_positions = len(symbol_positions)
                 
-                # ==========================================================
-                # CRITICAL FIX: Prevent opposite direction trades
-                # ==========================================================
-                if mt5_positions:
-                    existing_directions = set()
-                    for pos in mt5_positions:
-                        # MT5 type: 0 = BUY, 1 = SELL
-                        pos_dir = 'LONG' if pos.type == 0 else 'SHORT'
-                        existing_directions.add(pos_dir)
-                    
+                if symbol_positions:
+                    existing_directions = {
+                        'LONG' if pos.get('type') == 0 else 'SHORT'
+                        for pos in symbol_positions
+                    }
                     signal_direction = 'LONG' if signal.side == SignalType.LONG else 'SHORT'
                     opposite_direction = 'SHORT' if signal_direction == 'LONG' else 'LONG'
                     
@@ -1588,8 +1634,12 @@ class TradingLoop:
                         return
                         
             except Exception as e:
-                self.ctx.logger.debug(f"MT5 position check fallback: {e}")
-                current_positions = len(self.ctx.position_manager.get_positions(symbol=self.ctx.symbol))
+                self.ctx.logger.error(
+                    "Cannot verify open positions; blocking new entry: %s",
+                    e,
+                    exc_info=True
+                )
+                return
             
             # ============================================================
             # ENTRY CONFLUENCE FILTER - Quality Gate (NEW)
@@ -1627,7 +1677,9 @@ class TradingLoop:
                         signal_price = getattr(signal, 'price', None) or getattr(signal, 'entry_price', None)
                         atr = float(df['atr'].iloc[-1]) if 'atr' in df.columns else None
                         
-                        confluence_filter = get_entry_confluence_filter(config=self.ctx.config.get('entry_confluence', {}))
+                        confluence_filter = get_entry_confluence_filter(
+                            config=self.ctx.config.get('entry_confluence', {})
+                        )
                         entry_confluence_result = confluence_filter.analyze_entry(
                             signal_direction=signal_direction,
                             current_price=current_price,
@@ -1667,18 +1719,30 @@ class TradingLoop:
                         
                         # MARGINAL: Suboptimal entry - queue for better price, don't execute now
                         if entry_confluence_result.quality == EntryQuality.MARGINAL:
-                            if entry_confluence_result.optimal_entry:
-                                confluence_filter.register_pending_entry(
-                                    signal_id=signal.id,
-                                    signal_direction=signal_direction,
-                                    optimal_entry=entry_confluence_result.optimal_entry,
-                                    symbol=self.ctx.symbol
+                            if self._should_accept_marginal_entry(
+                                self.ctx.config, entry_confluence_result
+                            ):
+                                self.ctx.logger.info(
+                                    "Ultra-aggressive profile accepting marginal entry "
+                                    "at reduced risk size"
                                 )
-                                self.ctx.logger.info(f"⏳ Entry QUEUED (MARGINAL): Waiting for better price @ "
-                                                    f"{entry_confluence_result.optimal_entry:.5f}")
                             else:
-                                self.ctx.logger.info(f"⏸️ Entry MARGINAL with no better level identified - SKIP")
-                            return
+                                if entry_confluence_result.optimal_entry:
+                                    confluence_filter.register_pending_entry(
+                                        signal_id=signal.id,
+                                        signal_direction=signal_direction,
+                                        optimal_entry=entry_confluence_result.optimal_entry,
+                                        symbol=self.ctx.symbol
+                                    )
+                                    self.ctx.logger.info(
+                                        "Entry queued (marginal); waiting for price %.5f",
+                                        entry_confluence_result.optimal_entry
+                                    )
+                                else:
+                                    self.ctx.logger.info(
+                                        "Marginal entry has no better price level; skipping"
+                                    )
+                                return
                         
                         # Legacy gate check (for should_enter=False that isn't covered above)
                         if not entry_confluence_result.should_enter:
@@ -1705,6 +1769,59 @@ class TradingLoop:
                     self.ctx.logger.debug("Entry confluence filter not available, proceeding without")
                 except Exception as e:
                     self.ctx.logger.warning(f"Entry confluence analysis failed: {e}")
+
+            if entry_confluence_result is not None:
+                try:
+                    discord_config = self.ctx.config.get('discord', {})
+                    from integrations.discord_notifier import (
+                        NotificationChannel,
+                        get_discord_notifier,
+                    )
+
+                    notifier = get_discord_notifier()
+                    if (
+                        discord_config.get('enabled', True)
+                        and discord_config.get('alert_on_signals', True)
+                        and notifier.enabled
+                        and notifier.webhooks.get(NotificationChannel.SIGNALS)
+                    ):
+                        indicators = {}
+                        if df is not None and len(df) > 0:
+                            current_bar = df.iloc[-1]
+                            for name in ("rsi", "rsi_14", "adx", "atr"):
+                                if name in current_bar.index:
+                                    value = current_bar[name]
+                                    if pd.notna(value):
+                                        indicators[name.upper()] = float(value)
+
+                        queued = notifier.notify_signal_quality(
+                            symbol=self.ctx.symbol,
+                            direction="BUY" if signal.side == SignalType.LONG else "SELL",
+                            confidence=float(getattr(signal, "confidence", 0.0)),
+                            strategy=getattr(
+                                self.ctx.strategy,
+                                "name",
+                                type(self.ctx.strategy).__name__,
+                            ),
+                            indicators=indicators,
+                            confluence_quality=entry_confluence_result.quality.value,
+                            confluence_score=entry_confluence_result.score,
+                            confluence_reasons=entry_confluence_result.reasons,
+                            entry_price=getattr(signal, 'price', None)
+                                or getattr(signal, 'entry_price', None),
+                            stop_loss=getattr(signal, 'stop_loss', None),
+                            take_profit=getattr(signal, 'take_profit', None),
+                            risk_reward=getattr(signal, 'risk_reward', None),
+                            timeframe=str(self.ctx.timeframe),
+                        )
+                        if not queued:
+                            self.ctx.logger.warning(
+                                "Discord signal notification could not be queued"
+                            )
+                except Exception:
+                    self.ctx.logger.exception(
+                        "Failed to queue confluence-approved Discord signal"
+                    )
             
             # Adaptive Account Manager check (if available)
             if self.ctx.adaptive_account_manager:
@@ -1767,7 +1884,7 @@ class TradingLoop:
                 # Log the complete sizing decision
                 self.ctx.logger.info(f"Position sizing: {size_decision.reasoning}")
             
-            if approved:
+            if approved and position_size > 0:
                 self.ctx.logger.info(f"Risk approved: {position_size:.2f} lots - {reason}")
                 
                 if not self.ctx.dry_run:
@@ -1775,7 +1892,9 @@ class TradingLoop:
                 else:
                     self.ctx.logger.info("[DRY RUN] Would place order here")
             else:
-                self.ctx.logger.info(f"Risk rejected: {reason}")
+                self.ctx.logger.info(
+                    f"Risk rejected: {reason if not approved else 'position size fell below broker minimum'}"
+                )
         
         except Exception as e:
             self.ctx.logger.error(f"Order execution error: {e}", exc_info=True)

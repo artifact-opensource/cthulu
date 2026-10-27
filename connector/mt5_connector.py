@@ -61,6 +61,10 @@ class ConnectionConfig:
 
 
 class MT5Connector:
+    _SYMBOL_ALIASES = {
+        "WTI": ("OILCASH", "USOIL"),
+    }
+
     """
     MetaTrader 5 connection manager with health checks and reconnection logic.
     
@@ -393,17 +397,19 @@ class MT5Connector:
             return matches
 
         desired_norm = self._normalize_symbol(desired)
+        targets = (desired_norm, *self._SYMBOL_ALIASES.get(desired_norm, ()))
 
-        # Stage 1: exact normalized match (case-insensitive)
-        for s in all_symbols:
-            try:
-                name_norm = self._normalize_symbol(s.name)
-                if name_norm == desired_norm:
-                    matches.append(s.name)
-            except Exception:
-                continue
-        if matches:
-            return matches
+        # Prefer an exact normalized match, then known instrument aliases.
+        for target in targets:
+            for s in all_symbols:
+                try:
+                    name_norm = self._normalize_symbol(s.name)
+                    if name_norm == target:
+                        matches.append(s.name)
+                except Exception:
+                    continue
+            if matches:
+                return matches
 
         # Stage 2: exact case-sensitive match as fallback
         for s in all_symbols:
@@ -552,6 +558,7 @@ class MT5Connector:
                 'currency': account.currency,
                 'leverage': account.leverage,
                 'trade_allowed': account.trade_allowed,
+                'trade_mode': getattr(account, 'trade_mode', None),
             }
         except Exception as e:
             self.logger.error(f"Error fetching account info: {e}")
@@ -634,8 +641,8 @@ class MT5Connector:
             )
             if result is None:
                 return None
-            loss = float(result)
-            return abs(loss) if loss < 0 else None
+            profit_at_stop = float(result)
+            return max(0.0, -profit_at_stop)
         except Exception as e:
             self.logger.error("Unable to calculate stop risk for %s: %s", symbol, e)
             return None
@@ -737,12 +744,14 @@ class MT5Connector:
         """
         try:
             positions = mt5.positions_get()
-            if not positions:
-                return []
-            
+            if positions is None:
+                error = mt5.last_error() if callable(getattr(mt5, 'last_error', None)) else None
+                raise RuntimeError(f"MetaTrader 5 position query failed: {error}")
             # If positions_get returned a single object, normalize to list
             if not isinstance(positions, list) and not hasattr(positions, '__iter__'):
                 positions = [positions]
+            if len(positions) == 0:
+                return []
             
             result = []
             for p in positions:
@@ -760,13 +769,13 @@ class MT5Connector:
                         'sl': getattr(p, 'sl', None),
                         'tp': getattr(p, 'tp', None),
                     })
-                except Exception:
-                    continue
+                except Exception as e:
+                    raise RuntimeError("Unable to normalize an open MT5 position") from e
             
             return result
         except Exception as e:
             self.logger.error(f"Error fetching open positions: {e}")
-            return []
+            raise
             
     def health_check(self) -> Dict[str, Any]:
         """
@@ -817,5 +826,3 @@ class MT5Connector:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit."""
         self.disconnect()
-
-

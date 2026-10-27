@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 class RiskLimits:
     """Configuration for risk limits and thresholds."""
     # Position sizing
-    max_position_size_percent: float = 2.0  # Max % of balance per position
+    max_position_size_percent: float = 2.0  # Max account-currency risk at the initial stop
     max_lot_size: float = 1.0
     max_total_exposure_percent: float = 10.0  # Max % of balance in all positions
     max_aggregate_open_risk_percent: float = 50.0
@@ -546,14 +546,17 @@ class RiskEvaluator:
             Tuple of (within_limits: bool, reason: str)
         """
         try:
+            open_positions = self.connector.get_open_positions()
+            if open_positions is None:
+                return False, "Unable to verify current portfolio positions"
             symbol_key = ''.join(char for char in symbol.upper() if char.isalnum())
             symbol_positions = [
-                position for position in self.tracker.get_all_positions().values()
-                if ''.join(char for char in position.symbol.upper() if char.isalnum()) == symbol_key
+                position for position in open_positions
+                if ''.join(char for char in str(position.get('symbol', '')).upper() if char.isalnum()) == symbol_key
             ]
             if len(symbol_positions) >= self.limits.max_positions_per_symbol:
                 return False, f"Maximum positions for {symbol} ({self.limits.max_positions_per_symbol}) reached"
-            if self.tracker.get_position_count() >= self.limits.max_total_positions:
+            if len(open_positions) >= self.limits.max_total_positions:
                 return False, f"Maximum total positions ({self.limits.max_total_positions}) reached"
             
             return True, "Exposure within limits"
@@ -579,6 +582,9 @@ class RiskEvaluator:
             calculate_loss = getattr(self.connector, 'calculate_loss_at_stop', None)
             if not callable(get_positions) or not callable(calculate_loss):
                 return False, "Cannot verify aggregate stop risk; required MT5 risk data is unavailable"
+            is_connected = getattr(self.connector, 'is_connected', None)
+            if callable(is_connected) and not is_connected():
+                return False, "Cannot verify aggregate stop risk; MetaTrader 5 is disconnected"
 
             open_positions = get_positions()
             if open_positions is None:
@@ -709,16 +715,25 @@ class RiskEvaluator:
                 if info and info.get('bid') is not None and info.get('ask') is not None:
                     bid = float(info.get('bid'))
                     ask = float(info.get('ask'))
-                    mid = (bid + ask) / 2.0 if (bid is not None and ask is not None) else None
+                    mid = (bid + ask) / 2.0
+                    spread_price = abs(ask - bid)
+                elif info and info.get('point') is not None:
+                    mid = None
+                    spread_price = float(spread) * float(info['point'])
                 else:
                     mid = None
+                    spread_price = None
             except Exception:
                 mid = None
+                spread_price = None
 
             if mid and getattr(self.limits, 'max_spread_pct', None):
-                spread_pct = float(spread) / float(mid) if mid and mid != 0 else None
+                spread_pct = spread_price / mid if mid != 0 and spread_price is not None else None
                 if spread_pct is not None and spread_pct > self.limits.max_spread_pct:
-                    return False, f"Spread {spread} ({spread_pct:.4f} fraction) exceeds relative limit {self.limits.max_spread_pct}"
+                    return False, (
+                        f"Price spread {spread_price} ({spread_pct:.4%}) exceeds "
+                        f"relative limit {self.limits.max_spread_pct:.2%}"
+                    )
 
             return True, f"Spread {spread} acceptable"
             
@@ -892,5 +907,3 @@ class RiskEvaluator:
                 'risk_percent': 1.0,
                 'timeframes': ['M15']
             }
-
-

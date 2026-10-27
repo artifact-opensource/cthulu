@@ -144,7 +144,9 @@ ULTRA_AGGRESSIVE = {
     "description": "Ultra-Aggressive: dynamic strategy selector + scalping/day strategies for experienced traders.",
     "risk": {
         "max_position_size": 2.0,
+        "max_lot_size": 2.0,
         "default_position_size": 0.1,
+        "max_position_size_pct": 0.15,
         "position_size_pct": 15.0,
         "max_daily_loss": 500.0,
         "max_positions_per_symbol": 3,
@@ -182,6 +184,9 @@ ULTRA_AGGRESSIVE = {
         "lookback_bars": 500,
         "symbol": "BTCUSD#",
         "timeframe": "TIMEFRAME_M15"
+    },
+    "entry_confluence": {
+        "allow_marginal_entries": True
     },
     "indicators": [
         {"type": "rsi", "params": {"period": 14}},
@@ -252,6 +257,9 @@ def apply_mindset(config: Dict[str, Any], mindset_name: str) -> Dict[str, Any]:
             result["trading"] = {}
         result["trading"].update(mindset["trading"])
 
+    if "entry_confluence" in mindset:
+        result.setdefault("entry_confluence", {}).update(mindset["entry_confluence"])
+
     # Apply indicators if provided by the mindset
     if "indicators" in mindset:
         # Replace or set indicators list
@@ -291,7 +299,5 @@ def list_mindsets() -> Dict[str, str]:
         Dict of mindset_name -> description
     """
     return {name: m["description"] for name, m in MINDSETS.items()}
-
-
 
 

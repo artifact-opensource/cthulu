@@ -145,7 +145,7 @@ class CthuluBootstrap:
         connection_config = ConnectionConfig(**config['mt5'])
         connector = MT5Connector(connection_config)
         return connector
-    
+
     def initialize_data_layer(self, config: Dict[str, Any]) -> DataLayer:
         """Initialize data layer.
         
@@ -761,6 +761,7 @@ class CthuluBootstrap:
         
         # Initialize core components
         connector = self.initialize_connector(config)
+
         data_layer = self.initialize_data_layer(config)
         # Compute risk limits configuration (create RiskEvaluator later when position tracker is available)
         risk_limits = self.initialize_risk_manager(config)
@@ -1018,7 +1019,3 @@ def bootstrap_system(config_path: str, args: Any, logger: logging.Logger) -> Sys
     """
     bootstrapper = CthuluBootstrap(logger=logger)
     return bootstrapper.bootstrap(config_path, args)
-
-
-
-

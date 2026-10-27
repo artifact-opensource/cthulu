@@ -505,29 +505,75 @@ class DiscordNotifier:
         direction: str,
         confidence: float,
         strategy: str,
-        indicators: Optional[Dict[str, float]] = None
+        indicators: Optional[Dict[str, float]] = None,
+        confluence_quality: Optional[str] = None,
+        confluence_score: Optional[float] = None,
+        confluence_reasons: Optional[List[str]] = None,
+        entry_price: Optional[float] = None,
+        stop_loss: Optional[float] = None,
+        take_profit: Optional[float] = None,
+        risk_reward: Optional[float] = None,
+        timeframe: Optional[str] = None
     ) -> bool:
-        """Notify high-confidence signal detected"""
-        emoji = "🟢" if direction.upper() == "BUY" else "🔴"
+        """Notify a signal that passed the entry confluence gate."""
+        direction = direction.upper()
+        is_buy = direction == "BUY"
+        emoji = "🟢" if is_buy else "🔴"
+        confidence = min(1.0, max(0.0, confidence))
+        confidence_bar = "█" * round(confidence * 10) + "░" * (10 - round(confidence * 10))
         
         fields = [
-            {"name": "Symbol", "value": symbol, "inline": True},
-            {"name": "Direction", "value": f"{emoji} {direction.upper()}", "inline": True},
-            {"name": "Confidence", "value": f"{confidence:.1%}", "inline": True},
-            {"name": "Strategy", "value": strategy, "inline": True},
+            {"name": "Market", "value": f"`{symbol}`", "inline": True},
+            {"name": "Side", "value": f"{emoji} **{direction}**", "inline": True},
+            {"name": "Confidence", "value": f"`{confidence:.1%}`\n`{confidence_bar}`", "inline": True},
+            {"name": "Strategy", "value": strategy[:1024], "inline": True},
         ]
+
+        if confluence_quality is not None:
+            fields.append({
+                "name": "Entry Confluence",
+                "value": (
+                    f"**{confluence_quality.upper()}**"
+                    if confluence_score is None
+                    else f"**{confluence_quality.upper()}** · `{confluence_score:.0f}/100`"
+                ),
+                "inline": True
+            })
+
+        for label, value in (
+            ("Entry", entry_price),
+            ("Stop Loss", stop_loss),
+            ("Take Profit", take_profit),
+        ):
+            if value is not None:
+                fields.append({"name": label, "value": f"`{value:.5f}`", "inline": True})
+
+        if risk_reward is not None:
+            fields.append({"name": "Risk / Reward", "value": f"`1:{risk_reward:.2f}`", "inline": True})
+
+        if timeframe:
+            fields.append({"name": "Timeframe", "value": f"`{timeframe}`", "inline": True})
+
+        if confluence_reasons:
+            fields.append({
+                "name": "Why it qualifies",
+                "value": "\n".join(f"• {reason}" for reason in confluence_reasons[:5])[:1024],
+                "inline": False
+            })
         
         if indicators:
             for name, value in list(indicators.items())[:4]:
-                fields.append({"name": name, "value": f"{value:.4f}", "inline": True})
+                fields.append({"name": name.upper(), "value": f"`{value:.4f}`", "inline": True})
         
         return self.notify(DiscordNotification(
             channel=NotificationChannel.SIGNALS,
-            title=f"📡 High-Confidence Signal: {symbol}",
-            description=f"Strategy '{strategy}' detected strong {direction.upper()} setup",
-            color=Colors.PURPLE,
+            title=f"{emoji} {symbol} · {direction} setup",
+            description="**Confluence-approved candidate**\n"
+                        f"`{strategy}` passed the entry quality gate.",
+            color=Colors.SUCCESS if is_buy else Colors.DANGER,
             priority=NotificationPriority.MEDIUM,
-            fields=fields
+            fields=fields,
+            footer="Cthulu • Signal analysis — not an execution confirmation"
         ))
     
     def notify_regime_change(
