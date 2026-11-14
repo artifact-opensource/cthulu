@@ -20,6 +20,8 @@ dist/
 build/
 *.egg
 .eggs/
+/installer/obj/
+/installer/bin/
 
 # ============================================================================
 # VIRTUAL ENVIRONMENTS

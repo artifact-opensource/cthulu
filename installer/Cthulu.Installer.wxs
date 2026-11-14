@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Cthulu Trading System"
+           Manufacturer="Cthulu"
+           Version="6.0.0"
+           UpgradeCode="C9A67716-6168-4DE8-81FA-2C9BC8DA54C4"
+           Scope="perUser">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Cthulu is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open Cthulu first-run setup" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="APPLICATIONFOLDER" Name="Programs">
+        <Directory Id="INSTALLFOLDER" Name="Cthulu" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="CthuluFeature" Title="Cthulu Trading System" Level="1">
+      <ComponentGroupRef Id="PayloadFiles" />
+      <ComponentRef Id="LauncherComponent" />
+    </Feature>
+
+    <CustomAction Id="LaunchCthuluSetup"
+                  FileRef="CthuluLauncherExe"
+                  ExeCommand="setup"
+                  Execute="immediate"
+                  Impersonate="yes"
+                  Return="asyncNoWait" />
+
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+      <Publish Dialog="ExitDialog"
+               Control="Finish"
+               Event="DoAction"
+               Value="LaunchCthuluSetup"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed"
+               Order="1" />
+    </UI>
+  </Package>
+
+  <Fragment>
+    <Component Id="LauncherComponent" Directory="INSTALLFOLDER" Guid="941B31A6-C47B-4B99-979B-A861D3340738">
+      <RegistryValue Root="HKCU"
+                     Key="Software\Cthulu\Installer"
+                     Name="Launcher"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+      <File Id="CthuluLauncherExe"
+            Source="$(var.PayloadRoot)\CthuluLauncher.exe"
+            KeyPath="no" />
+      <Shortcut Id="CthuluSetupShortcut"
+                Directory="ProgramMenuFolder"
+                Name="Cthulu Setup"
+                Target="[#CthuluLauncherExe]"
+                Arguments="setup"
+                WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="CthuluLauncherShortcut"
+                Directory="ProgramMenuFolder"
+                Name="Cthulu Launcher"
+                Target="[#CthuluLauncherExe]"
+                Arguments="launch"
+                WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="CthuluDesktopShortcut"
+                Directory="DesktopFolder"
+                Name="Cthulu Launcher"
+                Target="[#CthuluLauncherExe]"
+                Arguments="launch"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveInstallFolder" Directory="INSTALLFOLDER" On="uninstall" />
+      <RemoveFolder Id="RemoveApplicationFolder" Directory="APPLICATIONFOLDER" On="uninstall" />
+    </Component>
+  </Fragment>
+</Wix>

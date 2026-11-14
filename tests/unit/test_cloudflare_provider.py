@@ -45,6 +45,7 @@ def test_cloudflare_chat_uses_gateway_and_openai_compatible_endpoint():
     args, kwargs = request.call_args
     assert args[0] == "POST"
     assert args[1].endswith("/ai/v1/chat/completions")
+    assert args[2]["Authorization"] == "Bearer test-token"
     assert args[2]["cf-aig-gateway-id"] == "default"
     assert kwargs == {}
     assert result.text == "OK"

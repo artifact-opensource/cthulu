@@ -10,13 +10,27 @@ version: 6.0.0
 ![Last Update](https://img.shields.io/badge/Last_Update-2026--01--06-4B0082?style=for-the-badge&labelColor=0D1117&logo=calendar&logoColor=white)
 ![](https://img.shields.io/github/last-commit/amuzetnoM/cthulu?style=for-the-badge&labelColor=0D1117&logo=github&logoColor=white) 
 
+### Windows MSI First-Run Setup
+
+The recommended Windows path is to build or download `Cthulu-Setup.msi`, then double-click it. The per-user installer offers to open the setup wizard when installation finishes. The wizard installs Python 3.12 if needed (through `winget`), creates `.venv`, installs the requirements, and asks for the MT5 account, risk limits, and optional Agent LLM settings. Internet access is required.
+
+Entering MT5 credentials enables the real MT5 account when you later select Legacy, Agentic, or HFT. Use a demo account first. The default limits are 0.5% risk per trade, 2% daily loss, 10% drawdown, and three simultaneous positions. The optional Agent overlay uses the existing Cloudflare AI Gateway provider; configure its account ID, gateway ID, API token, and model. The base URL can be left blank to use the account default.
+
+The wizard stores credentials in the user's local `.env` files with Windows permissions restricted to that user and LocalSystem. The MSI does not contain credentials. It does not start Cthulu or trading automatically: choose **Open launcher** after setup, then choose the desired mode. You can reopen **Cthulu Setup** from the Start Menu later.
+
+To build the MSI on Windows, install the .NET 8 SDK and run:
+
+```powershell
+.\installer\Build-Msi.ps1
+```
+
+The MSI is created at `installer\dist\Cthulu-Setup.msi`. The build stages tracked source files only and excludes local environment files, runtime configs, databases, logs, tests, and the nested `resource_aggregator` repository.
+
 ### Windows Double-Click Launcher
 
-From the repository folder, double-click `Cthulu Launcher.bat`. On first launch it checks for Python 3.10 or newer, creates the project `.venv`, and installs the dependencies before showing the launcher menu. Setup may take a few minutes and requires an internet connection; it runs again on later launches to keep dependencies current.
+If you already have the repository installed, double-click `Cthulu Launcher.bat`. It runs the existing dependency setup before showing the kill switch, Agentic, and Legacy choices. After choosing Agentic or Legacy, choose Single, Multi, or HFT. To exit without starting a mode, choose `X`. If setup fails, trading startup is blocked but the kill switch remains available. The launcher does not clear logs or reset trading data.
 
-The menu offers the kill switch, Agentic, and Legacy choices. After choosing Agentic or Legacy, choose Single, Multi, or HFT. To exit without starting a mode, choose `X`. If setup fails, trading startup is blocked but the kill switch remains available. The launcher does not clear logs or reset trading data.
-
-Create and configure `.env` from `.env.example` before starting a mode. Keep credentials private and do not commit `.env`.
+Keep `.env` and `cthulu_agent\.env.agent` private; never commit them.
 
 ### 1. Initial Setup
 
@@ -284,5 +298,3 @@ python -m Cthulu --config config.json --enable-rpc       # Enable RPC for GUI
 - Discussions: https://github.com/amuzetnoM/Cthulu/discussions
 
 Happy Trading!
-
-

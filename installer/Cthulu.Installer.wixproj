@@ -1,0 +1,16 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <OutputName>Cthulu-Setup</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>PayloadRoot=$(PayloadRoot)</DefineConstants>
+    <!-- ICE91 assumes a per-machine option; this package intentionally installs only per-user under LocalAppData. -->
+    <SuppressIces>ICE91</SuppressIces>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(PayloadManifest)' != ''">
+    <Compile Include="$(PayloadManifest)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+  </ItemGroup>
+</Project>

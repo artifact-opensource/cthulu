@@ -1,3 +1,4 @@
+import json
 from types import SimpleNamespace
 
 from config.mindsets import apply_mindset
@@ -109,6 +110,34 @@ def test_high_frequency_limits_survive_schema_and_reach_risk_manager():
     assert limits.max_total_positions == 100
     assert limits.max_daily_trades == 1000
     assert config_dict["trading"]["min_trade_interval"] == 0
+
+
+def test_installer_risk_limits_override_mindset_presets(tmp_path, monkeypatch):
+    config_path = tmp_path / "config.json"
+    config_path.write_text(
+        json.dumps(
+            {
+                "mt5": {"login": 1, "password": "test", "server": "test"},
+                "risk": {},
+                "trading": {"symbol": "EURUSD", "timeframe": "TIMEFRAME_H1"},
+                "strategy": {"type": "sma_crossover", "params": {}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("CTHULU_LEGACY_MAX_POSITION_SIZE_PCT", "0.005")
+    monkeypatch.setenv("CTHULU_LEGACY_MAX_DAILY_LOSS_PCT", "0.02")
+    monkeypatch.setenv("CTHULU_LEGACY_DRAWDOWN_HALT_PERCENT", "10")
+    monkeypatch.setenv("CTHULU_LEGACY_MAX_POSITIONS_PER_SYMBOL", "3")
+    monkeypatch.setenv("CTHULU_LEGACY_MAX_TOTAL_POSITIONS", "3")
+
+    config = CthuluBootstrap().load_configuration(str(config_path), mindset="high_frequency")
+
+    assert config["risk"]["max_position_size_pct"] == 0.005
+    assert config["risk"]["max_daily_loss_pct"] == 0.02
+    assert config["risk"]["drawdown_halt_percent"] == 10
+    assert config["risk"]["max_positions_per_symbol"] == 3
+    assert config["risk"]["max_total_positions"] == 3
 
 
 def test_trading_loop_uses_nested_high_frequency_cooldown():

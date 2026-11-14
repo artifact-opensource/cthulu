@@ -120,6 +120,8 @@ class CthuluBootstrap:
                     f"  Risk: position_size_pct={config['risk'].get('position_size_pct', 2.0)}%, "
                     f"max_daily_loss=${config['risk'].get('max_daily_loss', 50)}"
                 )
+
+            self._apply_installer_risk_overrides(config)
             
             # Symbol override from CLI
             if symbol_override:
@@ -131,6 +133,29 @@ class CthuluBootstrap:
         except Exception as e:
             self.logger.error(f"Failed to load configuration: {e}")
             raise
+
+    @staticmethod
+    def _apply_installer_risk_overrides(config: Dict[str, Any]) -> None:
+        """Keep first-run risk limits in effect when a mode applies a mindset preset."""
+        overrides = (
+            ("CTHULU_LEGACY_MAX_POSITION_SIZE_PCT", "max_position_size_pct", float, 0.0005, 0.05),
+            ("CTHULU_LEGACY_MAX_DAILY_LOSS_PCT", "max_daily_loss_pct", float, 0.0, 0.2),
+            ("CTHULU_LEGACY_DRAWDOWN_HALT_PERCENT", "drawdown_halt_percent", float, 0.0, 60.0),
+            ("CTHULU_LEGACY_MAX_POSITIONS_PER_SYMBOL", "max_positions_per_symbol", int, 1, 10),
+            ("CTHULU_LEGACY_MAX_TOTAL_POSITIONS", "max_total_positions", int, 1, 10),
+        )
+        risk = config.setdefault("risk", {})
+        for env_name, setting, converter, minimum, maximum in overrides:
+            raw_value = os.getenv(env_name)
+            if raw_value is None:
+                continue
+            try:
+                value = converter(raw_value)
+            except (TypeError, ValueError):
+                raise ValueError(f"{env_name} must be a number between {minimum} and {maximum}.")
+            if not minimum <= value <= maximum:
+                raise ValueError(f"{env_name} must be between {minimum} and {maximum}.")
+            risk[setting] = value
     
     def initialize_connector(self, config: Dict[str, Any]) -> MT5Connector:
         """Initialize MT5 connector.

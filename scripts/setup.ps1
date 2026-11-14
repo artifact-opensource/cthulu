@@ -16,7 +16,8 @@ param(
     [switch]$SkipVenv,
     [switch]$Force,
     [switch]$Dev,
-    [switch]$ForLauncher
+    [switch]$ForLauncher,
+    [switch]$BootstrapPython
 )
 
 $ErrorActionPreference = "Stop"
@@ -39,12 +40,30 @@ Write-Host ""
 function Find-PythonCommand {
     $launcher = Get-Command py -ErrorAction SilentlyContinue
     if ($launcher) {
-        foreach ($candidate in @('-3.13', '-3.12', '-3.11', '-3.10', '-3')) {
+        foreach ($candidate in @('-3.12', '-3.11', '-3.10', '-3.13', '-3')) {
             $versionOutput = & $launcher.Source $candidate --version 2>&1
             if ($LASTEXITCODE -eq 0 -and $versionOutput -match 'Python (\d+\.\d+(?:\.\d+)?)') {
                 return [pscustomobject]@{
                     Executable = $launcher.Source
                     Arguments = @($candidate)
+                    Version = [version]$matches[1]
+                }
+            }
+        }
+    }
+
+    foreach ($candidatePath in @(
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python312\python.exe'),
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'),
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python310\python.exe'),
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python313\python.exe')
+    )) {
+        if (Test-Path -LiteralPath $candidatePath -PathType Leaf) {
+            $versionOutput = & $candidatePath --version 2>&1
+            if ($LASTEXITCODE -eq 0 -and $versionOutput -match 'Python (\d+\.\d+(?:\.\d+)?)') {
+                return [pscustomobject]@{
+                    Executable = $candidatePath
+                    Arguments = @()
                     Version = [version]$matches[1]
                 }
             }
@@ -66,12 +85,43 @@ function Find-PythonCommand {
     return $null
 }
 
+function Get-PythonCommand {
+    $pythonCommand = Find-PythonCommand
+    if ($pythonCommand -or -not $BootstrapPython) {
+        return $pythonCommand
+    }
+
+    $winget = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $winget) {
+        Write-Fail "Python $PYTHON_MIN_VERSION or higher was not found and winget is unavailable. Install Python 3.12, then run setup again."
+        exit 1
+    }
+
+    Write-Step "Installing Python 3.12 for the current Windows user..."
+    & $winget.Source install --id Python.Python.3.12 --exact --scope user --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+    if ($LASTEXITCODE -ne 0) {
+        Write-Fail "Python could not be installed through winget (exit code $LASTEXITCODE). Install Python 3.12 and run setup again."
+        exit 1
+    }
+
+    $machinePath = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+    $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+    $env:Path = "$machinePath;$userPath"
+    $pythonCommand = Find-PythonCommand
+    if (-not $pythonCommand) {
+        Write-Fail "Python was installed but could not be found. Restart Windows, then run setup again."
+        exit 1
+    }
+
+    return $pythonCommand
+}
+
 $venvPath = Join-Path $PROJECT_ROOT ".venv"
 $venvPython = Join-Path $venvPath "Scripts\python.exe"
 $createdVenv = $false
 
 if ($SkipVenv) {
-    $pythonCommand = Find-PythonCommand
+    $pythonCommand = Get-PythonCommand
     if (-not $pythonCommand) {
         Write-Fail "Python $PYTHON_MIN_VERSION or higher was not found."
         exit 1
@@ -82,7 +132,7 @@ if ($SkipVenv) {
 } else {
     Write-Step "Setting up virtual environment..."
     if (-not (Test-Path -LiteralPath $venvPython -PathType Leaf) -or $Force) {
-        $pythonCommand = Find-PythonCommand
+        $pythonCommand = Get-PythonCommand
         if (-not $pythonCommand) {
             Write-Fail "Python $PYTHON_MIN_VERSION or higher was not found. Install Python and enable the Windows launcher, then try again."
             exit 1
