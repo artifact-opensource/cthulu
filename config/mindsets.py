@@ -145,12 +145,10 @@ ULTRA_AGGRESSIVE = {
     "risk": {
         "max_position_size": 2.0,
         "max_lot_size": 2.0,
-        "default_position_size": 0.1,
+        "default_position_size": 0.01,
         "max_position_size_pct": 0.15,
         "position_size_pct": 15.0,
         "max_daily_loss": 500.0,
-        "max_positions_per_symbol": 3,
-        "max_total_positions": 10,
         "use_kelly_sizing": True,
         "emergency_stop_loss_pct": 12.0,
         "circuit_breaker_enabled": True,
@@ -182,7 +180,6 @@ ULTRA_AGGRESSIVE = {
     "trading": {
         "poll_interval": 15,
         "lookback_bars": 500,
-        "symbol": "BTCUSD#",
         "timeframe": "TIMEFRAME_M15"
     },
     "entry_confluence": {
@@ -200,8 +197,58 @@ ULTRA_AGGRESSIVE = {
     "confidence_threshold": 0.25
 }
 
-# expose ultra aliases
-MINDSETS.update({"ultra_aggressive": ULTRA_AGGRESSIVE, "ultra": ULTRA_AGGRESSIVE})
+HIGH_FREQUENCY = {
+    "name": "high_frequency",
+    "description": (
+        "M1 multi-symbol scalping profile with equity-scaled 1% stop-risk per entry, "
+        "a 5% aggregate open-risk cap, at most 10 concurrent positions, and spread-filtered broker-universe discovery."
+    ),
+    "risk": {
+        "default_position_size": 0.01,
+        "max_position_size_pct": 0.01,
+        "max_lot_size": 100.0,
+        "max_aggregate_open_risk_pct": 5.0,
+        "max_daily_loss": 0.0,
+        "max_daily_loss_pct": 4.0,
+        "drawdown_halt_percent": 15.0,
+        "max_positions_per_symbol": 2,
+        "max_total_positions": 10,
+        "max_daily_trades": 1000,
+        "max_spread_pct": 0.0025,
+    },
+    "strategy_full": {
+        "type": "scalping",
+        "params": {
+            "fast_ema": 5,
+            "slow_ema": 10,
+            "rsi_period": 7,
+            "rsi_oversold": 30,
+            "rsi_overbought": 70,
+            "rsi_long_max": 70,
+            "rsi_short_min": 30,
+            "atr_period": 14,
+            "atr_multiplier": 1.0,
+            "risk_reward_ratio": 2.0,
+        },
+    },
+    "trading": {
+        "timeframe": "TIMEFRAME_M1",
+        "poll_interval": 5,
+        "min_trade_interval": 0,
+        "dynamic_universe": True,
+    },
+    "entry_confluence": {
+        "allow_marginal_entries": True,
+    },
+}
+
+# Expose profile aliases.
+MINDSETS.update({
+    "ultra_aggressive": ULTRA_AGGRESSIVE,
+    "ultra": ULTRA_AGGRESSIVE,
+    "high_frequency": HIGH_FREQUENCY,
+    "high-frequency": HIGH_FREQUENCY,
+})
 
 
 def apply_mindset(config: Dict[str, Any], mindset_name: str) -> Dict[str, Any]:
@@ -213,7 +260,7 @@ def apply_mindset(config: Dict[str, Any], mindset_name: str) -> Dict[str, Any]:
     
     Args:
         config: Base configuration dictionary
-        mindset_name: One of "aggressive", "balanced", "conservative"
+        mindset_name: A named trading profile
         
     Returns:
         New configuration dict with mindset applied
@@ -299,5 +346,3 @@ def list_mindsets() -> Dict[str, str]:
         Dict of mindset_name -> description
     """
     return {name: m["description"] for name, m in MINDSETS.items()}
-
-

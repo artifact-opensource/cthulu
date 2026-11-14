@@ -295,7 +295,7 @@ class DynamicSLTPManager:
         tick = None
         symbol_name = None
         if symbol_info:
-            tick = symbol_info.get('point') or symbol_info.get('tick_size')
+            tick = symbol_info.get('tick_size') or symbol_info.get('point')
             symbol_name = symbol_info.get('name') or symbol_info.get('symbol')
 
         # Minimums
@@ -377,23 +377,41 @@ class DynamicSLTPManager:
             mode=mode,
             reasoning=reasoning
         )        
-        reasoning = (
-            f"Mode: {mode.value}, ATR: {atr:.2f}, "
-            f"SL dist: {sl_distance:.2f}, TP dist: {tp_distance:.2f}, "
-            f"R:R: {tp_distance/sl_distance:.2f}"
+
+    def calculate_initial_sltp(
+        self,
+        ticket: int,
+        direction: str,
+        entry_price: float,
+        atr: float,
+        balance: float,
+        equity: float,
+        drawdown_pct: float,
+        initial_balance: float,
+        symbol_info: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Return configured initial SL/TP levels for a new or unprotected position."""
+        dynamic = self.calculate_dynamic_sltp(
+            entry_price=entry_price,
+            side=direction,
+            atr=atr,
+            balance=balance,
+            equity=equity,
+            drawdown_pct=drawdown_pct,
+            initial_balance=initial_balance,
+            symbol_info=symbol_info,
         )
-        
-        return DynamicSLTP(
-            stop_loss=stop_loss,
-            take_profit=take_profit,
-            breakeven_level=breakeven,
-            partial_tp_1=partial_tp_1 if self.partial_tp_enabled else None,
-            partial_tp_2=partial_tp_2 if self.partial_tp_enabled else None,
-            trail_activation=trail_activation,
-            trail_distance=trail_distance,
-            mode=mode,
-            reasoning=reasoning
-        )
+        self.positions_managed.setdefault(ticket, {
+            "highest": entry_price,
+            "lowest": entry_price,
+            "trailing_active": False,
+        })
+        return {
+            "sl": dynamic.stop_loss,
+            "tp": dynamic.take_profit,
+            "mode": dynamic.mode.value,
+            "reasoning": dynamic.reasoning,
+        }
     
     def should_move_to_breakeven(
         self,
@@ -613,13 +631,20 @@ class DynamicSLTPManager:
                 (entry_price - current_price) / entry_price * 100
             )
             
-            # In survival, take any profit over 0.3%
+            # In survival, lock a small profit with a protective stop.
             if pnl_pct >= 0.3:
-                result['update_tp'] = True
-                result['new_tp'] = current_price  # Close at market
-                result['action'] = 'survival_take_profit'
-                result['reasoning'] = f"Survival mode - taking {pnl_pct:.2f}% profit"
-                return result
+                buffer = entry_price * self.breakeven_buffer_pct / 100
+                new_sl = entry_price + buffer if is_long else entry_price - buffer
+                improves = current_sl is None or (
+                    new_sl > current_sl if is_long else new_sl < current_sl
+                )
+                remains_valid = new_sl < current_price if is_long else new_sl > current_price
+                if improves and remains_valid:
+                    result['update_sl'] = True
+                    result['new_sl'] = new_sl
+                    result['action'] = 'survival_lock'
+                    result['reasoning'] = f"Survival mode - locking profit after {pnl_pct:.2f}% move"
+                    return result
         
         result['reasoning'] = f"No adjustment needed - Mode: {dynamic.mode.value}"
         return result

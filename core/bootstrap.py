@@ -192,6 +192,7 @@ class CthuluBootstrap:
                 risk_config.get('max_daily_loss_pct', 0.05),
                 default=5.0
             ),
+            max_daily_trades=int(risk_config.get('max_daily_trades', 50)),
             max_aggregate_open_risk_percent=self._to_percent(
                 risk_config.get('max_aggregate_open_risk_pct', 50.0),
                 default=50.0

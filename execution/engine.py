@@ -18,6 +18,7 @@ from enum import Enum
 
 from cthulu.strategy.base import Signal, SignalType
 from cthulu import constants
+from execution_mode import ExecutionModeError, get_execution_mode, legacy_execution_enabled
 
 
 class OrderType(Enum):
@@ -172,6 +173,21 @@ class ExecutionEngine:
         Returns:
             ExecutionResult with order outcome
         """
+        try:
+            mode = get_execution_mode()
+        except ExecutionModeError as exc:
+            mode = "disabled"
+            self.logger.error("Legacy order blocked: %s", exc)
+        if not legacy_execution_enabled(mode):
+            return ExecutionResult(
+                order_id=None,
+                status=OrderStatus.REJECTED,
+                executed_price=None,
+                executed_volume=None,
+                timestamp=datetime.now(),
+                error=f"Legacy execution is disabled while execution mode is {mode}.",
+            )
+
         # Ensure metadata present
         if order_req.metadata is None:
             order_req.metadata = {}
@@ -590,6 +606,21 @@ class ExecutionEngine:
             ExecutionResult with close outcome
         """
         try:
+            mode = get_execution_mode()
+        except ExecutionModeError as exc:
+            mode = "disabled"
+            self.logger.error("Legacy close blocked: %s", exc)
+        if not legacy_execution_enabled(mode):
+            return ExecutionResult(
+                order_id=None,
+                status=OrderStatus.REJECTED,
+                executed_price=None,
+                executed_volume=None,
+                timestamp=datetime.now(),
+                error=f"Legacy execution is disabled while execution mode is {mode}.",
+            )
+
+        try:
             # Get position
             position = mt5.positions_get(ticket=ticket)
             if not position:
@@ -716,6 +747,14 @@ class ExecutionEngine:
         the resulting position ticket or order id if the order was filled.
         """
         try:
+            if not legacy_execution_enabled():
+                self.logger.warning("Legacy execute_order blocked by the shared execution-mode setting.")
+                return None
+        except ExecutionModeError as exc:
+            self.logger.error("Legacy execute_order blocked: %s", exc)
+            return None
+
+        try:
             sid = f"exec_{int(datetime.now().timestamp())}"
             side = 'BUY' if str(order_type).lower() in ('buy', 'long') else 'SELL'
 
@@ -760,6 +799,15 @@ class ExecutionEngine:
         Returns:
             True if modified successfully, False otherwise
         """
+        try:
+            mode = get_execution_mode()
+        except ExecutionModeError as exc:
+            mode = "disabled"
+            self.logger.error("Legacy position modification blocked: %s", exc)
+        if not legacy_execution_enabled(mode):
+            self.logger.warning("Legacy position modification blocked by execution mode %s.", mode)
+            return False
+
         try:
             # Get position info
             position = mt5.positions_get(ticket=ticket)
@@ -1024,7 +1072,5 @@ class ExecutionEngine:
             request["tp"] = float(order_req.tp)
             
         return request
-
-
 
 

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import MetaTrader5 as mt5
 from cthulu import constants
+from execution_mode import ExecutionModeError, require_legacy_execution
 
 
 def main():
@@ -52,6 +53,18 @@ Examples:
                        help='Simulate without placing real trades')
     
     args = parser.parse_args()
+
+    requests_execution = bool(
+        args.close
+        or args.close_all
+        or (args.symbol and args.side and args.volume is not None)
+    )
+    if requests_execution and not args.dry_run:
+        try:
+            require_legacy_execution()
+        except ExecutionModeError as exc:
+            print(f"Trade action blocked: {exc}")
+            return 2
     
     # Load config for MT5 connection
     config_path = Path(args.config)
@@ -239,7 +252,6 @@ Examples:
 
 if __name__ == '__main__':
     sys.exit(main())
-
 
 
 

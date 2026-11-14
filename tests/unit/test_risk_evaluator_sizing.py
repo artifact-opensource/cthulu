@@ -25,8 +25,9 @@ class FakeTracker:
 
 
 class FakeConnector:
-    def __init__(self, positions=None, min_lot=0.01):
+    def __init__(self, positions=None, pending=None, min_lot=0.01):
         self.positions = positions or []
+        self.pending = pending or []
         self.min_lot = min_lot
 
     def calculate_loss_at_stop(self, symbol, side, volume, entry, stop):
@@ -45,6 +46,9 @@ class FakeConnector:
     def get_open_positions(self):
         return self.positions
 
+    def get_pending_orders(self):
+        return self.pending
+
     def get_spread(self, symbol):
         return None
 
@@ -53,17 +57,18 @@ class FakeConnector:
 
 
 def make_evaluator(connector, tracker, **overrides):
-    limits = RiskLimits(
-        max_position_size_percent=2.0,
-        max_lot_size=1.0,
-        max_total_positions=6,
-        max_positions_per_symbol=3,
-        max_aggregate_open_risk_percent=50.0,
-        max_daily_loss=500.0,
-        max_daily_loss_percent=10.0,
-        min_balance_threshold=1.0,
-        **overrides,
-    )
+    limit_values = {
+        "max_position_size_percent": 2.0,
+        "max_lot_size": 1.0,
+        "max_total_positions": 6,
+        "max_positions_per_symbol": 3,
+        "max_aggregate_open_risk_percent": 50.0,
+        "max_daily_loss": 500.0,
+        "max_daily_loss_percent": 10.0,
+        "min_balance_threshold": 1.0,
+    }
+    limit_values.update(overrides)
+    limits = RiskLimits(**limit_values)
     return RiskEvaluator(connector, tracker, limits)
 
 
@@ -76,6 +81,17 @@ def test_position_size_uses_stop_risk_and_floors_to_volume_step():
     )
 
     assert size == 0.1
+
+
+def test_position_size_respects_high_frequency_small_lot_cap():
+    connector = FakeConnector()
+    evaluator = make_evaluator(connector, FakeTracker(), max_lot_size=0.02)
+
+    size = evaluator.calculate_position_size(
+        "GOLD", 10000, risk_percent=15.0, entry_price=100, stop_loss=90, side="BUY"
+    )
+
+    assert size == 0.02
 
 
 def test_position_is_rejected_when_broker_minimum_exceeds_risk_budget():
@@ -140,6 +156,49 @@ def test_aggregate_open_risk_fails_closed_when_position_query_is_unavailable():
     assert not approved
     assert "open positions are unavailable" in reason
     assert size == 0.0
+
+
+def test_exposure_limit_counts_pending_orders_toward_total_active_cap():
+    connector = FakeConnector(
+        positions=[{"symbol": "EURUSD"}],
+        pending=[{"symbol": "BTCUSD"}],
+    )
+    evaluator = make_evaluator(
+        connector,
+        FakeTracker(),
+        max_total_positions=2,
+        max_positions_per_symbol=3,
+    )
+
+    allowed, reason = evaluator.check_exposure_limits("GOLD", 0.01)
+
+    assert not allowed
+    assert "total active orders" in reason
+
+
+def test_aggregate_open_risk_includes_pending_order_stop_risk():
+    connector = FakeConnector(
+        pending=[{
+            "ticket": 11,
+            "symbol": "GOLD",
+            "volume": 24.5,
+            "price_open": 100,
+            "type": 2,
+            "sl": 90,
+        }]
+    )
+    evaluator = make_evaluator(
+        connector,
+        FakeTracker(),
+        max_aggregate_open_risk_percent=1.0,
+    )
+
+    allowed, reason = evaluator.check_aggregate_open_risk(
+        "BTCUSD", "BUY", 0.01, 100, 90, 10000
+    )
+
+    assert not allowed
+    assert "Aggregate stop risk" in reason
 
 
 def test_risk_reward_rejects_stop_on_wrong_side_for_direction():

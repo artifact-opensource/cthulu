@@ -42,6 +42,7 @@ config/*.yaml
 !config/*.example.yaml
 !config.example.json
 .env
+.env.agent
 .env.local
 .env.*.local
 config_battle_test.json
@@ -83,6 +84,7 @@ config.json.bak
 *.lock
 *.lck
 cthulu.lock
+.cthulu.killswitch
 .lock
 *.pid
 *.seed
@@ -385,3 +387,4 @@ model/arch_2.0/model/arch_2.0/training/test_metrics/metrics_20260201_180756_fina
 model/arch_2.0/model/arch_2.0/training/test_metrics/metrics_20260201_180832_final.json
 model/arch_2.0/HUGGINGFACE_README.md
 ML_RL/data/tier_optimizer/optimizer_state.json
+config_multi.json

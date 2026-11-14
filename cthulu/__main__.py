@@ -94,6 +94,7 @@ from config_schema import Config
 from config.mindsets import apply_mindset, list_mindsets
 from observability.logger import setup_logger
 from cognition import get_cognition_engine
+from execution_mode import ExecutionModeError, get_execution_mode, legacy_execution_enabled, require_trading_enabled
 
 # Backwards-compatible helper for tests & integrations
 # Signature matches older tests: init_ml_collector(config, args, logger)
@@ -178,7 +179,7 @@ def parse_arguments():
     parser.add_argument("--config", type=str, default="config.json",
                        help="Path to configuration file")
     parser.add_argument("--mindset", type=str, default=None,
-                       help="Trading mindset (conservative/balanced/aggressive/ultra_aggressive)")
+                       help="Trading mindset (conservative/balanced/aggressive/ultra_aggressive/high_frequency)")
     parser.add_argument("--list-mindsets", action="store_true",
                        help="List available mindsets and exit")
     parser.add_argument("--dry-run", action="store_true",
@@ -236,6 +237,12 @@ def main():
         5. Graceful shutdown
     """
     global shutdown_requested
+
+    try:
+        require_trading_enabled()
+    except ExecutionModeError as exc:
+        print(f"Trading disabled: {exc}")
+        return 3
     
     # CRITICAL: Prevent multiple instances from running simultaneously
     if not _singleton_lock.acquire():
@@ -261,6 +268,15 @@ def main():
             print(f"\n{name}:")
             print(f"  {description}")
         print("\n" + "=" * 50)
+        return 0
+
+    try:
+        execution_owner = get_execution_mode()
+    except ExecutionModeError as exc:
+        print(f"Execution disabled: {exc}")
+        return 2
+    if not legacy_execution_enabled(execution_owner):
+        print(f"Legacy engine not started: execution is disabled in mode {execution_owner}.")
         return 0
         
     # If user requested the NLP or interactive wizard via CLI, run it now
@@ -444,4 +460,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

@@ -11,6 +11,7 @@ if (-not (Test-Path -LiteralPath $startupScript)) {
     throw "Cthulu startup script not found: $startupScript"
 }
 
+$temporaryExePath = Join-Path $desktop 'Cthulu Launcher.new.exe'
 $source = @"
 using System;
 using System.Diagnostics;
@@ -30,22 +31,25 @@ public static class CthuluDesktopLauncher
 
         ProcessStartInfo start = new ProcessStartInfo();
         start.FileName = Environment.GetEnvironmentVariable("ComSpec");
+        if (String.IsNullOrEmpty(start.FileName))
+        {
+            start.FileName = "cmd.exe";
+        }
         start.Arguments = "/c \"\"" + batch + "\"\"";
         start.WorkingDirectory = root;
-        start.UseShellExecute = false;
-        start.CreateNoWindow = true;
+        start.UseShellExecute = true;
+        start.WindowStyle = ProcessWindowStyle.Normal;
         Process.Start(start);
     }
 }
 "@
 
-if (Test-Path -LiteralPath $exePath) {
-    Remove-Item -LiteralPath $exePath -Force
-}
 Add-Type -TypeDefinition $source `
     -OutputType WindowsApplication `
-    -OutputAssembly $exePath `
+    -OutputAssembly $temporaryExePath `
     -ErrorAction Stop
+
+Move-Item -LiteralPath $temporaryExePath -Destination $exePath -Force
 
 $shell = New-Object -ComObject WScript.Shell
 $shortcut = $shell.CreateShortcut($shortcutPath)

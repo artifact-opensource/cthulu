@@ -20,6 +20,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+from execution_mode import ExecutionModeError, require_trading_enabled
+
 
 def print_banner():
     """Print startup banner."""
@@ -39,6 +41,12 @@ _________   __  .__          .__
 
 async def main():
     """Main entry point."""
+    try:
+        require_trading_enabled()
+    except ExecutionModeError as e:
+        logger.error("Trading disabled: %s", e)
+        return
+
     print_banner()
     
     try:

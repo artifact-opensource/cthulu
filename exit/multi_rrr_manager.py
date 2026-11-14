@@ -24,6 +24,8 @@ from enum import Enum
 import logging
 import math
 
+from execution_mode import require_legacy_execution
+
 logger = logging.getLogger('cthulu.multi_rrr_exit')
 
 
@@ -405,6 +407,7 @@ class MultiRRRExitManager:
     def _execute_sl_modification(self, ticket: int, new_sl: float) -> Dict[str, Any]:
         """Modify position stop loss"""
         try:
+            require_legacy_execution()
             from cthulu.connector.mt5_connector import mt5
             
             positions = mt5.positions_get(ticket=ticket)

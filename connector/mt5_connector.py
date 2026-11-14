@@ -63,6 +63,8 @@ class ConnectionConfig:
 class MT5Connector:
     _SYMBOL_ALIASES = {
         "WTI": ("OILCASH", "USOIL"),
+        "GOLDM": ("GOLD", "XAUUSD"),
+        "XAUUSD": ("GOLD", "GOLDM"),
     }
 
     """
@@ -88,6 +90,9 @@ class MT5Connector:
         self._lock = Lock()
         self._last_request_time = 0.0
         self._min_request_interval = 0.1  # 100ms between requests
+        self._tradeable_symbols_cache: List[str] = []
+        self._tradeable_symbols_cached_at = 0.0
+        self._tradeable_symbols_spread_limit: Optional[float] = None
         # Tick manager for lightweight tick caching and subscriptions
         try:
             self._tick_manager = TickManager(self)
@@ -606,6 +611,67 @@ class MT5Connector:
             self.logger.error(f"Error fetching symbol info: {e}")
             return None
 
+    def get_tradeable_symbols(self, max_spread_pct: float = 0.0025) -> List[str]:
+        """Return active, tradable symbols with usable M1 history and acceptable spreads."""
+        now = time.time()
+        if (
+            self._tradeable_symbols_spread_limit == max_spread_pct
+            and now - self._tradeable_symbols_cached_at < 900
+        ):
+            return list(self._tradeable_symbols_cache)
+        if not self.is_connected():
+            raise RuntimeError("Cannot discover the trading universe while MT5 is disconnected")
+
+        self._rate_limit()
+        symbols = mt5.symbols_get()
+        if symbols is None:
+            error = mt5.last_error() if callable(getattr(mt5, "last_error", None)) else None
+            raise RuntimeError(f"MetaTrader 5 symbol query failed: {error}")
+
+        allowed_modes = {
+            getattr(mt5, "SYMBOL_TRADE_MODE_LONGONLY", 1),
+            getattr(mt5, "SYMBOL_TRADE_MODE_SHORTONLY", 2),
+            getattr(mt5, "SYMBOL_TRADE_MODE_FULL", 4),
+        }
+        timeframe = getattr(mt5, "TIMEFRAME_M1", None)
+        if timeframe is None:
+            raise RuntimeError("MetaTrader 5 M1 timeframe is unavailable")
+
+        selected = []
+        for symbol in symbols:
+            name = getattr(symbol, "name", None)
+            if not name or getattr(symbol, "trade_mode", None) not in allowed_modes:
+                continue
+            try:
+                if not mt5.symbol_select(name, True):
+                    continue
+                info = mt5.symbol_info(name)
+                tick = mt5.symbol_info_tick(name)
+                if not info or not tick or info.point <= 0:
+                    continue
+                bid, ask = float(tick.bid), float(tick.ask)
+                mid = (bid + ask) / 2.0
+                if bid <= 0 or ask < bid or mid <= 0 or (ask - bid) / mid > max_spread_pct:
+                    continue
+                tick_time = float(getattr(tick, "time", 0) or 0)
+                if tick_time <= 0 or now - tick_time > 300:
+                    continue
+                rates = mt5.copy_rates_from_pos(name, timeframe, 0, 120)
+                if rates is None or len(rates) < 100:
+                    continue
+                volumes = rates["tick_volume"][-20:]
+                if sum(float(volume) > 0 for volume in volumes) < 10:
+                    continue
+                selected.append(name)
+            except (AttributeError, TypeError, ValueError, KeyError) as exc:
+                self.logger.debug("Skipping symbol %s during universe discovery: %s", name, exc)
+
+        selected.sort()
+        self._tradeable_symbols_cache = selected
+        self._tradeable_symbols_cached_at = now
+        self._tradeable_symbols_spread_limit = max_spread_pct
+        return list(selected)
+
     def get_point_value(self, symbol: str) -> Optional[float]:
         """Return point value in account currency for one point movement for symbol."""
         try:
@@ -775,6 +841,29 @@ class MT5Connector:
             return result
         except Exception as e:
             self.logger.error(f"Error fetching open positions: {e}")
+            raise
+
+    def get_pending_orders(self) -> List[Dict[str, Any]]:
+        """Get all active pending orders from MT5."""
+        try:
+            orders = mt5.orders_get()
+            if orders is None:
+                error = mt5.last_error() if callable(getattr(mt5, 'last_error', None)) else None
+                raise RuntimeError(f"MetaTrader 5 pending-order query failed: {error}")
+            return [
+                {
+                    'ticket': getattr(order, 'ticket', None),
+                    'symbol': getattr(order, 'symbol', None),
+                    'type': getattr(order, 'type', None),
+                    'price_open': getattr(order, 'price_open', None),
+                    'volume': getattr(order, 'volume_current', getattr(order, 'volume_initial', None)),
+                    'sl': getattr(order, 'sl', None),
+                    'tp': getattr(order, 'tp', None),
+                }
+                for order in orders
+            ]
+        except Exception as e:
+            self.logger.error(f"Error fetching pending orders: {e}")
             raise
             
     def health_check(self) -> Dict[str, Any]:

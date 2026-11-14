@@ -227,5 +227,129 @@ def test_rsi_fallback_computes_alias_if_missing():
     assert 'atr' in out.columns
 
 
+def test_indicator_aliases_do_not_fragment_wide_dataframe():
+    import warnings
+    import pandas as pd
+    from cthulu.core.trading_loop import TradingLoop, TradingLoopContext
 
+    index = pd.date_range('2025-01-01', periods=5)
+    df = pd.DataFrame({
+        'open': [100.0] * 5,
+        'high': [101.0] * 5,
+        'low': [99.0] * 5,
+        'close': [100.0] * 5,
+        'volume': [10] * 5,
+        'sma_20': [100.0] * 5,
+        'sma_50': [100.0] * 5,
+    }, index=index)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', pd.errors.PerformanceWarning)
+        for i in range(110):
+            df[f'extra_{i}'] = float(i)
 
+    class DummyStrategy:
+        rsi_period = 7
+
+    class DummyRSI:
+        name = 'rsi'
+
+        def calculate(self, data):
+            return pd.Series([50.0] * len(data), index=data.index, name='rsi_7')
+
+    class DummyATR:
+        name = 'atr'
+
+        def calculate(self, data):
+            return pd.Series([1.0] * len(data), index=data.index, name='atr')
+
+    class DummyADX:
+        name = 'adx'
+
+        def calculate(self, data):
+            return pd.Series([20.0] * len(data), index=data.index, name='adx')
+
+    ctx = TradingLoopContext(
+        connector=None,
+        data_layer=None,
+        execution_engine=None,
+        risk_manager=None,
+        position_tracker=None,
+        position_lifecycle=None,
+        trade_adoption_manager=None,
+        exit_coordinator=None,
+        database=None,
+        metrics=None,
+        logger=logging.getLogger('cthulu.tests'),
+        symbol='EURUSD',
+        timeframe=60,
+        poll_interval=1,
+        lookback_bars=10,
+        dry_run=True,
+        indicators=[DummyRSI(), DummyATR(), DummyADX()],
+        exit_strategies=[],
+        trade_adoption_policy=None,
+        config={},
+        strategy=DummyStrategy(),
+    )
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter('always', pd.errors.PerformanceWarning)
+        out = TradingLoop(ctx)._calculate_indicators(df)
+
+    assert out is not None
+    assert out['rsi_7'].tolist() == [50.0] * 5
+    assert out['atr'].tolist() == [1.0] * 5
+    assert out['adx'].tolist() == [20.0] * 5
+    assert not [
+        warning for warning in caught
+        if issubclass(warning.category, pd.errors.PerformanceWarning)
+    ]
+
+    fallback_df = pd.DataFrame({
+        'open': [100.0] * 5,
+        'high': [101.0] * 5,
+        'low': [99.0] * 5,
+        'close': [100.0] * 5,
+        'volume': [10] * 5,
+        'sma_20': [100.0] * 5,
+        'sma_50': [100.0] * 5,
+    }, index=index)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', pd.errors.PerformanceWarning)
+        for i in range(110):
+            fallback_df[f'extra_{i}'] = float(i)
+
+    fallback_ctx = TradingLoopContext(
+        connector=None,
+        data_layer=None,
+        execution_engine=None,
+        risk_manager=None,
+        position_tracker=None,
+        position_lifecycle=None,
+        trade_adoption_manager=None,
+        exit_coordinator=None,
+        database=None,
+        metrics=None,
+        logger=logging.getLogger('cthulu.tests'),
+        symbol='EURUSD',
+        timeframe=60,
+        poll_interval=1,
+        lookback_bars=10,
+        dry_run=True,
+        indicators=[],
+        exit_strategies=[],
+        trade_adoption_policy=None,
+        config={},
+        strategy=None,
+    )
+    with warnings.catch_warnings(record=True) as fallback_caught:
+        warnings.simplefilter('always', pd.errors.PerformanceWarning)
+        fallback_out = TradingLoop(fallback_ctx)._calculate_indicators(fallback_df)
+
+    assert fallback_out is not None
+    assert 'rsi' in fallback_out.columns
+    assert 'atr' in fallback_out.columns
+    assert not [
+        warning for warning in fallback_caught
+        if issubclass(warning.category, pd.errors.PerformanceWarning)
+    ]

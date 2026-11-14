@@ -24,6 +24,8 @@ from datetime import datetime, timezone
 from enum import Enum
 import logging
 
+from execution_mode import require_legacy_execution
+
 logger = logging.getLogger("cthulu.multi_rrr_exit")
 
 
@@ -471,6 +473,7 @@ class MultiRRRExitManager:
     def _execute_sl_modification(self, action: ExitAction) -> Dict[str, Any]:
         """Execute stop loss modification."""
         try:
+            require_legacy_execution()
             from cthulu.connector.mt5_connector import mt5
             
             positions = mt5.positions_get(ticket=action.ticket)

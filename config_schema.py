@@ -44,6 +44,7 @@ class RiskConfig(BaseModel):
     drawdown_halt_percent: float = 50.0
     # Allow a legacy absolute dollar daily loss value to be stored by the wizard
     max_daily_loss: float = 0.0
+    max_daily_trades: int = 50
     max_positions_per_symbol: int = 1
     max_total_positions: int = 3
     min_risk_reward_ratio: float = 1.0
@@ -70,6 +71,7 @@ class TradingConfig(BaseModel):
     timeframe: str = "TIMEFRAME_H1"
     poll_interval: int = 60
     lookback_bars: int = 500
+    min_trade_interval: int = 60
 
 
 class StrategyConfig(BaseModel):
@@ -241,16 +243,19 @@ class Config(BaseModel):
         # Load .env file if available
         env_path = p.parent / '.env'
         if env_path.exists():
-            try:
+            if _dotenv_available:
+                load_dotenv(dotenv_path=env_path, override=True)
+            else:
                 with open(env_path, 'r') as f:
                     for line in f:
                         line = line.strip()
                         if line and not line.startswith('#'):
                             if '=' in line:
                                 key, value = line.split('=', 1)
-                                os.environ[key.strip()] = value.strip()
-            except Exception:
-                pass  # Ignore errors loading .env
+                                value = value.strip()
+                                if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+                                    value = value[1:-1]
+                                os.environ[key.strip()] = value
 
         text = p.read_text()
         raw = json.loads(text)
@@ -305,6 +310,4 @@ class Config(BaseModel):
             cfg.mt5.server = mt5_server
 
         return cfg
-
-
 

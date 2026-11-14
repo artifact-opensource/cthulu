@@ -10,6 +10,14 @@ version: 6.0.0
 ![Last Update](https://img.shields.io/badge/Last_Update-2026--01--06-4B0082?style=for-the-badge&labelColor=0D1117&logo=calendar&logoColor=white)
 ![](https://img.shields.io/github/last-commit/amuzetnoM/cthulu?style=for-the-badge&labelColor=0D1117&logo=github&logoColor=white) 
 
+### Windows Double-Click Launcher
+
+From the repository folder, double-click `Cthulu Launcher.bat`. On first launch it checks for Python 3.10 or newer, creates the project `.venv`, and installs the dependencies before showing the launcher menu. Setup may take a few minutes and requires an internet connection; it runs again on later launches to keep dependencies current.
+
+The menu offers the kill switch, Agentic, and Legacy choices. After choosing Agentic or Legacy, choose Single, Multi, or HFT. To exit without starting a mode, choose `X`. If setup fails, trading startup is blocked but the kill switch remains available. The launcher does not clear logs or reset trading data.
+
+Create and configure `.env` from `.env.example` before starting a mode. Keep credentials private and do not commit `.env`.
+
 ### 1. Initial Setup
 
 ```bash
@@ -276,7 +284,5 @@ python -m Cthulu --config config.json --enable-rpc       # Enable RPC for GUI
 - Discussions: https://github.com/amuzetnoM/Cthulu/discussions
 
 Happy Trading!
-
-
 
 

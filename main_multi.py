@@ -12,6 +12,8 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
+from execution_mode import ExecutionModeError, require_legacy_execution, require_trading_enabled
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -37,6 +39,17 @@ _________   __  .__          .__
 
 
 async def main():
+    try:
+        require_trading_enabled()
+    except ExecutionModeError as exc:
+        print(f"Trading disabled: {exc}")
+        return
+    try:
+        require_legacy_execution()
+    except ExecutionModeError as exc:
+        print(f"Legacy multi-symbol engine not started: {exc}")
+        return
+
     print_banner()
     
     try:

@@ -15,7 +15,8 @@
 param(
     [switch]$SkipVenv,
     [switch]$Force,
-    [switch]$Dev
+    [switch]$Dev,
+    [switch]$ForLauncher
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,87 +25,127 @@ $SCRIPT_DIR = $PSScriptRoot
 $PROJECT_ROOT = Split-Path -Parent $SCRIPT_DIR
 
 # Colors for output
-function Write-Step { param($msg) Write-Host "► $msg" -ForegroundColor Cyan }
-function Write-Success { param($msg) Write-Host "✓ $msg" -ForegroundColor Green }
-function Write-Warn { param($msg) Write-Host "⚠ $msg" -ForegroundColor Yellow }
-function Write-Fail { param($msg) Write-Host "✗ $msg" -ForegroundColor Red }
+function Write-Step { param($msg) Write-Host "[setup] $msg" -ForegroundColor Cyan }
+function Write-Success { param($msg) Write-Host "[OK] $msg" -ForegroundColor Green }
+function Write-Warn { param($msg) Write-Host "[WARN] $msg" -ForegroundColor Yellow }
+function Write-Fail { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "-------------------------------------------------------" -ForegroundColor Cyan
 Write-Host "  Cthulu Trading Bot - Automated Setup" -ForegroundColor Cyan
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "-------------------------------------------------------" -ForegroundColor Cyan
 Write-Host ""
 
-# Check Python installation
-Write-Step "Checking Python installation..."
-try {
-    $pythonVersion = python --version 2>&1
-    if ($pythonVersion -match "Python (\d+\.\d+)") {
-        $version = [version]$matches[1]
-        $minVersion = [version]$PYTHON_MIN_VERSION
-        
-        if ($version -ge $minVersion) {
-            Write-Success "Python $version detected"
-        } else {
-            Write-Fail "Python $version is below minimum required version $PYTHON_MIN_VERSION"
-            exit 1
+function Find-PythonCommand {
+    $launcher = Get-Command py -ErrorAction SilentlyContinue
+    if ($launcher) {
+        foreach ($candidate in @('-3.13', '-3.12', '-3.11', '-3.10', '-3')) {
+            $versionOutput = & $launcher.Source $candidate --version 2>&1
+            if ($LASTEXITCODE -eq 0 -and $versionOutput -match 'Python (\d+\.\d+(?:\.\d+)?)') {
+                return [pscustomobject]@{
+                    Executable = $launcher.Source
+                    Arguments = @($candidate)
+                    Version = [version]$matches[1]
+                }
+            }
         }
     }
-} catch {
-    Write-Fail "Python not found. Please install Python $PYTHON_MIN_VERSION or higher"
+
+    $python = Get-Command python -ErrorAction SilentlyContinue
+    if ($python) {
+        $versionOutput = & $python.Source --version 2>&1
+        if ($LASTEXITCODE -eq 0 -and $versionOutput -match 'Python (\d+\.\d+(?:\.\d+)?)') {
+            return [pscustomobject]@{
+                Executable = $python.Source
+                Arguments = @()
+                Version = [version]$matches[1]
+            }
+        }
+    }
+
+    return $null
+}
+
+$venvPath = Join-Path $PROJECT_ROOT ".venv"
+$venvPython = Join-Path $venvPath "Scripts\python.exe"
+$createdVenv = $false
+
+if ($SkipVenv) {
+    $pythonCommand = Find-PythonCommand
+    if (-not $pythonCommand) {
+        Write-Fail "Python $PYTHON_MIN_VERSION or higher was not found."
+        exit 1
+    }
+    $pythonExecutable = $pythonCommand.Executable
+    $pythonArguments = $pythonCommand.Arguments
+    $pythonVersion = $pythonCommand.Version
+} else {
+    Write-Step "Setting up virtual environment..."
+    if (-not (Test-Path -LiteralPath $venvPython -PathType Leaf) -or $Force) {
+        $pythonCommand = Find-PythonCommand
+        if (-not $pythonCommand) {
+            Write-Fail "Python $PYTHON_MIN_VERSION or higher was not found. Install Python and enable the Windows launcher, then try again."
+            exit 1
+        }
+        if ($pythonCommand.Version -lt [version]$PYTHON_MIN_VERSION) {
+            Write-Fail "Python $($pythonCommand.Version) is below the minimum required version $PYTHON_MIN_VERSION."
+            exit 1
+        }
+
+        if ((Test-Path -LiteralPath $venvPath) -and $Force) {
+            Write-Warn "Removing existing virtual environment..."
+            Remove-Item -LiteralPath $venvPath -Recurse -Force
+        }
+
+        Write-Step "Creating .venv with Python $($pythonCommand.Version)..."
+        $venvArguments = @($pythonCommand.Arguments) + @('-m', 'venv', $venvPath)
+        & $pythonCommand.Executable @venvArguments
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $venvPython -PathType Leaf)) {
+            Write-Fail "Failed to create the project virtual environment."
+            exit 1
+        }
+        $createdVenv = $true
+    }
+
+    $pythonExecutable = $venvPython
+    $pythonArguments = @()
+    $versionOutput = & $pythonExecutable --version 2>&1
+    if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch 'Python (\d+\.\d+(?:\.\d+)?)') {
+        Write-Fail "Could not determine the version of the project virtual environment Python."
+        exit 1
+    }
+    $pythonVersion = [version]$matches[1]
+}
+
+Write-Step "Checking Python installation..."
+if ($pythonVersion -lt [version]$PYTHON_MIN_VERSION) {
+    Write-Fail "Python $pythonVersion is below the minimum required version $PYTHON_MIN_VERSION."
+    exit 1
+}
+Write-Success "Python $pythonVersion detected"
+
+$requirementsFile = Join-Path $PROJECT_ROOT "requirements.txt"
+if (-not (Test-Path -LiteralPath $requirementsFile -PathType Leaf)) {
+    Write-Fail "requirements.txt not found"
     exit 1
 }
 
-# Create virtual environment
-if (-not $SkipVenv) {
-    Write-Step "Setting up virtual environment..."
-    $venvPath = Join-Path $PROJECT_ROOT "venv"
-    
-    if (Test-Path $venvPath) {
-        if ($Force) {
-            Write-Warn "Removing existing virtual environment..."
-            Remove-Item -Recurse -Force $venvPath
-        } else {
-            Write-Success "Virtual environment already exists (use -Force to recreate)"
-            $SkipVenv = $true
-        }
-    }
-    
-    if (-not $SkipVenv) {
-        python -m venv $venvPath
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success "Virtual environment created"
-        } else {
-            Write-Fail "Failed to create virtual environment"
-            exit 1
-        }
-    }
-    
-    # Activate venv
-    Write-Step "Activating virtual environment..."
-    $activateScript = Join-Path $venvPath "Scripts\Activate.ps1"
-    & $activateScript
-    Write-Success "Virtual environment activated"
-}
-
-# Upgrade pip
-Write-Step "Upgrading pip..."
-python -m pip install --upgrade pip --quiet
-Write-Success "pip upgraded"
-
-# Install dependencies
-Write-Step "Installing dependencies..."
-$requirementsFile = Join-Path $PROJECT_ROOT "requirements.txt"
-if (Test-Path $requirementsFile) {
-    pip install -r $requirementsFile --quiet
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Dependencies installed"
-    } else {
-        Write-Fail "Failed to install dependencies"
+if ($createdVenv -or (-not $ForLauncher -and -not $SkipVenv)) {
+    Write-Step "Upgrading pip..."
+    & $pythonExecutable @pythonArguments -m pip install --upgrade pip --quiet
+    if ($LASTEXITCODE -ne 0) {
+        Write-Fail "Could not upgrade pip."
         exit 1
     }
+    Write-Success "pip ready"
+}
+
+Write-Step "Installing dependencies..."
+& $pythonExecutable @pythonArguments -m pip install -r $requirementsFile --quiet
+if ($LASTEXITCODE -eq 0) {
+    Write-Success "Dependencies installed"
 } else {
-    Write-Fail "requirements.txt not found"
+    Write-Fail "Failed to install dependencies"
     exit 1
 }
 
@@ -113,37 +154,41 @@ if ($Dev) {
     Write-Step "Installing development dependencies..."
     $devRequirementsFile = Join-Path $PROJECT_ROOT "requirements-dev.txt"
     if (Test-Path $devRequirementsFile) {
-        pip install -r $devRequirementsFile --quiet
+        & $pythonExecutable @pythonArguments -m pip install -r $devRequirementsFile --quiet
+        if ($LASTEXITCODE -ne 0) {
+            Write-Fail "Failed to install development dependencies"
+            exit 1
+        }
         Write-Success "Development dependencies installed"
     }
 }
 
 # Check MT5 installation
 Write-Step "Checking MetaTrader 5 installation..."
-try {
-    $mt5Check = python -c "import MetaTrader5 as mt5; print(mt5.version())" 2>&1
-    if ($mt5Check) {
-        Write-Success "MetaTrader5 Python package installed: $mt5Check"
-    }
-} catch {
+$mt5Check = & $pythonExecutable @pythonArguments -c 'import MetaTrader5 as mt5; print(mt5.version())' 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Success "MetaTrader5 Python package installed: $mt5Check"
+} else {
     Write-Warn "MetaTrader5 package check failed"
 }
 
 # Create config if needed
-Write-Step "Checking configuration..."
-$configFile = Join-Path $PROJECT_ROOT "config" "config.yaml"
-$configExample = Join-Path $PROJECT_ROOT "config" "config.example.yaml"
+if (-not $ForLauncher) {
+    Write-Step "Checking configuration..."
+    $configFile = Join-Path $PROJECT_ROOT "config" "config.yaml"
+    $configExample = Join-Path $PROJECT_ROOT "config" "config.example.yaml"
 
-if (-not (Test-Path $configFile)) {
-    if (Test-Path $configExample) {
-        Copy-Item $configExample $configFile
-        Write-Warn "config.yaml created from template - PLEASE CONFIGURE IT"
-        Write-Host "  Edit: config\config.yaml" -ForegroundColor Yellow
+    if (-not (Test-Path $configFile)) {
+        if (Test-Path $configExample) {
+            Copy-Item $configExample $configFile
+            Write-Warn "config.yaml created from template - PLEASE CONFIGURE IT"
+            Write-Host "  Edit: config\config.yaml" -ForegroundColor Yellow
+        } else {
+            Write-Warn "config.example.yaml not found"
+        }
     } else {
-        Write-Warn "config.example.yaml not found"
+        Write-Success "config.yaml exists"
     }
-} else {
-    Write-Success "config.yaml exists"
 }
 
 # Create required directories
@@ -157,43 +202,44 @@ foreach ($dir in $directories) {
     }
 }
 
-# Initialize database
-Write-Step "Initializing database..."
-$dbScript = Join-Path $PROJECT_ROOT "scripts" "init_db.py"
-if (Test-Path $dbScript) {
-    python $dbScript
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Database initialized"
-    } else {
-        Write-Warn "Database initialization had issues"
+# Initialize database and run the legacy install checks only for manual setup.
+if (-not $ForLauncher) {
+    Write-Step "Initializing database..."
+    $dbScript = Join-Path $PROJECT_ROOT "scripts" "init_db.py"
+    if (Test-Path $dbScript) {
+        & $pythonExecutable @pythonArguments $dbScript
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "Database initialized"
+        } else {
+            Write-Warn "Database initialization had issues"
+        }
     }
-}
 
-# Run installation tests
-Write-Step "Running installation tests..."
-$testScript = Join-Path $PROJECT_ROOT "tests" "test_installation.py"
-if (Test-Path $testScript) {
-    python $testScript
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Installation tests passed"
-    } else {
-        Write-Warn "Some installation tests failed"
+    Write-Step "Running installation tests..."
+    $testScript = Join-Path $PROJECT_ROOT "tests" "test_installation.py"
+    if (Test-Path $testScript) {
+        & $pythonExecutable @pythonArguments $testScript
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "Installation tests passed"
+        } else {
+            Write-Warn "Some installation tests failed"
+        }
     }
 }
 
 Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "-------------------------------------------------------" -ForegroundColor Green
 Write-Host "  Setup Complete!" -ForegroundColor Green
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Green
+Write-Host "-------------------------------------------------------" -ForegroundColor Green
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  1. Configure your MT5 credentials in config\config.yaml"
-Write-Host "  2. Run tests: python -m pytest tests/"
-Write-Host "  3. Start Cthulu: python -m cthulu"
+if ($ForLauncher) {
+    Write-Host "  Dependencies are ready. The launcher will now ask which mode to start."
+} else {
+    Write-Host "  1. Configure your MT5 credentials in config\config.yaml"
+    Write-Host "  2. Run tests: python -m pytest tests/"
+    Write-Host "  3. Start Cthulu: python -m cthulu"
+}
 Write-Host ""
 Write-Host "Documentation: docs\README.md" -ForegroundColor Cyan
 Write-Host ""
-
-
-
-

@@ -19,6 +19,8 @@ import logging
 from pathlib import Path
 from typing import Optional, Callable, Any, Dict
 
+from execution_mode import ExecutionModeError, agent_execution_enabled, require_legacy_execution
+
 
 class ShutdownHandler:
     """
@@ -125,6 +127,20 @@ class ShutdownHandler:
         open positions: close all, leave open, or close specific tickets.
         """
         self.logger.info("Checking for open positions during shutdown")
+
+        try:
+            if agent_execution_enabled():
+                self.logger.warning("Skipping interactive position handling during shutdown; Agentic mode manages the shared account.")
+                return
+        except ExecutionModeError as exc:
+            self.logger.warning("Skipping position handling because execution mode is invalid: %s", exc)
+            return
+
+        try:
+            require_legacy_execution()
+        except ExecutionModeError as exc:
+            self.logger.warning("Skipping legacy position handling during shutdown: %s", exc)
+            return
         
         # Check if dry-run mode
         is_dry_run = self.config.get('runtime', {}).get('dry_run', False) if self.config else (self.args.dry_run if self.args else False)
@@ -434,7 +450,5 @@ def create_shutdown_handler(
         observability_process=optional_components.get('observability_process'),
         monitoring_processes=optional_components.get('monitoring_processes')
     )
-
-
 
 

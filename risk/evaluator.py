@@ -237,7 +237,7 @@ class RiskEvaluator:
                     return False, f"Margin call triggered (level: {margin_level:.2%})"
             
             # CASE 5: Excessive drawdown from peak
-            if self.peak_equity > 0:
+            if self.peak_equity > 0 and self.limits.drawdown_halt_percent > 0:
                 drawdown_percent = ((self.peak_equity - equity) / self.peak_equity) * 100
                 if drawdown_percent >= self.limits.drawdown_halt_percent:
                     logger.error(f"DRAWDOWN HALT: {drawdown_percent:.1f}% exceeds limit {self.limits.drawdown_halt_percent}%")
@@ -549,15 +549,19 @@ class RiskEvaluator:
             open_positions = self.connector.get_open_positions()
             if open_positions is None:
                 return False, "Unable to verify current portfolio positions"
+            get_pending = getattr(self.connector, "get_pending_orders", None)
+            pending_orders = get_pending() if callable(get_pending) else []
+            if pending_orders is None:
+                return False, "Unable to verify current pending orders"
             symbol_key = ''.join(char for char in symbol.upper() if char.isalnum())
-            symbol_positions = [
-                position for position in open_positions
-                if ''.join(char for char in str(position.get('symbol', '')).upper() if char.isalnum()) == symbol_key
+            symbol_orders = [
+                order for order in [*open_positions, *pending_orders]
+                if ''.join(char for char in str(order.get('symbol', '')).upper() if char.isalnum()) == symbol_key
             ]
-            if len(symbol_positions) >= self.limits.max_positions_per_symbol:
+            if len(symbol_orders) >= self.limits.max_positions_per_symbol:
                 return False, f"Maximum positions for {symbol} ({self.limits.max_positions_per_symbol}) reached"
-            if len(open_positions) >= self.limits.max_total_positions:
-                return False, f"Maximum total positions ({self.limits.max_total_positions}) reached"
+            if len(open_positions) + len(pending_orders) >= self.limits.max_total_positions:
+                return False, f"Maximum total active orders ({self.limits.max_total_positions}) reached"
             
             return True, "Exposure within limits"
             
@@ -574,7 +578,7 @@ class RiskEvaluator:
         stop_loss: float,
         equity: float
     ) -> tuple[bool, str]:
-        """Enforce the portfolio stop-risk budget across all open MT5 positions."""
+        """Enforce the portfolio stop-risk budget across open positions and pending orders."""
         try:
             if equity <= 0 or self.limits.max_aggregate_open_risk_percent <= 0:
                 return False, "Invalid equity or aggregate risk limit"
@@ -589,6 +593,10 @@ class RiskEvaluator:
             open_positions = get_positions()
             if open_positions is None:
                 return False, "Cannot verify aggregate stop risk; open positions are unavailable"
+            get_pending = getattr(self.connector, 'get_pending_orders', None)
+            pending_orders = get_pending() if callable(get_pending) else []
+            if pending_orders is None:
+                return False, "Cannot verify aggregate stop risk; pending orders are unavailable"
 
             aggregate_loss = 0.0
             for position in open_positions:
@@ -606,6 +614,23 @@ class RiskEvaluator:
                 loss = calculate_loss(symbol, side, volume, entry, sl)
                 if loss is None:
                     return False, f"Cannot calculate stop risk for open position {position.get('ticket')}"
+                aggregate_loss += loss
+
+            for order in pending_orders:
+                sl = order.get('sl')
+                symbol = order.get('symbol')
+                volume = order.get('volume')
+                entry = order.get('price_open')
+                order_type = order.get('type')
+                side = 'BUY' if order_type in (2, 4, 6, 'buy_limit', 'buy_stop', 'buy_stop_limit') else 'SELL'
+                if not sl or not symbol or not volume or not entry:
+                    return False, (
+                        f"Cannot verify aggregate risk: pending order "
+                        f"{order.get('ticket', 'unknown')} has no valid stop loss"
+                    )
+                loss = calculate_loss(symbol, side, volume, entry, sl)
+                if loss is None:
+                    return False, f"Cannot calculate stop risk for pending order {order.get('ticket')}"
                 aggregate_loss += loss
 
             proposed_loss = calculate_loss(
@@ -637,7 +662,7 @@ class RiskEvaluator:
         try:
             daily_pnl = self.daily_tracker.get_daily_pnl()
             
-            if daily_pnl <= -self.limits.max_daily_loss:
+            if self.limits.max_daily_loss > 0 and daily_pnl <= -self.limits.max_daily_loss:
                 if self.limits.emergency_shutdown_enabled:
                     self.trigger_emergency_shutdown()
                 return False, f"Daily loss limit ({self.limits.max_daily_loss}) exceeded: {daily_pnl:.2f}"

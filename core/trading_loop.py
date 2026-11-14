@@ -28,6 +28,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field, replace
 import pandas as pd
+from shared_order_lock import account_order_lock
 
 from cthulu.strategy.base import Strategy, SignalType
 from cthulu.execution.engine import ExecutionEngine, OrderRequest, OrderType, OrderStatus
@@ -39,6 +40,7 @@ from cthulu.persistence.database import Database, TradeRecord, SignalRecord
 from cthulu.observability.metrics import MetricsCollector
 from cthulu.connector.mt5_connector import MT5Connector
 from cthulu.data.layer import DataLayer
+from execution_mode import ExecutionModeError, get_execution_mode, legacy_execution_enabled
 
 
 @dataclass
@@ -450,7 +452,11 @@ class TradingLoop:
         
         # CRITICAL FIX: Trade cooldown to prevent rapid-fire entries
         self._last_trade_time: Optional[datetime] = None
-        self._min_trade_interval_seconds = self.ctx.config.get('min_trade_interval', 60)  # 1 minute default
+        trading_config = self.ctx.config.get('trading', {})
+        self._min_trade_interval_seconds = trading_config.get(
+            'min_trade_interval',
+            self.ctx.config.get('min_trade_interval', 60)
+        )
         self._last_signal_direction: Optional[str] = None
         self._consecutive_same_direction = 0
         self._symbol_loops = self._build_symbol_loops()
@@ -482,7 +488,18 @@ class TradingLoop:
 
     def _build_symbol_loops(self) -> List["TradingLoop"]:
         watchlist = self.ctx.config.get("watchlist", [])
-        if not watchlist or self.ctx.config.get("_multi_symbol_child"):
+        if self.ctx.config.get("_multi_symbol_child"):
+            return []
+        trading_config = self.ctx.config.get("trading", {})
+        if trading_config.get("dynamic_universe"):
+            discover = getattr(self.ctx.connector, "get_tradeable_symbols", None)
+            if not callable(discover):
+                raise RuntimeError("The configured connector does not support dynamic symbol discovery")
+            max_spread_pct = float(self.ctx.config.get("risk", {}).get("max_spread_pct", 0.0025))
+            watchlist = discover(max_spread_pct)
+            if not watchlist:
+                raise RuntimeError("No tradable symbols passed the spread, quote-freshness, and M1-history filters")
+        if not watchlist:
             return []
 
         loops = []
@@ -842,6 +859,15 @@ class TradingLoop:
         if df is None:
             self.ctx.logger.warning("Indicator calculation failed")
             return
+
+        try:
+            owner = get_execution_mode()
+        except ExecutionModeError as exc:
+            self.ctx.logger.error("Trading iteration disabled: %s", exc)
+            return
+        if not legacy_execution_enabled(owner):
+            self.ctx.logger.info("Legacy execution disabled in mode %s.", owner)
+            return
         
         # 3. Check pending entries (queued for better price)
         self._check_pending_entries(df)
@@ -849,6 +875,25 @@ class TradingLoop:
         # 4. Generate strategy signals
         self.ctx.logger.info(f"Loop #{self.loop_count}: Generating signals...")
         signal = self._generate_signal(df)
+        try:
+            from legacy_bridge import publish_legacy_context
+
+            row = df.iloc[-1].to_dict()
+            indicators = {
+                str(key): value for key, value in row.items()
+                if str(key).lower() not in {"time", "open", "high", "low", "close", "volume", "tick_volume"}
+            }
+            publish_legacy_context(
+                self.ctx.symbol,
+                str(self.ctx.timeframe),
+                bar={key: row.get(key) for key in ("time", "open", "high", "low", "close", "volume", "tick_volume")},
+                indicators=indicators,
+                signal=signal,
+                regime=str(getattr(self.ctx.strategy, "regime", "unknown")),
+                strategy=self.ctx.strategy.__class__.__name__ if self.ctx.strategy else "unknown",
+            )
+        except Exception:
+            self.ctx.logger.exception("Failed to publish Legacy analysis for the agent")
         
         # 5. Process entry signals
         if signal:
@@ -1147,6 +1192,7 @@ class TradingLoop:
             
             # Create friendly aliases for commonly-required indicators (so strategies can rely on expected column names)
             try:
+                aliases = {}
                 # RSI alias
                 rsi_period = getattr(self.ctx.strategy, 'rsi_period', None)
                 try:
@@ -1171,13 +1217,13 @@ class TradingLoop:
                                     chosen = c
                                     break
                         chosen = chosen or rsi_candidates[0]
-                        df[rsi_col] = df[chosen]
+                        aliases[rsi_col] = df[chosen]
                         self.ctx.logger.debug(f"Created RSI alias column '{rsi_col}' from '{chosen}'")
                 # ATR alias
                 if 'atr' not in df.columns:
                     atr_candidates = [c for c in df.columns if c.startswith('runtime_atr')]
                     if atr_candidates:
-                        df['atr'] = df[atr_candidates[0]]
+                        aliases['atr'] = df[atr_candidates[0]]
                         self.ctx.logger.debug(f"Created ATR alias column 'atr' from '{atr_candidates[0]}'")
                 # ADX alias
                 if 'adx' not in df.columns:
@@ -1190,12 +1236,15 @@ class TradingLoop:
                                 chosen = c
                                 break
                         chosen = chosen or adx_candidates[0]
-                        df['adx'] = df[chosen]
+                        aliases['adx'] = df[chosen]
                         self.ctx.logger.debug(f"Created ADX alias column 'adx' from '{chosen}'")
+                if aliases:
+                    df = pd.concat([df, pd.DataFrame(aliases, index=df.index)], axis=1)
             except Exception:
                 self.ctx.logger.exception('Failed while creating indicator alias columns')
 
             # Fallback: if required indicators are still missing, compute them directly
+            fallback_aliases = {}
             try:
                 # RSI fallback
                 rsi_col = None
@@ -1254,7 +1303,7 @@ class TradingLoop:
                                             chosen = c
                                             break
                                 chosen = chosen or candidates[0]
-                                df[rsi_col] = df[chosen]
+                                fallback_aliases[rsi_col] = df[chosen]
                                 self.ctx.logger.debug(f"Created RSI alias '{rsi_col}' from '{chosen}' in fallback")
                     except Exception:
                         self.ctx.logger.exception('RSI fallback calculation failed')
@@ -1296,12 +1345,14 @@ class TradingLoop:
                         if 'atr' not in df.columns:
                             candidates = [c for c in df.columns if 'atr' in c.lower() and c.startswith('runtime_')]
                             if candidates:
-                                df['atr'] = df[candidates[0]]
+                                fallback_aliases['atr'] = df[candidates[0]]
                                 self.ctx.logger.debug(f"Created ATR alias 'atr' from '{candidates[0]}' in fallback")
                     except Exception:
                         self.ctx.logger.exception('ATR fallback calculation failed')
             except Exception:
                 self.ctx.logger.exception('Failed during indicator fallback calculations')
+            if fallback_aliases:
+                df = pd.concat([df, pd.DataFrame(fallback_aliases, index=df.index)], axis=1)
 
             self.ctx.logger.debug(f"Calculated SMA, ATR, and {len(self.ctx.indicators)} additional indicators")
             # Debug: log indicator columns for easy troubleshooting
@@ -1577,6 +1628,10 @@ class TradingLoop:
             return None
     
     def _process_entry_signal(self, signal):
+        with account_order_lock():
+            return self._process_entry_signal_locked(signal)
+
+    def _process_entry_signal_locked(self, signal):
         """
         Process an entry signal (risk approval + execution).
         
@@ -1688,6 +1743,36 @@ class TradingLoop:
                             atr=atr,
                             signal_entry_price=signal_price
                         )
+                        try:
+                            from legacy_bridge import publish_legacy_context
+
+                            signal_data = signal.to_dict() if hasattr(signal, "to_dict") else vars(signal)
+                            signal_data.update({
+                                "confluence_score": entry_confluence_result.score,
+                                "confluence_quality": entry_confluence_result.quality.value,
+                                "confluence_multiplier": entry_confluence_result.position_mult,
+                                "confluence_reasons": entry_confluence_result.reasons[:8],
+                            })
+                            row = df.iloc[-1].to_dict()
+                            indicators = {
+                                str(key): value for key, value in row.items()
+                                if str(key).lower() not in {"time", "open", "high", "low", "close", "volume", "tick_volume"}
+                            }
+                            metadata = getattr(signal, "metadata", None) or {}
+                            rejected = "" if entry_confluence_result.should_enter else entry_confluence_result.quality.value
+                            publish_legacy_context(
+                                self.ctx.symbol,
+                                str(self.ctx.timeframe),
+                                bar=row,
+                                indicators=indicators,
+                                signal=signal_data,
+                                regime=str(metadata.get("regime", "unknown")),
+                                strategy=self.ctx.strategy.__class__.__name__ if self.ctx.strategy else "unknown",
+                                score=entry_confluence_result.score,
+                                rejection=rejected,
+                            )
+                        except Exception:
+                            self.ctx.logger.exception("Failed to publish Legacy entry-confluence analysis for the agent")
                         
                         # Log entry analysis
                         self.ctx.logger.info(f"Entry confluence: {entry_confluence_result.quality.value} "
@@ -2262,9 +2347,10 @@ class TradingLoop:
             # Check each position against exit strategies
             for position in positions:
                 # DYNAMIC SL/TP MANAGEMENT
-                if not self.ctx.dry_run and self.ctx.dynamic_sltp_manager and atr_value and account_info:
+                position_df, position_atr = self._position_dynamic_data(position, df, atr_value)
+                if not self.ctx.dry_run and self.ctx.dynamic_sltp_manager and position_atr and account_info:
                     try:
-                        self._apply_dynamic_sltp(position, atr_value, account_info, df)
+                        self._apply_dynamic_sltp(position, position_atr, account_info, position_df)
                     except Exception as e:
                         self.ctx.logger.error(f"Dynamic SL/TP error for {position.ticket}: {e}")
                 
@@ -2292,6 +2378,40 @@ class TradingLoop:
         
         except Exception as e:
             self.ctx.logger.error(f"Position monitoring error: {e}", exc_info=True)
+
+    def _position_dynamic_data(self, position, current_df: pd.DataFrame, current_atr):
+        if self._symbol_key(position.symbol) == self._symbol_key(self.ctx.symbol):
+            return current_df, current_atr
+        try:
+            rates = self.ctx.connector.get_rates(
+                symbol=position.symbol,
+                timeframe=self.ctx.timeframe,
+                count=max(self.ctx.lookback_bars, 50),
+            )
+            if not rates:
+                self.ctx.logger.warning(
+                    "Dynamic SL/TP skipped for %s: position-symbol rates unavailable",
+                    position.ticket,
+                )
+                return None, None
+            position_df = self.ctx.data_layer.normalize_rates(rates, symbol=position.symbol)
+            if position_df.empty:
+                self.ctx.logger.warning(
+                    "Dynamic SL/TP skipped for %s: position-symbol ATR unavailable",
+                    position.ticket,
+                )
+                return position_df, None
+            from cthulu.indicators.atr import calculate_atr
+
+            atr = calculate_atr(position_df, period=14)
+            return position_df, float(atr.iloc[-1])
+        except Exception as e:
+            self.ctx.logger.warning(
+                "Dynamic SL/TP data lookup failed for %s: %s",
+                position.ticket,
+                e,
+            )
+            return None, None
     
     def _apply_dynamic_sltp(self, position, atr_value: float, account_info: dict, df: pd.DataFrame):
         """
@@ -2329,6 +2449,7 @@ class TradingLoop:
             current_price = position.current_price
             # Be defensive about attribute names: some PositionInfo instances use 'side' or 'type'
             side = getattr(position, 'side', None) or getattr(position, 'type', None) or getattr(position, 'position_type', None)
+            side = 'BUY' if str(side).upper() in ('BUY', '0') else 'SELL'
             # Some modules use 'sl'/'tp' while others use 'stop_loss'/'take_profit'
             current_sl = getattr(position, 'sl', None)
             if current_sl is None:
@@ -2336,6 +2457,10 @@ class TradingLoop:
             current_tp = getattr(position, 'tp', None)
             if current_tp is None:
                 current_tp = getattr(position, 'take_profit', None)
+            if current_sl is not None and float(current_sl) <= 0:
+                current_sl = None
+            if current_tp is not None and float(current_tp) <= 0:
+                current_tp = None
             
             # Get symbol info for symbol-aware SL/TP safety
             symbol_info = None
@@ -2345,6 +2470,64 @@ class TradingLoop:
                     symbol_info = self.ctx.connector.get_symbol_info(sym)
             except Exception:
                 symbol_info = None
+
+            if (
+                (current_sl is None or current_tp is None)
+                and hasattr(self.ctx.dynamic_sltp_manager, 'calculate_initial_sltp')
+            ):
+                initial = self.ctx.dynamic_sltp_manager.calculate_initial_sltp(
+                    ticket=position.ticket,
+                    direction=side,
+                    entry_price=entry_price,
+                    atr=atr_value,
+                    balance=balance,
+                    equity=equity,
+                    drawdown_pct=drawdown_pct,
+                    initial_balance=initial_balance,
+                    symbol_info=symbol_info,
+                )
+                if isinstance(initial, dict):
+                    point = float((symbol_info or {}).get('point') or 0.0)
+                    stops_level = float(
+                        (symbol_info or {}).get('trade_stops_level')
+                        or (symbol_info or {}).get('stops_level')
+                        or 0.0
+                    )
+                    min_distance = max(point, point * stops_level)
+                    new_sl, new_tp = current_sl, current_tp
+                    is_long = str(side).upper() == 'BUY'
+                    if current_sl is None:
+                        candidate = float(initial['sl'])
+                        valid = (
+                            candidate < current_price - min_distance
+                            if is_long
+                            else candidate > current_price + min_distance
+                        )
+                        if valid:
+                            new_sl = candidate
+                    if current_tp is None:
+                        candidate = float(initial['tp'])
+                        valid = (
+                            candidate > current_price + min_distance
+                            if is_long
+                            else candidate < current_price - min_distance
+                        )
+                        if valid:
+                            new_tp = candidate
+                    if new_sl != current_sl or new_tp != current_tp:
+                        if self.ctx.position_lifecycle.modify_position(
+                            position.ticket, sl=new_sl, tp=new_tp
+                        ):
+                            self.ctx.logger.info(
+                                f"Initial dynamic SL/TP applied to position {position.ticket}"
+                            )
+                        return
+                    if current_sl is None:
+                        self.ctx.logger.warning(
+                            "No valid initial dynamic stop could be placed for position %s",
+                            position.ticket,
+                        )
+                        return
 
             # Get update recommendation
             update = self.ctx.dynamic_sltp_manager.update_position_sltp(

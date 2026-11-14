@@ -17,6 +17,8 @@ from datetime import datetime, timezone
 import logging
 import math
 
+from execution_mode import require_legacy_execution
+
 logger = logging.getLogger('cthulu.profit_scaler')
 
 # ML Tier Optimizer integration
@@ -635,6 +637,7 @@ class ProfitScaler:
     def _execute_sl_modification(self, ticket: int, new_sl: float) -> Dict[str, Any]:
         """Modify position stop loss with validation"""
         try:
+            require_legacy_execution()
             from cthulu.connector.mt5_connector import mt5
             
             # Get current position
@@ -869,4 +872,3 @@ def create_profit_scaler(connector, execution_engine, config_dict: Optional[Dict
             ]
     
     return ProfitScaler(connector, execution_engine, config)
-

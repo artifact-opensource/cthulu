@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 
+from execution_mode import ExecutionModeError, require_legacy_execution
+
 logger = logging.getLogger(__name__)
 
 
@@ -122,8 +124,8 @@ class MultiSymbolOrchestrator:
         
         # Correlation groups — positions in same group count together
         self._correlation_groups = {
-            'gold': ['GOLDm#', 'GOLD#', 'XAUUSD'],
-            'oil': ['OILCash#', 'USOIL', 'BRENT'],
+            'gold': ['GOLDm#', 'GOLD#', 'GOLD', 'XAUUSD'],
+            'oil': ['OILCash#', 'OILCash', 'OILCASH', 'USOIL', 'BRENT', 'WTI'],
             'crypto': ['BTCUSD#', 'ETHUSD#', 'BTCUSD', 'ETHUSD'],
             'eur': ['EURUSD', 'EURGBP', 'EURJPY'],
         }
@@ -231,6 +233,8 @@ class MultiSymbolOrchestrator:
     
     async def _check_daily_limits(self) -> bool:
         """Check if daily loss limit has been hit. Returns True if trading is OK."""
+        if self.max_daily_loss_pct <= 0:
+            return True
         today = datetime.now(timezone.utc).date()
         
         # Reset on new day
@@ -263,6 +267,12 @@ class MultiSymbolOrchestrator:
     
     async def _execute_cycle(self):
         """Execute one full multi-symbol analysis + trade cycle."""
+        try:
+            require_legacy_execution()
+        except ExecutionModeError as exc:
+            logger.warning("Multi-symbol legacy execution paused: %s", exc)
+            return
+
         self._loop_count += 1
         
         # FIRST: Scan for adoptions (must run before signal generation to avoid duplicates)
@@ -346,9 +356,7 @@ class MultiSymbolOrchestrator:
         
         # Fetch market data
         try:
-            data = self.components.data_layer.get_ohlcv(
-                symbol=sym, timeframe=ctx.timeframe, count=200
-            )
+            data = self._fetch_symbol_data(sym, ctx)
         except Exception as e:
             logger.debug(f"No data for {sym}: {e}")
             return None
@@ -359,8 +367,8 @@ class MultiSymbolOrchestrator:
         # Check data freshness via bar timestamps
         # If the latest bar time hasn't changed across cycles, market is closed
         try:
-            if 'time' in data.columns and len(data) >= 2:
-                last_bar_time = data['time'].iloc[-1]
+            if len(data) >= 2:
+                last_bar_time = data['time'].iloc[-1] if 'time' in data.columns else data.index[-1]
                 last_bar_key = f'_last_bar_time_{sym}'
                 prev_bar_time = getattr(self, last_bar_key, None)
                 setattr(self, last_bar_key, last_bar_time)
@@ -410,6 +418,7 @@ class MultiSymbolOrchestrator:
         )
         
         if signal is None:
+            self._publish_legacy_context(sym, ctx, data, indicators, None)
             return None
         
         # Ensure symbol is set correctly
@@ -424,6 +433,7 @@ class MultiSymbolOrchestrator:
                 
                 if confluence['should_reject']:
                     logger.debug(f"{sym}: Signal rejected by confluence: {confluence['reason']}")
+                    self._publish_legacy_context(sym, ctx, data, indicators, signal, rejection=confluence['reason'])
                     return None
                 
                 signal['confidence'] *= confluence['confidence_multiplier']
@@ -477,6 +487,7 @@ class MultiSymbolOrchestrator:
             # If session multiplier is 0, don't trade this symbol at all
             if session_multiplier <= 0:
                 logger.debug(f"{sym}: Session {signal['session']} — symbol disabled")
+                self._publish_legacy_context(sym, ctx, data, indicators, signal, rejection="session multiplier is zero")
                 return None
         
         combined_score = (
@@ -485,6 +496,8 @@ class MultiSymbolOrchestrator:
             confluence_score * 0.35 +
             max(0, macro_multiplier - 0.7) * 0.15  # Macro contributes 15%
         ) * loss_penalty * macro_multiplier * session_multiplier
+
+        self._publish_legacy_context(sym, ctx, data, indicators, signal, score=combined_score)
         
         return ScoredSignal(
             signal=signal,
@@ -494,6 +507,47 @@ class MultiSymbolOrchestrator:
             strategy=signal.get('strategy', 'unknown'),
             timestamp=time.time()
         )
+
+    @staticmethod
+    def _publish_legacy_context(sym, ctx, data, indicators, signal, score=None, rejection=""):
+        try:
+            from legacy_bridge import publish_legacy_context
+
+            bar = data.iloc[-1].to_dict() if hasattr(data, "iloc") and len(data) else {}
+            if bar and "time" not in bar and hasattr(data, "index"):
+                bar["time"] = str(data.index[-1])
+            publish_legacy_context(
+                sym,
+                str(ctx.timeframe),
+                bar=bar,
+                indicators=indicators,
+                signal=signal,
+                regime=ctx.regime,
+                strategy=(signal or {}).get("strategy", "unknown") if isinstance(signal, dict) else "unknown",
+                score=score,
+                rejection=rejection,
+            )
+        except Exception:
+            logger.exception("%s: Failed to publish Legacy analysis for the agent", sym)
+
+    def _fetch_symbol_data(self, symbol: str, ctx: SymbolContext):
+        """Fetch MT5 rates and normalize them using the shared Legacy data layer."""
+        from cthulu.connector.mt5_connector import mt5
+
+        timeframe = ctx.timeframe
+        if isinstance(timeframe, str):
+            timeframe = getattr(mt5, f"TIMEFRAME_{timeframe.upper()}", None)
+        if timeframe is None:
+            raise ValueError(f"Unsupported timeframe for {symbol}: {ctx.timeframe}")
+
+        rates = self.components.mt5_connector.get_rates(
+            symbol=symbol,
+            timeframe=timeframe,
+            count=200,
+        )
+        if rates is None or len(rates) == 0:
+            return None
+        return self.components.data_layer.normalize_rates(rates, symbol=symbol)
     
     async def _calculate_indicators(self, data) -> Dict[str, Any]:
         """Calculate indicators for a given dataset."""
@@ -548,8 +602,11 @@ class MultiSymbolOrchestrator:
                 return False
             
             # Per-symbol limit
-            sym_positions = sum(1 for p in positions if p.symbol == symbol)
-            sym_ctx = self.symbols.get(symbol)
+            sym_positions = sum(
+                1 for p in positions
+                if self._symbol_key(p.symbol) == self._symbol_key(symbol)
+            )
+            sym_ctx = self._get_symbol_context(symbol)
             max_per_sym = sym_ctx.max_positions if sym_ctx else self.max_positions_per_symbol
             
             if sym_positions >= max_per_sym:
@@ -575,21 +632,40 @@ class MultiSymbolOrchestrator:
     
     def _get_correlation_group(self, symbol: str) -> Optional[str]:
         """Get the correlation group a symbol belongs to."""
+        key = self._symbol_key(symbol)
         for group_name, symbols in self._correlation_groups.items():
-            if symbol in symbols:
+            if key in {self._symbol_key(candidate) for candidate in symbols}:
                 return group_name
         return None
+
+    @staticmethod
+    def _symbol_key(symbol: str) -> str:
+        normalized = "".join(char for char in str(symbol).upper() if char.isalnum())
+        if normalized.startswith(("GOLD", "XAU")):
+            return "GOLD"
+        if normalized.startswith("BTCUSD"):
+            return "BTCUSD"
+        if normalized.startswith("ETHUSD"):
+            return "ETHUSD"
+        if normalized in {"WTI", "OILCASH", "USOIL", "BRENT"}:
+            return "OIL"
+        return normalized
+
+    def _get_symbol_context(self, symbol: str) -> Optional[SymbolContext]:
+        exact = self.symbols.get(symbol)
+        if exact:
+            return exact
+        key = self._symbol_key(symbol)
+        return next((ctx for name, ctx in self.symbols.items() if self._symbol_key(name) == key), None)
     
     def _get_macro_bias_for_symbol(self, symbol: str, macro) -> float:
         """Map a trading symbol to its macro directional bias."""
-        # Gold group
-        if symbol in ('GOLDm#', 'GOLD#', 'XAUUSD'):
+        key = self._symbol_key(symbol)
+        if key == "GOLD":
             return macro.gold_bias
-        # Oil group
-        elif symbol in ('OILCash#', 'USOIL', 'BRENT'):
+        elif key == "OIL":
             return macro.oil_bias
-        # Crypto group
-        elif symbol in ('BTCUSD#', 'BTCUSD', 'ETHUSD#', 'ETHUSD'):
+        elif key in ("BTCUSD", "ETHUSD"):
             return macro.crypto_bias
         # EUR group
         elif symbol in ('EURUSD', 'EURGBP', 'EURJPY'):
@@ -694,56 +770,180 @@ class MultiSymbolOrchestrator:
     async def _apply_sltp(self, ticket: int, signal: Dict[str, Any], symbol: str):
         """Apply initial SL/TP to a new position."""
         try:
-            ctx = self.symbols.get(symbol)
-            atr = ctx.indicators.get('ATR', 10.0) if ctx else 10.0
-            
-            result = self.components.dynamic_sltp_manager.calculate_initial_sltp(
+            manager = self.components.dynamic_sltp_manager
+            if not manager:
+                return
+            positions = self.components.position_manager.monitor_positions()
+            position = next((p for p in positions if p.ticket == ticket), None)
+            if not position:
+                logger.warning("Cannot apply initial SL/TP: position %s was not found", ticket)
+                return
+            atr = await self._position_atr(position)
+            if atr is None:
+                logger.warning("Cannot apply initial SL/TP: ATR unavailable for %s", ticket)
+                return
+            account = self.components.connector.get_account_info() or {}
+            balance = float(account.get('balance') or 0.0)
+            equity = float(account.get('equity') or balance)
+            state = manager.positions_managed
+            initial_balance = float(state.setdefault('initial_balance', balance) or balance)
+            peak_balance = max(balance, float(state.get('peak_balance', balance) or balance))
+            state['peak_balance'] = peak_balance
+            drawdown_pct = ((peak_balance - balance) / peak_balance * 100) if peak_balance else 0.0
+            result = manager.calculate_initial_sltp(
                 ticket=ticket,
                 direction=signal['direction'],
-                entry_price=signal.get('entry_price', 0),
-                atr=atr
+                entry_price=position.open_price,
+                atr=atr,
+                balance=balance,
+                equity=equity,
+                drawdown_pct=drawdown_pct,
+                initial_balance=initial_balance,
+                symbol_info=self.components.connector.get_symbol_info(symbol),
             )
-            
-            if result['sl'] and result['tp']:
-                success = self.components.mt5_connector.modify_position(
-                    ticket=ticket, sl=result['sl'], tp=result['tp']
-                )
-                if success:
-                    logger.info(f"SL/TP applied to {ticket}: SL={result['sl']:.2f}, TP={result['tp']:.2f}")
-                    self.components.trade_manager.update_position_sltp(
-                        ticket=ticket, sl=result['sl'], tp=result['tp']
-                    )
+            sl = position.stop_loss or result['sl']
+            tp = position.take_profit or result['tp']
+            if (not position.stop_loss or not position.take_profit) and self.components.position_lifecycle.modify_position(ticket, sl=sl, tp=tp):
+                logger.info("Initial dynamic SL/TP applied to %s", ticket)
         except Exception as e:
             logger.error(f"SLTP application error: {e}")
     
     async def _manage_all_positions(self):
-        """Manage SL/TP for ALL open positions across ALL symbols."""
-        positions = self.components.trade_manager.get_all_positions()
-        
+        """Manage every broker position, including positions not opened by Cthulu."""
+        manager = self.components.dynamic_sltp_manager
+        if not manager:
+            return
+        positions = self.components.position_manager.monitor_positions()
+        account = self.components.connector.get_account_info() or {}
+        balance = float(account.get('balance') or 0.0)
+        equity = float(account.get('equity') or balance)
+        state = manager.positions_managed
+        initial_balance = float(state.setdefault('initial_balance', balance) or balance)
+        peak_balance = max(balance, float(state.get('peak_balance', balance) or balance))
+        state['peak_balance'] = peak_balance
+        drawdown_pct = ((peak_balance - balance) / peak_balance * 100) if peak_balance else 0.0
+
         for position in positions:
             try:
-                # Get the right indicators for this position's symbol
-                ctx = self.symbols.get(position.symbol)
-                if ctx and ctx.indicators:
-                    atr = ctx.indicators.get('ATR', 10.0)
-                    current_price = (ctx.market_data['close'].iloc[-1] 
-                                   if ctx.market_data is not None else position.price_open)
-                else:
-                    atr = 10.0
-                    current_price = position.price_open  # Fallback to open price
-                
-                result = self.components.dynamic_sltp_manager.update_position_sltp(
-                    position=position, current_price=current_price, atr=atr
-                )
-                
-                if result['update_sl'] or result['update_tp']:
-                    self.components.mt5_connector.modify_position(
+                atr = await self._position_atr(position)
+                if atr is None:
+                    logger.debug("Dynamic SL/TP skipped for %s: ATR unavailable", position.ticket)
+                    continue
+                current_price = float(position.current_price or 0.0)
+                if current_price <= 0:
+                    continue
+                symbol_info = self.components.connector.get_symbol_info(position.symbol)
+                if not symbol_info:
+                    logger.warning("Dynamic SL/TP skipped for %s: symbol info unavailable", position.ticket)
+                    continue
+                side = position.side.upper()
+                current_sl = position.stop_loss or None
+                current_tp = position.take_profit or None
+                if current_sl is None or current_tp is None:
+                    initial = manager.calculate_initial_sltp(
                         ticket=position.ticket,
-                        sl=result['new_sl'] if result['update_sl'] else position.sl,
-                        tp=result['new_tp'] if result['update_tp'] else position.tp
+                        direction=side,
+                        entry_price=position.open_price,
+                        atr=atr,
+                        balance=balance,
+                        equity=equity,
+                        drawdown_pct=drawdown_pct,
+                        initial_balance=initial_balance,
+                        symbol_info=symbol_info,
+                    )
+                    point = float(symbol_info.get('point') or 0.0)
+                    min_distance = max(
+                        point,
+                        point * float(symbol_info.get('trade_stops_level') or 0),
+                    )
+                    new_sl, new_tp = current_sl, current_tp
+                    if current_sl is None:
+                        candidate = float(initial['sl'])
+                        valid = (
+                            candidate < current_price - min_distance
+                            if side == 'BUY'
+                            else candidate > current_price + min_distance
+                        )
+                        if valid:
+                            new_sl = candidate
+                    if current_tp is None:
+                        candidate = float(initial['tp'])
+                        valid = (
+                            candidate > current_price + min_distance
+                            if side == 'BUY'
+                            else candidate < current_price - min_distance
+                        )
+                        if valid:
+                            new_tp = candidate
+                    if new_sl != current_sl or new_tp != current_tp:
+                        self.components.position_lifecycle.modify_position(
+                            position.ticket, sl=new_sl, tp=new_tp
+                        )
+                        continue
+                    if current_sl is None:
+                        logger.warning("Dynamic SL/TP could not find a valid initial stop for %s", position.ticket)
+                        continue
+
+                update = manager.update_position_sltp(
+                    ticket=position.ticket,
+                    entry_price=position.open_price,
+                    current_price=current_price,
+                    side=side,
+                    current_sl=current_sl,
+                    current_tp=current_tp,
+                    atr=atr,
+                    balance=balance,
+                    equity=equity,
+                    drawdown_pct=drawdown_pct,
+                    initial_balance=initial_balance,
+                    symbol_info=symbol_info,
+                )
+                if not update.get('update_sl') or update.get('new_sl') is None:
+                    continue
+                new_sl = float(update['new_sl'])
+                improves = current_sl is None or (
+                    new_sl > current_sl if side == 'BUY' else new_sl < current_sl
+                )
+                min_distance = max(
+                    float(symbol_info.get('point') or 0.0),
+                    float(symbol_info.get('point') or 0.0) * float(symbol_info.get('trade_stops_level') or 0),
+                )
+                valid = new_sl < current_price - min_distance if side == 'BUY' else new_sl > current_price + min_distance
+                if improves and valid:
+                    self.components.position_lifecycle.modify_position(
+                        position.ticket, sl=new_sl, tp=current_tp
                     )
             except Exception as e:
-                logger.debug(f"Position mgmt error {position.ticket}: {e}")
+                logger.exception("Dynamic SL/TP failed for position %s: %s", position.ticket, e)
+
+    async def _position_atr(self, position) -> Optional[float]:
+        ctx = self._get_symbol_context(position.symbol)
+        if ctx and ctx.indicators:
+            try:
+                atr = float(ctx.indicators.get('ATR') or ctx.indicators.get('atr') or 0.0)
+                if atr > 0:
+                    return atr
+            except (TypeError, ValueError):
+                pass
+
+        from cthulu.connector.mt5_connector import mt5
+
+        timeframe = self.timeframe
+        if isinstance(timeframe, str):
+            timeframe = getattr(mt5, f"TIMEFRAME_{timeframe.upper()}", None)
+        if timeframe is None:
+            raise ValueError(f"Unsupported timeframe for position {position.ticket}: {self.timeframe}")
+        rates = self.components.connector.get_rates(position.symbol, timeframe, 200)
+        if not rates:
+            return None
+        data = self.components.data_layer.normalize_rates(rates, symbol=position.symbol)
+        from cthulu.indicators.atr import calculate_atr
+
+        try:
+            atr = float(calculate_atr(data, period=14).iloc[-1])
+        except (TypeError, ValueError):
+            return None
+        return atr if atr > 0 else None
     
     async def _evaluate_all_exits(self):
         """Evaluate exit conditions for ALL positions."""
@@ -751,7 +951,7 @@ class MultiSymbolOrchestrator:
             positions = self.components.trade_manager.get_all_positions()
             
             for position in positions:
-                ctx = self.symbols.get(position.symbol)
+                ctx = self._get_symbol_context(position.symbol)
                 if ctx and ctx.market_data is not None:
                     current_price = ctx.market_data['close'].iloc[-1]
                     indicators = ctx.indicators
@@ -773,7 +973,7 @@ class MultiSymbolOrchestrator:
                     self.components.dynamic_sltp_manager.cleanup_position(position.ticket)
                     
                     # Update consecutive loss tracking
-                    sym_ctx = self.symbols.get(position.symbol)
+                    sym_ctx = self._get_symbol_context(position.symbol)
                     if sym_ctx:
                         if position.profit < 0:
                             sym_ctx.consecutive_losses += 1
