@@ -277,23 +277,9 @@ flowchart LR
 
 ## Monitoring & Deployment Recommendations
 
-**Short-term (30–60 min validation)**
-- Run Cthulu locally using an aggressive mindset config and debug logging:
-```bash
-python -m Cthulu --config configs/mindsets/aggressive/config_aggressive_h1.json --symbol "GOLD#m" --skip-setup --no-prompt --log-level DEBUG
-```
-- Tail logs and watch for messages:
-  - `Adopted trade:`
-  - `Set SL/TP for #`
-  - `SL/TP verification failed`
-  - `Failed to select symbol`
+The current operator workflow is the Windows first-run wizard followed by `Cthulu Launcher.bat`; the old headless CLI and Docker examples are not the current deployment path. The launcher starts the Agent dashboard and supervisor in both execution modes. The supervisor retries the Agent process, but does not restart the Legacy engine.
 
-**Production (recommended)**
-- Containerize with Docker, expose Prometheus metrics (use `observability/prometheus.py`).
-- Use orchestration (Compose/K8s) with health probes and restart policies.
-- Centralized logging and alerting (Prometheus + Alertmanager; Slack/PagerDuty for critical alerts).
-
-Choose: (A) 30–60 minute live terminal monitoring, or (B) start containerizing + add Prometheus endpoint and alert rules.
+For install, launch, risk, HFT preflight, dashboard, and recovery instructions, see the [Quick Start](02_QUICKSTART.md) and [Deployment guide](09_DEPLOYMENT.md). Use the [Agent guide](../cthulu_agent/README.md) for dashboard access and Agent controls.
 
 ---
 

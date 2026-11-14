@@ -1,300 +1,118 @@
 ---
 title: QUICK START
-description: Get started with Cthulu trading system - installation, configuration, and first trades
+description: Current Windows installation, first-run setup, and launcher choices for Cthulu
 tags: [quickstart, installation, setup, getting-started]
 sidebar_position: 2
-version: 6.0.0
 ---
 
-![](https://img.shields.io/badge/Version-6.0.0-4B0082?style=for-the-badge&labelColor=0D1117&logo=git&logoColor=white) 
-![Last Update](https://img.shields.io/badge/Last_Update-2026--01--06-4B0082?style=for-the-badge&labelColor=0D1117&logo=calendar&logoColor=white)
-![](https://img.shields.io/github/last-commit/amuzetnoM/cthulu?style=for-the-badge&labelColor=0D1117&logo=github&logoColor=white) 
+# Quick Start
 
-### Windows MSI First-Run Setup
+This guide covers the current Windows setup and launcher flow. For a concise project overview, see the [root README](../readme.md).
 
-The recommended Windows path is to build or download `Cthulu-Setup.msi`, then double-click it. The per-user installer offers to open the setup wizard when installation finishes. The wizard installs Python 3.12 if needed (through `winget`), creates `.venv`, installs the requirements, and asks for the MT5 account, risk limits, and optional Agent LLM settings. Internet access is required.
+## 1. Install prerequisites
 
-Entering MT5 credentials enables the real MT5 account when you later select Legacy, Agentic, or HFT. Use a demo account first. The default limits are 0.5% risk per trade, 2% daily loss, 10% drawdown, and three simultaneous positions. The optional Agent overlay uses the existing Cloudflare AI Gateway provider; configure its account ID, gateway ID, API token, and model. The base URL can be left blank to use the account default.
+- Windows and a MetaTrader 5 terminal installed separately.
+- An MT5 demo account for normal initial testing. HFT is an exception: its current preflight requires a real MT5 account.
+- Internet access for the installer/setup wizard to bootstrap Python or install dependencies.
 
-The wizard stores credentials in the user's local `.env` files with Windows permissions restricted to that user and LocalSystem. The MSI does not contain credentials. It does not start Cthulu or trading automatically: choose **Open launcher** after setup, then choose the desired mode. You can reopen **Cthulu Setup** from the Start Menu later.
+Python 3.10 or later is required. The first-run wizard attempts to install Python 3.12 through `winget` if needed. If `winget` is unavailable, install Python manually and rerun setup.
 
-To build the MSI on Windows, install the .NET 8 SDK and run:
+## 2. Run first-run setup
+
+### From the MSI
+
+Double-click `Cthulu-Setup.msi`. On the Finish page, leave **Open Cthulu first-run setup** selected. If you skip it, open **Cthulu Setup** from the Start Menu. The MSI also creates a **Cthulu Launcher** Start Menu shortcut and desktop shortcut.
+
+### From a source checkout
+
+Run this from the repository root; the wizard can bootstrap Python, create `.venv`, and install the project requirements:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File .\installer\cthulu_first_run_setup.ps1
+```
+
+The batch launcher is not the first-run credential wizard. `Cthulu Launcher.bat` checks/installs dependencies and opens the menus, but requires the first-run configuration files to exist. Running `scripts\setup.ps1` alone does not collect the account details or create those files.
+
+### Build an MSI from source
+
+With the .NET 8 SDK installed, run:
 
 ```powershell
 .\installer\Build-Msi.ps1
 ```
 
-The MSI is created at `installer\dist\Cthulu-Setup.msi`. The build stages tracked source files only and excludes local environment files, runtime configs, databases, logs, tests, and the nested `resource_aggregator` repository.
+The result is `installer\dist\Cthulu-Setup.msi`. The build excludes local credentials, runtime configs, databases, logs, tests, and the nested `resource_aggregator` repository.
 
-### Windows Double-Click Launcher
+## 3. Enter account, risk, and optional Agent settings
 
-If you already have the repository installed, double-click `Cthulu Launcher.bat`. It runs the existing dependency setup before showing the kill switch, Agentic, and Legacy choices. After choosing Agentic or Legacy, choose Single, Multi, or HFT. To exit without starting a mode, choose `X`. If setup fails, trading startup is blocked but the kill switch remains available. The launcher does not clear logs or reset trading data.
+The wizard requires an MT5 account number, password, and broker server. The terminal executable path is optional. Install and log in to the MT5 terminal separately.
 
-Keep `.env` and `cthulu_agent\.env.agent` private; never commit them.
+The default risk values are percentages of account equity:
 
-### 1. Initial Setup
+| Setting | Default |
+|---|---:|
+| Maximum risk per trade | 0.5% |
+| Daily-loss stop | 2% |
+| Drawdown halt | 10% |
+| Maximum simultaneous positions | 3 |
 
-```bash
-# Clone or update repository
-git clone https://github.com/amuzetnoM/Cthulu.git
-cd Cthulu
+Daily-loss and drawdown values of `0` disable their respective stop. Review these limits before starting any mode.
 
-# Install dependencies
-pip install -r requirements.txt
+The Agent LLM overlay is optional. To configure it during setup, enable the Cloudflare AI Gateway option and enter:
 
-# Create your .env file
-cp .env.example .env
-```
+- Cloudflare account ID
+- AI Gateway ID (default: `default`)
+- Cloudflare API token
+- Model (default: `@cf/qwen/qwen3-30b-a3b-fp8`)
+- Optional base URL override (leave blank to use the account default)
 
-### 2. Configure Credentials
+The wizard stores Legacy settings in `config.json`, `config_multi.json`, and the root `.env`; Agent settings and the optional LLM key are stored in `cthulu_agent\.env.agent`. Windows ACLs restrict those environment files to the current user and LocalSystem, but the values are not encrypted. Do not commit or share them.
 
-Edit `.env` file:
-```bash
-# MetaTrader 5 Credentials
-MT5_LOGIN=your_account_number
-MT5_PASSWORD=your_password
-MT5_SERVER=your_broker_server
+**Important live-trading behavior:** setup does not start Cthulu, but it writes `LIVE_RUN_CONFIRM=1` for the Agent. Agent autonomy defaults to `autonomous`. When you later choose Agentic on a real MT5 account, the Agent can place orders without an additional per-order confirmation. Use a demo account for Single/Multi testing and change the Agent autonomy/confirmation setting if that is not intended.
 
-# Trading Configuration
-ACCOUNT_CURRENCY=USD
-RISK_PER_TRADE=0.02
-MAX_DAILY_LOSS=0.05
-```
+## 4. Start from the launcher
 
-### 3. Run Setup Wizard
+Double-click `Cthulu Launcher.bat`, or select the installed **Cthulu Launcher** shortcut. The launcher checks dependencies and then shows two sequential menus:
 
-Choose one of two wizards:
+1. **Kill and stay down**, **Agentic**, **Legacy**, or **Exit**.
+2. After choosing Agentic or Legacy: **Single**, **Multi**, **HFT**, or **Exit**.
 
-#### Interactive Wizard (Recommended for beginners)
-```bash
-python -m Cthulu --wizard
-```
-Step-by-step prompts for:
-- Trading mindset (aggressive/balanced/conservative)
-- Symbol and timeframe
-- Risk management
-- Strategy selection (single or dynamic)
-- Technical indicators
+The two menu choices are independent:
 
-#### NLP Wizard (Advanced - describe in natural language)
-```bash
-python -m Cthulu --wizard-ai
-```
-Example input:
-```
-Aggressive GOLD#m on M15 and H1, 2% risk, $100 max loss
-```
+| Menu | Choice | Effect |
+|---|---|---|
+| Execution | **Agentic** | Starts the Legacy engine and Agent runtime together. Both may act under their separate risk checks. |
+| Execution | **Legacy** | Legacy is the active trading owner. The Agent dashboard runtime starts, but Agent order placement and management are blocked. |
+| Trading | **Single** | Uses `config.json`. |
+| Trading | **Multi** | Uses `config_multi.json`; the Legacy engine uses the configured ultra-aggressive mindset for this launcher mode. |
+| Trading | **HFT** | Uses `config.json`, M1 data, and broker-universe scanning after a safety preflight. Choose Agentic first if Agent trading should be active in HFT. |
 
-### 4. Start Trading
+### HFT preflight and risk
 
-```bash
-# Dry run (recommended first)
-python -m Cthulu --config config.json --dry-run
+The current HFT startup requires a **real** MT5 account with trading enabled. It blocks startup if no tradable symbols are available, an existing position/order lacks a stop loss, risk cannot be calculated, aggregate stop risk exceeds 5%, or active orders exceed 10. Consequently, the current HFT launcher rejects demo accounts.
 
-# Live trading (requires confirmation)
-export LIVE_RUN_CONFIRM=1
-python -m Cthulu --config config.json
-```
+The HFT Agent profile caps risk at 1% per entry, 5% aggregate open risk, and 10 active orders; configured settings can impose stricter caps. HFT does not disable the Agent's configured daily-loss or drawdown halts. Treat HFT as live high-risk trading, not as the demo-test option.
 
+## 5. Dashboard controls and stopping
 
+The launcher opens the Agent dashboard and starts a supervisor that retries the Agent process after unexpected exits. The supervisor does not restart the Legacy engine. If the dashboard service restarts, the browser may briefly disconnect.
 
-### Features
-- Auto-refresh every 2 seconds
-- Singleton instance (no duplicates)
-- Graceful shutdown
-- Log file monitoring
+From **Dashboard → Settings → Cthulu services**:
 
----
+- **Kill and stay down** sets a persistent stop marker and stops Cthulu/Agent services.
+- **Restart services** starts the last-saved execution mode and trading mode again; HFT repeats its preflight.
 
-## Strategy Modes
-
-### Single Strategy Mode
-Choose one strategy:
-- **SMA Crossover**: Simple moving average crossover (beginner-friendly)
-- **EMA Crossover**: Exponential moving average (responsive)
-- **Momentum Breakout**: Price momentum detection (aggressive)
-- **Scalping**: Quick trades with tight stops (advanced)
-
-### Dynamic Strategy Selection (New!)
-System automatically switches between strategies based on:
-- Market regime detection
-- Strategy performance tracking
-- Real-time conditions
-- Confidence scores
-
-Example config:
-```json
-{
-  "strategy": {
-    "type": "dynamic",
-    "dynamic_selection": {
-      "regime_detection_enabled": true,
-      "performance_tracking_enabled": true,
-      "min_confidence_threshold": 0.6
-    },
-    "strategies": [
-      {"type": "sma_crossover", "params": {"fast_period": 10, "slow_period": 30}},
-      {"type": "ema_crossover", "params": {"fast_period": 12, "slow_period": 26}},
-      {"type": "momentum_breakout", "params": {"lookback_period": 20}},
-      {"type": "scalping", "params": {"quick_period": 5, "trend_period": 20}}
-    ]
-  }
-}
-```
-
----
-
-## Technical Indicators
-
-Add indicators to enhance your strategy:
-
-### Available Indicators
-1. **RSI** (Relative Strength Index)
-   - Momentum oscillator
-   - Default: period=14, overbought=70, oversold=30
-
-2. **MACD** (Moving Average Convergence Divergence)
-   - Trend following
-   - Default: fast=12, slow=26, signal=9
-
-3. **Bollinger Bands**
-   - Volatility indicator
-   - Default: period=20, std_dev=2.0
-
-4. **Stochastic**
-   - Momentum indicator
-   - Default: k=14, d=3, smooth=3
-
-5. **ADX** (Average Directional Index)
-   - Trend strength
-   - Default: period=14
-
-6. **Supertrend** ⭐ NEW in v4.0.0
-   - Trend following
-   - Default: atr_period=10, multiplier=3.0
-
-7. **VWAP** ⭐ NEW in v4.0.0
-   - Volume weighted average price
-   - Intraday trading
-
-Example config:
-```json
-{
-  "indicators": [
-    {"type": "supertrend", "params": {"atr_period": 10, "atr_multiplier": 3.0}},
-    {"type": "rsi", "params": {"period": 14}},
-    {"type": "vwap", "params": {}}
-  ]
-}
-```
-
----
-
-## Mindset Presets
-
-Pre-configured risk profiles:
-
-### Aggressive
-- Position size: 5% per trade
-- Max positions: 5
-- Daily loss limit: $100
-- Faster signals, tighter stops
-
-### Balanced (Recommended)
-- Position size: 2% per trade
-- Max positions: 3
-- Daily loss limit: $50
-- Moderate risk/reward
-
-### Conservative
-- Position size: 1% per trade
-- Max positions: 2
-- Daily loss limit: $25
-- Wider stops, stricter filters
-
-Apply via CLI:
-```bash
-python -m Cthulu --config config.json --mindset aggressive
-```
-
-Or during wizard setup.
-
----
-
-## 🔧 Command Line Options
-
-```bash
-# Basic
-python -m Cthulu --config config.json                    # Start with config
-
-# Wizard
-python -m Cthulu --wizard                                 # Interactive setup
-python -m Cthulu --wizard-ai                             # NLP-based setup
-python -m Cthulu --config config.json --skip-setup       # Skip wizard
-
-# Trading Modes
-python -m Cthulu --config config.json --dry-run          # Simulate trades
-python -m Cthulu --config config.json --adopt-only       # Only manage existing trades
-
-# Customization
-python -m Cthulu --config config.json --mindset aggressive
-python -m Cthulu --config config.json --symbol GOLD#m
-python -m Cthulu --config config.json --enable-ml        # Enable ML features
-
-# RPC Server
-python -m Cthulu --config config.json --enable-rpc       # Enable RPC for GUI
-```
-
----
+You can also select **Kill and stay down** from the launcher's first menu. To resume, explicitly launch Cthulu and choose a mode. Stopping services does not close broker positions or cancel pending orders. Check them in MT5. The launcher does not clear logs, databases, trading history, or daily-loss state.
 
 ## Troubleshooting
 
-### MT5 Not Connecting
-1. Check `.env` file has correct credentials
-2. Verify MT5 terminal is installed and running
-3. Check config uses FROM_ENV:
-   ```json
-   "mt5": {
-     "password": "FROM_ENV",
-     "server": "FROM_ENV"
-   }
-   ```
+| Symptom | Check |
+|---|---|
+| Launcher says configuration is missing | Complete the first-run wizard; the dependency script alone does not create the MT5/Agent configuration. |
+| Python or dependency setup fails | Install Python 3.10+ (Python 3.12 is the setup bootstrap default), then rerun the wizard. Check the latest `logs\Cthulu_setup_*.log`. |
+| MT5 cannot connect | Verify the terminal is installed, account number/password/server are correct, and the selected account is available in MT5. |
+| HFT startup is blocked | HFT needs a real account, MT5 trading permission, available tradable symbols, protected existing orders/positions, and exposure under its preflight caps. Read the HFT preflight log. |
+| Kill switch remains active | Start the launcher and explicitly choose a mode to resume. Do not delete the marker as a substitute for checking why services stopped. |
+| Service or dashboard exits | Review `logs\Cthulu_agent_supervisor.log` and the latest `Cthulu_*.err.log` / `Cthulu_agent_*.err.log`. |
 
-### GUI Issues
-- **Dark mode broken**: Update to latest version (fixed)
-- **Multiple GUIs**: Update to latest version (singleton pattern added)
-- **Can't launch**: Check `logs/gui_stderr.log` for errors
-
-### Configuration Issues
-- Run wizard: `python -m Cthulu --wizard`
-- Check example: `config.example.json`
-- See documentation: `UPGRADE_FIXES.md`
-
----
-
-## 📚 Additional Resources
-
-- **Full Documentation**: `UPGRADE_GUIDE.md`
-- **Fix Details**: `UPGRADE_FIXES.md`
-- **Release Notes**: `release_notes/v4.0.0.md`
-- **Implementation**: `IMPLEMENTATION_SUMMARY.md`
-
----
-
-
-## 💡 Tips
-
-1. **Start with dry-run**: Test your config without risking capital
-2. **Use balanced mindset**: Good for most traders
-3. **Monitor GUI**: Keep eye on active strategy and regime
-4. **Review logs**: Check `Cthulu.log` for detailed activity
-5. **Adjust gradually**: Small changes, measure impact
-
----
-
-## 🆘 Support
-
-- Issues: https://github.com/amuzetnoM/Cthulu/issues
-- Discussions: https://github.com/amuzetnoM/Cthulu/discussions
-
-Happy Trading!
+For Agent controls, provider setup, and dashboard security, see the [Agent README](../cthulu_agent/README.md). For risk concepts, see [Risk Management](07_RISK.md).

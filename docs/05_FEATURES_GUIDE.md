@@ -23,6 +23,8 @@ _________   __  .__          .__
 ## Overview
 
 > This document describes the major features of the Cthulu trading system — a cutting-edge, multi-strategy autonomous trading platform with dynamic strategy selection, next-generation indicators, and the revolutionary **SAFE (Set And Forget Engine)** architecture.
+>
+> **Current operation:** This is a versioned feature reference, not a startup guide or a performance guarantee. Use the [Quick Start](02_QUICKSTART.md) for the current launcher modes, risk controls, and supported operator workflow.
 
 ### SAFE: Set And Forget Engine
 
@@ -36,26 +38,25 @@ _________   __  .__          .__
 
 ## Table of Contents
 
-1. [Trading Strategies (7 Active)](#trading-strategies)
-2. [Next-Generation Indicators](#next-generation-indicators)
-3. [Dynamic Strategy Selection](#dynamic-strategy-selection)
-4. [Multi-Strategy Fallback](#multi-strategy-fallback)
-5. [Entry Quality Gate (v5.3.0)](#entry-quality-gate)
-6. [Ultra-Aggressive Mode](#ultra-aggressive-mode)
-7. [Equity Curve Management](#equity-curve-management)
-8. [Exit Management System](#exit-management-system)
-9. [Adaptive Loss Curve](#adaptive-loss-curve)
-10. [Confluence Exit Manager](#confluence-exit-manager)
-11. [Micro Account Protection](#micro-account-protection)
-12. [Profit Scaling System](#profit-scaling-system)
-13. [Adaptive Account Manager](#adaptive-account-manager)
-14. [Liquidity Trap Detection](#liquidity-trap-detection)
-15. [SPARTA Mode](#sparta-mode-battle-testing)
-15. [Create Your Own Mode](#create-your-own-mode)
-16. [Real-Time Observability](#real-time-observability)
-17. [Configuration Guide](#configuration-guide)
-18. [Usage Examples](#usage-examples)
-19. [Performance Tuning](#performance-tuning)
+- [Trading Strategies](#trading-strategies)
+- [Next-Generation Indicators](#next-generation-indicators)
+- [Dynamic Strategy Selection](#dynamic-strategy-selection)
+- [Multi-Strategy Fallback](#multi-strategy-fallback)
+- [Ultra-Aggressive Mode](#ultra-aggressive-mode)
+- [Equity Curve Management](#equity-curve-management)
+- [Exit Management System](#exit-management-system)
+- [Adaptive Loss Curve](#adaptive-loss-curve)
+- [Confluence Exit Manager](#confluence-exit-manager)
+- [Micro Account Protection](#microaccountprotection-intelligent-dca)
+- [Profit Scaling System](#profit-scaling-system)
+- [Adaptive Account Manager](#adaptive-account-manager)
+- [Liquidity Trap Detection](#liquidity-trap-detection)
+- [SPARTA Mode](#sparta-mode-battle-testing)
+- [Create Your Own Mode](#create-your-own-mode)
+- [Real-Time Observability](#real-time-observability)
+- [Configuration Guide](#configuration-guide)
+- [Usage Examples](#usage-examples)
+- [Performance Tuning](#performance-tuning)
 
 ---
 
@@ -708,21 +709,13 @@ report = selector.get_performance_report()
 
 ## Usage Examples
 
-### 1. Run with Ultra-Aggressive Configuration
+The current full-system startup is the Windows launcher, not the older direct CLI examples:
 
-```bash
-# Interactive mode
-python -m Cthulu --config config_ultra_aggressive.json
+1. Complete [first-run setup](02_QUICKSTART.md).
+2. Double-click `Cthulu Launcher.bat`.
+3. Choose **Agentic** or **Legacy**, then **Single**, **Multi**, or **HFT**.
 
-# Automated mode (headless)
-python -m Cthulu --config config_ultra_aggressive.json --skip-setup --no-prompt
-
-# Dry-run (no real trades)
-python -m Cthulu --config config_ultra_aggressive.json --dry-run
-
-# Debug mode
-python -m Cthulu --config config_ultra_aggressive.json --log-level DEBUG
-```
+For an Agent-only local development run, see the [Agent guide](../cthulu_agent/README.md). HFT is a live-account mode and must pass its current preflight; see the [Quick Start](02_QUICKSTART.md#hft-preflight-and-risk) before selecting it.
 
 ### 2. Monitor Dynamic Strategy Selection
 
@@ -889,49 +882,13 @@ Track these metrics:
 
 ---
 
-## Desktop GUI Interface
+## Agent Dashboard
 
-### Overview
-Cthulu includes a comprehensive desktop GUI (`python -m Cthulu --gui`) that provides real-time monitoring and manual trading capabilities.
+The current operator dashboard is a web UI launched by `Cthulu Launcher.bat`; it is not the retired `python -m Cthulu --gui` desktop application. The dashboard runtime starts in both **Agentic** and **Legacy** execution modes. Agent trading actions are enabled only in Agentic mode.
 
-### Features
+Use the dashboard's **Overview**, **Chat**, and **Settings** pages to inspect the Agent, configure controls, and manage Cthulu services. **Kill and stay down** stops services persistently; **Restart services** restarts the saved mode and configuration. Stopping services does not close positions or cancel pending MT5 orders.
 
-#### Live Trade Monitoring
-- **Real-time Positions**: View all open positions with ticket numbers, symbols, sides, volumes, current prices, and P&L
-- **Automatic Updates**: Refreshes every 2 seconds with latest market data
-- **Alternating Rows**: Improved readability with color-coded rows
-
-#### Detailed Trade History
-- **Database-Driven**: Pulls complete trade records from SQLite database
-- **Comprehensive Details**: Shows entry/exit times, prices, volumes, P&L, and trade status
-- **Historical Records**: Displays up to 50 most recent trades, ordered by entry time
-- **Status Tracking**: OPEN, CLOSED, CANCELLED status with exit reasons
-
-#### Performance Dashboard
-- **Key Metrics**: Total trades, win rate, net profit, profit factor, max drawdown, Sharpe ratio
-- **Real-time Updates**: Metrics update from performance logs
-- **Strategy Info**: Current active strategy and detected market regime
-
-#### Manual Trading
-- **Order Placement**: GUI interface for placing manual trades
-- **Risk Validation**: Orders validated against risk limits before submission
-- **RPC Integration**: Uses internal HTTP API for order execution
-
-### Usage
-```bash
-# Launch GUI
-python -m Cthulu --gui
-
-# Or run full system with GUI
-python -m Cthulu --config config.json
-```
-
-### Configuration
-The GUI automatically connects to the running Cthulu instance and displays data from:
-- `Cthulu.db` - Trade database
-- `Cthulu.log` - Live log updates
-- `logs/latest_summary.txt` - Performance metrics
-- `logs/strategy_info.txt` - Strategy status
+For installation, dashboard access, and recovery steps, see the [Quick Start](02_QUICKSTART.md) and [Agent guide](../cthulu_agent/README.md).
 
 ---
 
@@ -1777,7 +1734,4 @@ Cthulu v6.0.0 is a **market-destroying beast** with:
 The system is designed to be a **Set And Forget Engine** - configure once, let it trade autonomously, and watch it adapt to any market condition.
 
 **Remember**: *"An apex predator doesn't react to the market - it dominates it."*
-
-
-
 

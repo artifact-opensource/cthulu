@@ -1,6 +1,8 @@
 # Ultra-Aggressive Mindset Configuration
 
 > **v6.0.0** | High-Risk, High-Reward Trading Profile
+>
+> **Legacy configuration note:** The per-timeframe JSON files below are older configuration presets. The current Windows launcher selects `config.json` for Single/HFT or `config_multi.json` for Multi; it does not select these files directly. Use the first-run wizard and review its risk values before trading.
 
 ## Overview
 
@@ -52,21 +54,14 @@ All ultra-aggressive configs use dynamic strategy selection with these strategie
 
 ## Usage
 
-```bash
-# Via wizard
-python -m cthulu --wizard
-# Select "Ultra-Aggressive" mindset
-
-# Direct config
-python -m cthulu --config configs/mindsets/ultra_aggressive/config_ultra_aggressive_m15.json
-```
+For the current Windows flow, complete the [first-run setup](../../../docs/02_QUICKSTART.md), then start `Cthulu Launcher.bat`. Select **Multi** to use `config_multi.json` and the launcher's configured ultra-aggressive Legacy mindset. The launcher does not use a command-line `--wizard` flow to select one of the per-timeframe JSON files above.
 
 ## ⚠️ Warning
 
 This mindset is for **experienced traders only**. The higher risk parameters can lead to 
 significant losses. Always:
 
-1. Test thoroughly in dry-run mode first
+1. Test on a dedicated MT5 demo account first
 2. Use appropriate account sizing
 3. Monitor positions actively
 4. Have circuit breakers enabled

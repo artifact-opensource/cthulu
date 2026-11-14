@@ -1,39 +1,24 @@
 ---
-title: LLM AUTO-TUNE
-description: Configuration and usage of LLM endpoints for AI-assisted summarization and PR generation in the Cthulu trading system
+title: LLM SETUP
+description: Configuration of the separate legacy auto_tune LLM endpoint
 tags: [llm, ai, auto_tune, integration]
 sidebar_position: 13
-version: 6.0.0
 ---
 
-![](https://img.shields.io/badge/Version-6.0.0-4B0082?style=for-the-badge&labelColor=0D1117)
-![Last Update](https://img.shields.io/badge/Last_Update-2026--01--06-4B0082?style=for-the-badge&labelColor=0D1117&logo=calendar)
-![](https://img.shields.io/github/last-commit/amuzetnoM/cthulu?style=for-the-badge&labelColor=0D1117&logo=github&logoColor=white)
+# LLM integration for `auto_tune`
 
-# LLM integration for auto_tune
+> **Scope:** This page documents the separate Legacy `auto_tune` integration and its `LLM_ENDPOINT` / `LLM_API_KEY` settings. It does not configure the Agent's trading model. Configure the Agent through the first-run wizard or Agent Settings using Cloudflare AI Gateway; see the [Quick Start](02_QUICKSTART.md) and [Agent guide](../cthulu_agent/README.md).
 
-This document explains how to configure an LLM endpoint for AI-assisted summarization and PR generation.
+## Environment variables
 
-Environment variables (recommended):
+- `LLM_ENDPOINT`: HTTP endpoint that accepts a JSON payload such as `{ "prompt": "..." }` and returns JSON with a `text` or `response` field.
+- `LLM_API_KEY`: Optional API key sent in the `Authorization: Bearer <key>` header.
 
-- LLM_ENDPOINT: URL of an HTTP endpoint that accepts JSON payload `{ "prompt": "..." }` and returns JSON with `text` or `response` field.
-- LLM_API_KEY: API key (optional) to pass in `Authorization: Bearer <key>` header.
+## Supported endpoint patterns
 
-Supported modes:
+1. **Remote provider:** Set `LLM_ENDPOINT` to an endpoint or proxy that implements the JSON request/response shape above.
+2. **Local HTTP wrapper:** Run a local server that exposes the same interface.
 
-1. Remote provider (OpenAI-compatible): set `LLM_ENDPOINT` to your proxy or provider URL. Example: `https://api.example.com/v1/generate`
-2. Local HTTP wrapper: run a local server that exposes a simple JSON API compatible with the above payload. Projects like `gpt4all-web` or a simple FastAPI wrapper around `llama.cpp`-style models can be used.
+If `LLM_ENDPOINT` is not configured, the auto-tune summarizer uses a deterministic local fallback to produce an `ai_summary`. This is not equivalent to a real LLM.
 
-Fallback:
-
-- If no `LLM_ENDPOINT` is configured, the auto-tune summarizer uses a deterministic local fallback summary so the pipeline still produces an `ai_summary` field. This is *not* equivalent to a real LLM but avoids blocking automation.
-
-Security and costs:
-
-- Treat `LLM_API_KEY` as a secret. Do not commit it to Git.
-- Monitor and rate-limit calls when enabling expensive (paid) providers.
-
-Next steps to fully enable cloud/local LLMs:
-
-- Provide a tested endpoint that adheres to the simple JSON shape.
-- Update CI to avoid leaking keys and to gate production auto-apply flows when an LLM is in use (optional).
+Treat `LLM_API_KEY` as a secret. Do not commit it to Git, and monitor provider costs and rate limits.

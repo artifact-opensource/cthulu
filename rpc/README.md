@@ -8,16 +8,10 @@ Lightweight HTTP-based RPC server for programmatic control of Cthulu at runtime.
 
 ## Quick Start
 
+> **Trading risk:** `POST /trade` submits real orders to the configured MT5 account when live trading is enabled. The order examples and stress-test tools below are for a dedicated demo account only; they are not health checks. Use `GET /health` for a non-trading check.
+
 ```powershell
-# Place a BUY order
-$body = '{"symbol":"BTCUSD#","side":"BUY","volume":0.01}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8278/trade" -Method POST -Body $body -ContentType "application/json"
-
-# Place a SELL order
-$body = '{"symbol":"BTCUSD#","side":"SELL","volume":0.01}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8278/trade" -Method POST -Body $body -ContentType "application/json"
-
-# Check health
+# Non-trading health check
 Invoke-RestMethod -Uri "http://127.0.0.1:8278/health" -Method GET
 ```
 
@@ -177,7 +171,7 @@ for v in vulns:
 
 ## Stress Testing via RPC
 
-The monitoring directory includes scripts for RPC-based stress testing:
+These scripts can submit real orders. Run them only against a dedicated demo account after reviewing their source; do not use them to check whether the service is responding. Use `GET /health` instead.
 
 ```powershell
 # Run full stress test (120 minutes)
@@ -199,7 +193,7 @@ RPC integrates with:
 
 ## Full Documentation
 
-See [docs/development_log/rpc.md](../docs/development_log/rpc.md) for complete API reference.
+This file is the RPC API reference. For current startup and risk guidance, see the [Quick Start](../docs/02_QUICKSTART.md) and [Observability guide](../docs/10_OBSERVABILITY.md).
 
 ## Security Best Practices
 

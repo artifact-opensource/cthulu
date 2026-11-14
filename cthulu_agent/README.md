@@ -1,21 +1,28 @@
-# Cthulu agent
+# Cthulu Agent
 
-A provider-agnostic, journaling, self-reviewing trading agent with a live dashboard. It sits beside the legacy bot and talks to MetaTrader 5 directly (or to a built-in paper market).
+The Agent is a journaling, self-reviewing trading runtime with a live dashboard. It can connect to MetaTrader 5 or the built-in paper market and runs beside the Legacy engine.
 
 ## Run it
+
+For the full Windows trading system, complete [first-run setup](../docs/02_QUICKSTART.md) and launch `Cthulu Launcher.bat` from the repository root. Choose **Agentic** or **Legacy**, then **Single**, **Multi**, or **HFT**. The Agent dashboard runtime starts in both execution modes; Agent order placement and management are enabled only in Agentic mode.
+
+For a direct Agent-only development run, use the repository virtual environment from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe .\run_agent.py --open
 ```
-.\.venv\Scripts\python.exe run_agent.py --open
-```
-Use the project virtual environment for Cthulu commands and tests; a system-wide Python install may not include the project's dependencies.
-Run the Agent tests with the same interpreter:
-```
+
+This command runs the Agent runtime/dashboard only; it does not start the Legacy trading engine or replace the full-system launcher. Run the Agent tests with the same interpreter:
+
+```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s cthulu_agent\tests
 ```
-1. Open **Settings** and choose **Cloudflare AI Gateway** (default model `@cf/qwen/qwen3-30b-a3b-fp8`). Add a Cloudflare Account ID and API token, press **Find models**, then **Save**. The gateway defaults to `default`.
-2. It starts on the **paper** broker unless `BROKER=mt5` is configured. The agent's MT5 adapter uses the account configured in `.env`.
-3. Watch **Overview**. Talk to it in **Chat**.
 
-Needs only `numpy` and `pandas` (already in the repo's requirements) plus `MetaTrader5` for live use. No build step, no Node.
+Configure **Cloudflare AI Gateway** in the first-run wizard or Agent **Settings**. The default model is `@cf/qwen/qwen3-30b-a3b-fp8`; the gateway ID defaults to `default`. Supply a Cloudflare account ID and API token, use **Find models** if configuring through Settings, and save the configuration. The Agent starts on the paper broker unless `BROKER=mt5` is configured; its MT5 adapter uses the account configured for Cthulu.
+
+The first-run wizard writes `LIVE_RUN_CONFIRM=1` for the Agent, while Agent autonomy defaults to `autonomous`. Agentic startup can therefore place orders on the configured live account without separate per-order confirmation. Review the [Quick Start risk warning](../docs/02_QUICKSTART.md#3-enter-account-risk-and-optional-agent-settings) and test Single/Multi on a demo account.
+
+The project requirements include `numpy` and `pandas`; live MT5 use also requires the MetaTrader 5 terminal and its Python package. No Node build step is required.
 
 ## The loop
 Every cycle the agent **observes** (cheap, no LLM), then, when something is worth thinking about, it runs **plan → reason → adjust → execute → reflect**:
@@ -62,9 +69,11 @@ The Settings page has one shared `CTHULU_EXECUTION_MODE` switch:
 
 The switch is stored in the shared project-root `.env` and read for every execution decision, independently of the Agent's separate settings file. An already-running process observes a change without a restart. Enabling Agentic mode can adopt existing positions. Disabling Agentic actions requires a connected, flat account with no pending orders. The agent can manage external positions when `AGENT_MANAGE_FOREIGN=true`; symbol aliases resolve the configured watchlist to broker symbols.
 
-The desktop **Cthulu Launcher** asks for Legacy or Agentic mode and then single- or multi-symbol configuration. It updates only `CTHULU_EXECUTION_MODE` in the project `.env`, then starts both the Legacy engine and Agent hidden after Windows elevation approval. Multi-symbol startup uses `config_multi.json` and the configured ultra-aggressive mindset. Startup and service output is written under `logs/`. Backgrounding hides their windows; it does not guarantee crash recovery or reduce their CPU usage.
+The Windows **Cthulu Launcher** first asks for **Agentic** or **Legacy**, then **Single**, **Multi**, or **HFT**. It starts the Legacy engine and Agent supervisor/dashboard. In Agentic mode, both the Legacy loop and Agent can act under their separate risk checks. In Legacy mode, Agent trading is blocked while the dashboard remains available. Multi-symbol startup uses `config_multi.json` and the configured ultra-aggressive Legacy mindset. Startup and service output is written under `logs/`.
 
-The separate **Cthulu HFT** startup runs both engines with `config.json`, M1 data, dynamic broker-universe scanning, a 1% equity stop-risk ceiling per entry, 5% aggregate open-risk ceiling, and a 10-order combined cap. Daily-loss and peak-drawdown halts are disabled in this profile. Those HFT overrides are process-local and do not replace unrelated `.env` values. Both engines use a cross-process account-order lock so their risk checks and submissions cannot race past the shared active-order cap. The startup refuses to duplicate existing Cthulu services; verify and stop existing processes before using it.
+HFT is a trading mode beneath either execution mode, not a separate third startup owner. It uses `config.json`, M1 data, dynamic broker-universe scanning, and a safety preflight. The current preflight requires a real MT5 account with trading enabled, tradable symbols, stop protection on existing positions and orders, no more than 10 active orders, and calculated aggregate stop risk at or below 5%; it rejects demo accounts. The HFT Agent profile caps risk at 1% per entry, 5% aggregate open risk, and 10 active orders. Configured daily-loss and peak-drawdown halts remain active in HFT mode.
+
+The launcher opens the dashboard and starts an Agent supervisor that retries the Agent process with backoff after an unexpected exit. It does not supervise or restart the Legacy engine. Dashboard Settings provides **Kill and stay down** and **Restart services**. The kill switch stops Cthulu services but does not close broker positions, cancel pending orders, purge logs, or reset account history.
 
 ## World feed
 Cthulu includes native, read-only public data feeds; no aggregator service or extra package is required:

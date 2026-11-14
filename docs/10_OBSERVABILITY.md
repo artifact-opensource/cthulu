@@ -15,6 +15,8 @@ version: 6.0.0
 
 > This document describes Cthulu's performance metrics, how they're computed, and how to expose them via the built-in Prometheus exporter.
 
+> **Scope:** Metrics/Prometheus settings below are optional technical references and are not configured by the first-run wizard. The supported Windows operator dashboard and current log locations are in the [Quick Start](02_QUICKSTART.md) and [Observability Guide](../observability/OBSERVABILITY_GUIDE.md). RPC endpoints that submit orders can place trades; never use them as health checks.
+
 Cthulu now produces a comprehensive performance snapshot that is suitable for realtime monitoring and historical analysis.
 Key capabilities:
 - Per-trade and per-symbol aggregates (realized/unrealized PnL, wins/losses, exposures)
@@ -118,6 +120,8 @@ Docker-compose notes (what I added to the repository):
 
 Cthulu includes an RPC server for programmatic control. This enables external monitoring tools and scripts to inject trades and query system state.
 
+> **Order safety:** `POST /trade` submits a real order to the configured MT5 account when live trading is enabled. Keep the service on loopback, use only a dedicated demo account for testing, and use `GET /health` for a non-trading health check.
+
 **Default Endpoints:**
 - `POST http://127.0.0.1:8278/trade` - Submit trade orders
 - `GET http://127.0.0.1:8278/provenance` - Query order audit trail
@@ -133,7 +137,7 @@ Cthulu includes an RPC server for programmatic control. This enables external mo
 }
 ```
 
-For complete RPC documentation, see [development_log/rpc.md](development_log/rpc.md).
+For RPC request and response details, see the [RPC README](../rpc/README.md).
 
 ---
 
@@ -307,5 +311,3 @@ The system respects Discord's rate limits:
 ---
 
 For examples and more details, see `docs/Changelog/CHANGELOG.md` and the tests (`tests/unit/test_metrics_improved.py`, `tests/unit/test_metrics_prometheus_integration.py`).
-
-

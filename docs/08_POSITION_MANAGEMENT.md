@@ -16,6 +16,8 @@ version: 6.0.0
 
 The Position Management system is responsible for the complete lifecycle of trading positions in Cthulu, from opening to closing, including sophisticated profit-taking strategies, external trade adoption, and real-time tracking.
 
+> **Current operation:** This is a code-level reference. Use the [Quick Start](02_QUICKSTART.md) for the active Windows launcher and risk settings. Test position adoption only on a dedicated demo account.
+
 ### Key Components
 
 - **Position Manager** (`position/manager.py`) - Central orchestrator
@@ -388,15 +390,9 @@ for trade in adopted_trades:
 
 ### Testing Adoption
 
-Use the helper script to place an external trade and test adoption:
+Test external-position adoption only on a dedicated MT5 demo account. The old `--adopt-only` command is not part of the current launcher workflow, and the helper script can submit an actual MT5 order; do not run it against a live account.
 
-```bash
-# Place external test trade (magic number = 0)
-python scripts/place_external_test_trade.py
-
-# Run Cthulu in adopt-only mode
-python -m cthulu --config config.json --adopt-only --log-level DEBUG
-```
+For a normal test, complete first-run setup, select **Agentic** in `Cthulu Launcher.bat`, and verify that the Agent's `AGENT_MANAGE_FOREIGN` setting and risk limits are appropriate for the demo account. The launcher starts the full system; see the [Quick Start](02_QUICKSTART.md) for mode selection and safety details.
 
 ### SL/TP Application
 
@@ -910,22 +906,8 @@ if cthulu_tickets != mt5_tickets:
 
 ## Related Documentation
 
-- [Risk Management](RISK.md) - Position-level risk management
-- [Exit Strategies](../exit/README.md) - Exit strategy system
-- [Stop Loss Bug Fix](STOP_LOSS_BUG_FIX.md) - Critical fix details
-- [Features Guide](FEATURES_GUIDE.md) - Profit scaling configuration
-- [Architecture](ARCHITECTURE.md) - System architecture
-
----
-
-## See Also
-
-- [Advanced Risk Management](ADVANCED_RISK.md)
-- [Execution Engine](../execution/README.md)
-- [Database Schema](DB_MIGRATION.md)
-- [Testing Guide](TESTING.md)
-
----
-
-**Last Updated:** 2026-01-05  
-**Version:** 6.0.0
+- [Quick Start](02_QUICKSTART.md) — current startup and safety workflow
+- [Risk Management](07_RISK.md)
+- [Features Guide](05_FEATURES_GUIDE.md)
+- [Architecture](04_ARCHITECTURE.md)
+- [Agent guide](../cthulu_agent/README.md)
