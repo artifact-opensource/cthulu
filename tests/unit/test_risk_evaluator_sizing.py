@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+from cthulu.persistence.database import Database
 from cthulu.risk.evaluator import RiskEvaluator, RiskLimits
 from cthulu.strategy.base import SignalType
 
@@ -52,11 +53,14 @@ class FakeConnector:
     def get_spread(self, symbol):
         return None
 
+    def get_point_value(self, symbol):
+        return 20.0
+
     def get_account_info(self):
         return {"balance": 10000, "equity": 10000}
 
 
-def make_evaluator(connector, tracker, **overrides):
+def make_evaluator(connector, tracker, state_store=None, **overrides):
     limit_values = {
         "max_position_size_percent": 2.0,
         "max_lot_size": 1.0,
@@ -69,7 +73,7 @@ def make_evaluator(connector, tracker, **overrides):
     }
     limit_values.update(overrides)
     limits = RiskLimits(**limit_values)
-    return RiskEvaluator(connector, tracker, limits)
+    return RiskEvaluator(connector, tracker, limits, state_store=state_store)
 
 
 def test_position_size_uses_stop_risk_and_floors_to_volume_step():
@@ -94,6 +98,29 @@ def test_position_size_respects_high_frequency_small_lot_cap():
     assert size == 0.02
 
 
+def test_approval_compounds_position_size_from_equity_not_balance():
+    connector = FakeConnector()
+    evaluator = make_evaluator(connector, FakeTracker())
+    evaluator.approve_trade = lambda **kwargs: (True, "approved")
+
+    approved, reason, size = evaluator.approve(
+        SimpleNamespace(
+            symbol="GOLD",
+            price=100,
+            stop_loss=90,
+            take_profit=120,
+            side=SignalType.LONG,
+            confidence=0.9,
+        ),
+        {"balance": 5000, "equity": 1000},
+        current_positions=0,
+    )
+
+    assert approved
+    assert reason == "approved"
+    assert size == 0.1
+
+
 def test_position_is_rejected_when_broker_minimum_exceeds_risk_budget():
     connector = FakeConnector(min_lot=0.1)
     evaluator = make_evaluator(connector, FakeTracker())
@@ -103,6 +130,33 @@ def test_position_is_rejected_when_broker_minimum_exceeds_risk_budget():
     )
 
     assert size == 0.0
+
+
+def test_volatility_sizing_rejects_minimum_lot_above_equity_risk_budget():
+    connector = FakeConnector(min_lot=0.1)
+    evaluator = make_evaluator(connector, FakeTracker())
+
+    size = evaluator.calculate_position_size(
+        "GOLD", 100, method="volatility", risk_percent=1.0, atr=1.0
+    )
+
+    assert size == 0.0
+
+
+def test_volatility_sizing_floors_to_broker_volume_step():
+    connector = FakeConnector(min_lot=0.05)
+    connector.get_symbol_info = lambda symbol: {
+        "volume_min": 0.05,
+        "volume_max": 10.0,
+        "volume_step": 0.05,
+    }
+    evaluator = make_evaluator(connector, FakeTracker())
+
+    size = evaluator.calculate_position_size(
+        "GOLD", 100, method="volatility", risk_percent=1.5, atr=1.0
+    )
+
+    assert size == 0.05
 
 
 def test_aggregate_open_risk_blocks_exposure_over_limit():
@@ -244,3 +298,97 @@ def test_spread_percentage_rejects_genuinely_wide_price_spread():
 
     assert not acceptable
     assert "Price spread" in reason
+
+
+def test_minimum_balance_floor_activates_at_threshold_and_persists_per_account(tmp_path):
+    database_path = tmp_path / "risk-state.db"
+    database = Database(str(database_path))
+    connector = FakeConnector()
+    account = {
+        "login": 12345,
+        "server": "test-server",
+        "balance": 0.20,
+        "equity": 0.20,
+        "margin_free": 0.20,
+    }
+
+    try:
+        evaluator = make_evaluator(
+            connector,
+            FakeTracker(),
+            state_store=database,
+            min_balance_threshold=10.0,
+        )
+        assert evaluator.check_balance_protection(account)[0]
+
+        reached_threshold = {**account, "balance": 10.0, "equity": 10.0, "margin_free": 10.0}
+        assert evaluator.check_balance_protection(reached_threshold)[0]
+    finally:
+        database.close()
+
+    reopened_database = Database(str(database_path))
+    try:
+        evaluator = make_evaluator(
+            connector,
+            FakeTracker(),
+            state_store=reopened_database,
+            min_balance_threshold=10.0,
+        )
+        below_threshold = {**account, "balance": 9.99, "equity": 9.99, "margin_free": 9.99}
+        safe, reason = evaluator.check_balance_protection(below_threshold)
+        assert not safe
+        assert "below minimum" in reason
+
+        other_account = {**below_threshold, "login": 67890}
+        assert evaluator.check_balance_protection(other_account)[0]
+    finally:
+        reopened_database.close()
+
+
+def test_zero_free_margin_is_not_replaced_with_account_equity():
+    evaluator = make_evaluator(
+        FakeConnector(),
+        FakeTracker(),
+        min_balance_threshold=10.0,
+    )
+
+    safe, reason = evaluator.check_balance_protection({
+        "balance": 0.20,
+        "equity": 0.20,
+        "margin_free": 0.0,
+    })
+
+    assert not safe
+    assert "Insufficient free margin" in reason
+
+
+def test_small_account_is_not_forced_to_broker_minimum_volume():
+    evaluator = make_evaluator(
+        FakeConnector(min_lot=0.01),
+        FakeTracker(),
+        min_balance_threshold=10.0,
+    )
+    signal = SimpleNamespace(
+        symbol="GOLD",
+        price=100,
+        stop_loss=90,
+        take_profit=120,
+        side=SignalType.LONG,
+        confidence=0.9,
+    )
+
+    approved, reason, size = evaluator.approve(
+        signal,
+        {
+            "login": 12345,
+            "server": "test-server",
+            "balance": 0.20,
+            "equity": 0.20,
+            "margin_free": 0.20,
+        },
+        current_positions=0,
+    )
+
+    assert not approved
+    assert "broker minimum volume" in reason
+    assert size == 0.0

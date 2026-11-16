@@ -56,6 +56,10 @@ def test_signal_notification_includes_confluence_details(monkeypatch):
     assert captured["url"] == "https://example.invalid/webhook"
     embed = captured["payload"]["embeds"][0]
     assert embed["title"] == "🟢 OILCash · BUY setup"
+    assert embed["description"] == (
+        "**Confluence-approved candidate**\n"
+        "`StrategySelectorAdapter` passed the entry quality gate."
+    )
     assert embed["color"] == 0x00FF00
     fields = {field["name"]: field["value"] for field in embed["fields"]}
     assert fields["Entry Confluence"] == "**GOOD** · `78/100`"
@@ -66,6 +70,24 @@ def test_signal_notification_includes_confluence_details(monkeypatch):
     assert fields["Risk / Reward"] == "`1:2.00`"
     assert fields["Timeframe"] == "`M15`"
     assert fields["RSI"] == "`54.2000`"
+
+
+def test_signal_without_confluence_is_not_described_as_approved():
+    notifier = DiscordNotifier(signals_webhook="configured")
+
+    assert notifier.notify_signal_quality(
+        symbol="GOLD",
+        direction="SELL",
+        confidence=0.7,
+        strategy="test_strategy",
+    )
+
+    notification = notifier._queues[NotificationChannel.SIGNALS].get_nowait()[2]
+
+    assert notification.description == (
+        "**Strategy-generated candidate**\n"
+        "`test_strategy` produced a signal."
+    )
 
 
 def test_signal_webhook_configuration_enables_discord_notifier():

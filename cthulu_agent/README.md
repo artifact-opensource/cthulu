@@ -18,7 +18,7 @@ This command runs the Agent runtime/dashboard only; it does not start the Legacy
 .\.venv\Scripts\python.exe -m unittest discover -s cthulu_agent\tests
 ```
 
-Configure **Cloudflare AI Gateway** in the first-run wizard or Agent **Settings**. The default model is `@cf/qwen/qwen3-30b-a3b-fp8`; the gateway ID defaults to `default`. Supply a Cloudflare account ID and API token, use **Find models** if configuring through Settings, and save the configuration. The Agent starts on the paper broker unless `BROKER=mt5` is configured; its MT5 adapter uses the account configured for Cthulu.
+Configure **Cloudflare AI Gateway** in the first-run wizard or Agent **Settings**. The default model is `@cf/ibm-granite/granite-4.0-h-micro`; the gateway ID defaults to `default`. Supply a Cloudflare account ID and API token, use **Find models** if configuring through Settings, and save the configuration. The Agent starts on the paper broker unless `BROKER=mt5` is configured; its MT5 adapter uses the account configured for Cthulu.
 
 The first-run wizard writes `LIVE_RUN_CONFIRM=1` for the Agent, while Agent autonomy defaults to `autonomous`. Agentic startup can therefore place orders on the configured live account without separate per-order confirmation. Review the [Quick Start risk warning](../docs/02_QUICKSTART.md#3-enter-account-risk-and-optional-agent-settings) and test Single/Multi on a demo account.
 
@@ -34,7 +34,7 @@ Every cycle the agent **observes** (cheap, no LLM), then, when something is wort
 * **Reflect**: compares what happened with what it expected; sets when to look next.
 
 LLM calls are gated (market change, open book, schedule, per-hour cap) so a free model is not hammered.
-Cloudflare Workers AI calls use the OpenAI-compatible AI Gateway endpoint. The selected Qwen3 30B-A3B model is listed at $0.051/M input tokens and $0.335/M output tokens in Cloudflare's current pricing table; model availability and rates can change. If a response is empty or truncated, the client retries with progressively larger generation budgets and reports the final model/token usage on failure.
+Cloudflare Workers AI calls use the OpenAI-compatible AI Gateway endpoint. Granite 4.0 H-Micro (`@cf/ibm-granite/granite-4.0-h-micro`) is currently listed at $0.017/M input tokens and $0.112/M output tokens, roughly one-third the Neuron cost of the previous Qwen3 30B-A3B model. Workers AI includes a shared free allocation of 10,000 Neurons per account per day, resetting at 00:00 UTC; heavy use can still exhaust it. Model availability and pricing can change, so check [Cloudflare Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/). If a response is empty or truncated, the client retries with progressively larger generation budgets and reports the final model/token usage on failure.
 
 ## How it learns
 * Everything is written to SQLite (`data/agent.db`): journal (full-text searchable), todos, trades, equity, chat.

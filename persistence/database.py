@@ -911,6 +911,43 @@ class Database:
         except Exception as e:
             self.logger.error(f"Failed to record metric: {e}", exc_info=True)
             return False
+
+    def get_meta_value(self, key: str, default: Optional[str] = None) -> Optional[str]:
+        """Read a persisted value from the metadata table."""
+        if not key:
+            raise ValueError("Metadata key must not be empty")
+        if self.conn is None:
+            raise RuntimeError("Database connection is unavailable")
+
+        try:
+            row = self.conn.execute(
+                "SELECT value FROM meta WHERE key = ?",
+                (key,),
+            ).fetchone()
+        except sqlite3.Error:
+            self.logger.exception("Failed to read database metadata key %s", key)
+            raise
+
+        return default if row is None else row["value"]
+
+    def set_meta_value(self, key: str, value: str) -> None:
+        """Persist a value in the metadata table."""
+        if not key:
+            raise ValueError("Metadata key must not be empty")
+        if self.conn is None:
+            raise RuntimeError("Database connection is unavailable")
+        if self._read_only:
+            raise PermissionError("Database is read-only")
+
+        try:
+            self.conn.execute(
+                "INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)",
+                (key, value),
+            )
+            self.conn.commit()
+        except sqlite3.Error:
+            self.logger.exception("Failed to write database metadata key %s", key)
+            raise
             
     def close(self):
         """Close database connection."""

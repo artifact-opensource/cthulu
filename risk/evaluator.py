@@ -63,7 +63,7 @@ class RiskLimits:
     emergency_shutdown_enabled: bool = True
     
     # Negative Balance Protection
-    min_balance_threshold: float = 10.0  # Minimum balance to allow trading
+    min_balance_threshold: float = 10.0  # Floor enforced after the balance first reaches it
     margin_call_threshold: float = 0.5   # Stop trading if equity/margin ratio falls below this
     drawdown_halt_percent: float = 50.0  # Halt trading if drawdown exceeds this %
     negative_balance_action: str = "halt"  # "halt", "close_all", "reduce"
@@ -118,7 +118,13 @@ class RiskEvaluator:
     previous managers into one cohesive system.
     """
     
-    def __init__(self, connector, position_tracker, limits: Optional[RiskLimits] = None):
+    def __init__(
+        self,
+        connector,
+        position_tracker,
+        limits: Optional[RiskLimits] = None,
+        state_store: Optional[Any] = None,
+    ):
         """
         Initialize the risk evaluator.
         
@@ -126,10 +132,13 @@ class RiskEvaluator:
             connector: MT5 connector
             position_tracker: PositionTracker instance
             limits: RiskLimits configuration
+            state_store: Optional persistence backend for account risk state
         """
         self.connector = connector
         self.tracker = position_tracker
         self.limits = limits or RiskLimits()
+        self.state_store = state_store
+        self._balance_guard_reached: set[str] = set()
         self.daily_tracker = DailyRiskTracker()
         self.emergency_shutdown_triggered = False
         
@@ -143,6 +152,63 @@ class RiskEvaluator:
         self.margin_call_triggered = False
         
         logger.info(f"RiskEvaluator initialized (max_spread_points={self.limits.max_spread_points}, min_balance_threshold={self.limits.min_balance_threshold})")
+
+    @staticmethod
+    def _account_value(account_info, primary: str, alias: str, default):
+        if isinstance(account_info, dict):
+            value = account_info.get(primary)
+            if value is None:
+                value = account_info.get(alias, default)
+        else:
+            value = getattr(account_info, primary, None)
+            if value is None:
+                value = getattr(account_info, alias, default)
+        return default if value is None else value
+
+    @staticmethod
+    def _balance_guard_key(account_info, threshold: float) -> Optional[str]:
+        login = RiskEvaluator._account_value(account_info, "login", "Login", None)
+        server = RiskEvaluator._account_value(account_info, "server", "Server", None)
+        if login is None or server is None:
+            return None
+        login = str(login).strip()
+        server = str(server).strip()
+        if not login or not server:
+            return None
+        return f"risk:min_balance_guard:{server}:{login}:{threshold:.8g}"
+
+    def _minimum_balance_guard_active(self, account_info, balance: float) -> bool:
+        threshold = float(self.limits.min_balance_threshold)
+        if not math.isfinite(threshold):
+            raise ValueError("Minimum balance threshold must be finite")
+        if threshold <= 0:
+            return False
+
+        account_key = self._balance_guard_key(account_info, threshold)
+        memory_key = account_key or "__unidentified_account__"
+
+        if balance >= threshold:
+            if account_key and self.state_store is not None:
+                set_value = getattr(self.state_store, "set_meta_value", None)
+                if not callable(set_value):
+                    raise RuntimeError("Risk state store cannot persist balance guard state")
+                set_value(account_key, "1")
+            self._balance_guard_reached.add(memory_key)
+            return True
+
+        if memory_key in self._balance_guard_reached:
+            return True
+
+        if account_key and self.state_store is not None:
+            get_value = getattr(self.state_store, "get_meta_value", None)
+            if not callable(get_value):
+                raise RuntimeError("Risk state store cannot read balance guard state")
+            reached = get_value(account_key, "0")
+            if str(reached).strip().lower() in {"1", "true", "yes"}:
+                self._balance_guard_reached.add(memory_key)
+                return True
+
+        return False
     
     def check_balance_protection(self, account_info) -> tuple[bool, str]:
         """
@@ -162,16 +228,14 @@ class RiskEvaluator:
         """
         try:
             # Extract account metrics
-            if isinstance(account_info, dict):
-                balance = float(account_info.get('balance') or account_info.get('Balance') or 0.0)
-                equity = float(account_info.get('equity') or account_info.get('Equity') or balance)
-                margin = float(account_info.get('margin') or account_info.get('Margin') or 0.0)
-                free_margin = float(account_info.get('margin_free') or account_info.get('FreeMargin') or equity)
-            else:
-                balance = float(getattr(account_info, 'balance', getattr(account_info, 'Balance', 0.0)))
-                equity = float(getattr(account_info, 'equity', getattr(account_info, 'Equity', balance)))
-                margin = float(getattr(account_info, 'margin', getattr(account_info, 'Margin', 0.0)))
-                free_margin = float(getattr(account_info, 'margin_free', getattr(account_info, 'FreeMargin', equity)))
+            balance = float(self._account_value(account_info, "balance", "Balance", 0.0))
+            equity = float(self._account_value(account_info, "equity", "Equity", balance))
+            margin = float(self._account_value(account_info, "margin", "Margin", 0.0))
+            free_margin = float(
+                self._account_value(account_info, "margin_free", "FreeMargin", equity)
+            )
+            if not all(math.isfinite(value) for value in (balance, equity, margin, free_margin)):
+                return False, "Account balance, equity, and margin values must be finite"
             
             # Track initial and peak balance for drawdown calculation
             if self.initial_balance is None:
@@ -183,6 +247,37 @@ class RiskEvaluator:
                 self.peak_balance = balance
             if equity > self.peak_equity:
                 self.peak_equity = equity
+
+            # CASE 1: Negative or non-positive balance
+            if balance < 0:
+                self.negative_balance_triggered = True
+                logger.critical(f"NEGATIVE BALANCE DETECTED: ${balance:.2f} - ALL TRADING HALTED")
+                if self.limits.negative_balance_action == "close_all":
+                    self._emergency_close_all_positions()
+                return False, f"CRITICAL: Negative balance (${balance:.2f}) - trading halted"
+            if balance == 0:
+                return False, "Account balance is zero - trading blocked"
+
+            # CASE 2: Negative or non-positive equity
+            if equity <= 0:
+                if equity < 0:
+                    logger.critical(f"NEGATIVE EQUITY: ${equity:.2f} - emergency action required")
+                    self._emergency_close_all_positions()
+                    return False, f"CRITICAL: Negative equity (${equity:.2f}) - positions closed"
+                return False, "Account equity is zero - trading blocked"
+
+            # The floor becomes active only after this account first reaches it.
+            balance_guard_active = self._minimum_balance_guard_active(account_info, balance)
+            if balance_guard_active and balance < self.limits.min_balance_threshold:
+                logger.error(
+                    "Balance $%.2f below activated minimum threshold $%.2f",
+                    balance,
+                    self.limits.min_balance_threshold,
+                )
+                return False, (
+                    f"Balance (${balance:.2f}) below minimum "
+                    f"${self.limits.min_balance_threshold:.2f}"
+                )
 
             today = datetime.now().date()
             if today != self.daily_start_date:
@@ -205,26 +300,7 @@ class RiskEvaluator:
                         f"{self.limits.max_daily_loss_percent:.2f}% limit"
                     )
             
-            # CASE 1: Negative balance - CRITICAL
-            if balance < 0:
-                self.negative_balance_triggered = True
-                logger.critical(f"NEGATIVE BALANCE DETECTED: ${balance:.2f} - ALL TRADING HALTED")
-                if self.limits.negative_balance_action == "close_all":
-                    self._emergency_close_all_positions()
-                return False, f"CRITICAL: Negative balance (${balance:.2f}) - trading halted"
-            
-            # CASE 2: Balance below minimum threshold
-            if balance < self.limits.min_balance_threshold:
-                logger.error(f"Balance ${balance:.2f} below minimum threshold ${self.limits.min_balance_threshold}")
-                return False, f"Balance (${balance:.2f}) below minimum ${self.limits.min_balance_threshold}"
-            
-            # CASE 3: Negative equity (floating losses exceed balance)
-            if equity < 0:
-                logger.critical(f"NEGATIVE EQUITY: ${equity:.2f} - emergency action required")
-                self._emergency_close_all_positions()
-                return False, f"CRITICAL: Negative equity (${equity:.2f}) - positions closed"
-            
-            # CASE 4: Margin call condition
+            # CASE 3: Margin call condition
             if margin > 0:
                 margin_level = equity / margin
                 if margin_level < self.limits.margin_call_threshold:
@@ -236,15 +312,18 @@ class RiskEvaluator:
                         self._reduce_exposure()
                     return False, f"Margin call triggered (level: {margin_level:.2%})"
             
-            # CASE 5: Excessive drawdown from peak
+            # CASE 4: Excessive drawdown from peak
             if self.peak_equity > 0 and self.limits.drawdown_halt_percent > 0:
                 drawdown_percent = ((self.peak_equity - equity) / self.peak_equity) * 100
                 if drawdown_percent >= self.limits.drawdown_halt_percent:
                     logger.error(f"DRAWDOWN HALT: {drawdown_percent:.1f}% exceeds limit {self.limits.drawdown_halt_percent}%")
                     return False, f"Drawdown {drawdown_percent:.1f}% exceeds limit {self.limits.drawdown_halt_percent}%"
             
-            # CASE 6: Free margin too low for new positions
-            if free_margin < self.limits.min_balance_threshold:
+            # CASE 5: Free margin must remain positive; the dollar floor is deferred too.
+            if free_margin <= 0:
+                logger.warning("Free margin must be positive for new positions")
+                return False, f"Insufficient free margin (${free_margin:.2f})"
+            if balance_guard_active and free_margin < self.limits.min_balance_threshold:
                 logger.warning(f"Free margin ${free_margin:.2f} too low for new positions")
                 return False, f"Insufficient free margin (${free_margin:.2f})"
             
@@ -499,15 +578,40 @@ class RiskEvaluator:
                     logger.warning("ATR not provided for volatility sizing, using percent method")
                     return self.calculate_position_size(symbol, balance, "percent", risk_percent)
                 
-                # Adjust position size inversely to volatility
-                # Higher volatility = smaller position
-                point_value = self.connector.get_point_value(symbol)
+                point_value = float(self.connector.get_point_value(symbol) or 0.0)
                 risk_amount = balance * (risk_percent / 100.0)
-                volume = risk_amount / (atr * point_value)
-                
-                min_lot = self.connector.get_min_lot(symbol)
-                volume = max(min_lot, round(volume / min_lot) * min_lot)
-                return volume
+                risk_per_lot = float(atr) * point_value
+                info = self.connector.get_symbol_info(symbol)
+                if (
+                    not math.isfinite(risk_amount)
+                    or not math.isfinite(risk_per_lot)
+                    or risk_amount <= 0
+                    or risk_per_lot <= 0
+                    or not info
+                ):
+                    return 0.0
+
+                min_lot = float(info.get('volume_min') or 0.0)
+                volume_step = float(info.get('volume_step') or min_lot)
+                max_lot = min(
+                    float(info.get('volume_max') or self.limits.max_lot_size),
+                    self.limits.max_lot_size,
+                )
+                if (
+                    not all(math.isfinite(value) for value in (min_lot, volume_step, max_lot))
+                    or min_lot <= 0
+                    or volume_step <= 0
+                    or max_lot < min_lot
+                ):
+                    return 0.0
+                if risk_per_lot * min_lot > risk_amount + 1e-12:
+                    return 0.0
+
+                volume = min(risk_amount / risk_per_lot, max_lot)
+                volume = math.floor((volume + 1e-12) / volume_step) * volume_step
+                if volume + 1e-12 < min_lot:
+                    return 0.0
+                return round(volume, 8)
             
             elif method == "kelly":
                 # Kelly Criterion sizing

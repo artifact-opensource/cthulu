@@ -515,7 +515,7 @@ class DiscordNotifier:
         risk_reward: Optional[float] = None,
         timeframe: Optional[str] = None
     ) -> bool:
-        """Notify a signal that passed the entry confluence gate."""
+        """Notify a strategy signal, with optional entry-confluence details."""
         direction = direction.upper()
         is_buy = direction == "BUY"
         emoji = "🟢" if is_buy else "🔴"
@@ -564,12 +564,19 @@ class DiscordNotifier:
         if indicators:
             for name, value in list(indicators.items())[:4]:
                 fields.append({"name": name.upper(), "value": f"`{value:.4f}`", "inline": True})
+
+        description = (
+            "**Confluence-approved candidate**\n"
+            f"`{strategy}` passed the entry quality gate."
+            if confluence_quality is not None
+            else "**Strategy-generated candidate**\n"
+            f"`{strategy}` produced a signal."
+        )
         
         return self.notify(DiscordNotification(
             channel=NotificationChannel.SIGNALS,
             title=f"{emoji} {symbol} · {direction} setup",
-            description="**Confluence-approved candidate**\n"
-                        f"`{strategy}` passed the entry quality gate.",
+            description=description,
             color=Colors.SUCCESS if is_buy else Colors.DANGER,
             priority=NotificationPriority.MEDIUM,
             fields=fields,

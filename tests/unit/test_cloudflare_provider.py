@@ -18,7 +18,7 @@ def test_cloudflare_provider_defaults_to_low_cost_agentic_model(monkeypatch):
     config = manager.provider_config("cloudflare")
 
     assert manager.configured
-    assert config["model"] == "@cf/qwen/qwen3-30b-a3b-fp8"
+    assert config["model"] == "@cf/ibm-granite/granite-4.0-h-micro"
     assert config["base_url"] == (
         f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1"
     )
@@ -29,12 +29,12 @@ def test_cloudflare_chat_uses_gateway_and_openai_compatible_endpoint():
         "cloudflare",
         f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/v1",
         "test-token",
-        "@cf/qwen/qwen3-30b-a3b-fp8",
+        "@cf/ibm-granite/granite-4.0-h-micro",
         account_id=ACCOUNT_ID,
         gateway_id="default",
     )
     response = {
-        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "model": "@cf/ibm-granite/granite-4.0-h-micro",
         "choices": [{"message": {"content": "OK"}, "finish_reason": "stop"}],
         "usage": {"prompt_tokens": 1, "completion_tokens": 1},
     }

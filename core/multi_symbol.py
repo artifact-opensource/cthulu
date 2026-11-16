@@ -11,7 +11,9 @@ Architecture:
 Phase 1 of Cthulu Autonomous Trading System.
 """
 import asyncio
+from copy import deepcopy
 import logging
+import math
 import time
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
@@ -20,6 +22,28 @@ from datetime import datetime, timezone
 from execution_mode import ExecutionModeError, require_legacy_execution
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_mt5_timeframe(timeframe, mt5_module=None):
+    if mt5_module is None:
+        from cthulu.connector.mt5_connector import mt5 as mt5_module
+
+    if isinstance(timeframe, str):
+        name = timeframe.strip().upper()
+        if not name.startswith("TIMEFRAME_"):
+            name = f"TIMEFRAME_{name}"
+        timeframe = getattr(mt5_module, name, None)
+    if timeframe is None:
+        raise ValueError(f"Unsupported timeframe: {timeframe}")
+    return timeframe
+
+
+def _configured_timeframe(config: Dict[str, Any]) -> str:
+    timeframe = config.get('timeframe')
+    trading_config = config.get('trading')
+    if not timeframe and isinstance(trading_config, dict):
+        timeframe = trading_config.get('timeframe')
+    return timeframe or 'M5'
 
 
 @dataclass
@@ -53,6 +77,73 @@ class ScoredSignal:
     timestamp: float = 0.0
 
 
+class _MultiSymbolStrategyAdapter:
+    def __init__(self, strategy: Any, symbol: str):
+        self.strategy = strategy
+        self.symbol = symbol
+
+    def generate_signal(
+        self,
+        data: Any,
+        indicators: Dict[str, Any],
+        regime: str,
+    ) -> Optional[Dict[str, Any]]:
+        if data is None or len(data) == 0:
+            return None
+
+        bar = data.iloc[-1]
+        if hasattr(self.strategy, "generate_signal_with_data"):
+            raw_signal = self.strategy.generate_signal_with_data(data, bar)
+        elif hasattr(self.strategy, "generate_signal"):
+            raw_signal = self.strategy.generate_signal(data, bar)
+        else:
+            raw_signal = self.strategy.on_bar(bar)
+
+        if raw_signal is None:
+            return None
+        if isinstance(raw_signal, dict):
+            signal = raw_signal.copy()
+        else:
+            to_dict = getattr(raw_signal, "to_dict", None)
+            if not callable(to_dict):
+                logger.error("%s: Strategy returned an unsupported signal", self.symbol)
+                return None
+            signal = to_dict()
+
+        metadata = signal.get("metadata")
+        if not isinstance(metadata, dict):
+            metadata = {}
+            signal["metadata"] = metadata
+        metadata.setdefault("market_regime", regime)
+        metadata.setdefault("indicators", indicators)
+
+        raw_direction = signal.get("direction") or signal.get("side") or signal.get("action")
+        if hasattr(raw_direction, "value"):
+            raw_direction = raw_direction.value
+        direction = str(raw_direction or "").strip().lower()
+        if direction in {"buy", "long"}:
+            signal["direction"] = "buy"
+        elif direction in {"sell", "short"}:
+            signal["direction"] = "sell"
+        else:
+            logger.error("%s: Strategy signal has no valid direction", self.symbol)
+            return None
+
+        dynamic_selector = getattr(self.strategy, "selector", None)
+        current_strategy = getattr(dynamic_selector, "current_strategy", None)
+        strategy_name = (
+            metadata.get("generated_by")
+            or metadata.get("strategy_type")
+            or signal.get("strategy")
+            or getattr(current_strategy, "name", None)
+            or getattr(self.strategy, "name", "unknown")
+        )
+        signal["symbol"] = self.symbol
+        signal["strategy"] = str(strategy_name)
+        signal.setdefault("strategy_score", metadata.get("strategy_score", 0.5))
+        return signal
+
+
 class MultiSymbolOrchestrator:
     """
     Orchestrates trading across multiple symbols.
@@ -74,7 +165,7 @@ class MultiSymbolOrchestrator:
         """
         self.components = components
         self.config = config
-        self.timeframe = config.get('timeframe', 'M5')
+        self.timeframe = _configured_timeframe(config)
         self.loop_interval = config.get('loop_interval', 15)
         
         # Portfolio-level limits
@@ -86,9 +177,10 @@ class MultiSymbolOrchestrator:
         self.signal_cooldown_seconds = portfolio_config.get('signal_cooldown_seconds', 300)
         
         # Track daily P&L
-        self._daily_start_balance = 0.0
+        self._daily_start_equity = 0.0
         self._daily_date = None
         self._daily_loss_halt = False
+        self._execution_halt_reason = None
         
         # Market Intelligence (Phase 2)
         self._macro: Optional[Any] = None
@@ -176,16 +268,35 @@ class MultiSymbolOrchestrator:
     
     def _init_strategy_selectors(self):
         """Create independent strategy selectors per symbol."""
-        from strategy.selector import StrategySelector
+        if not self.symbols:
+            return
         
-        strategy_config = self.config.get('strategy_selector', {})
+        strategy_config = self.config.get("strategy")
+        if not isinstance(strategy_config, dict):
+            raise ValueError("Multi-symbol configuration requires a strategy object")
         
+        from core.strategy_factory import StrategyFactory
+
+        factory = StrategyFactory(logger=logger)
         for sym, ctx in self.symbols.items():
-            # Merge per-symbol strategy overrides
-            sym_strategy_config = {**strategy_config, **ctx.strategy_overrides}
-            selector = StrategySelector(config=sym_strategy_config, symbol=sym)
+            sym_strategy_config = deepcopy(strategy_config)
+            if ctx.strategy_overrides:
+                if not isinstance(ctx.strategy_overrides, dict):
+                    raise ValueError(f"Strategy overrides for {sym} must be an object")
+                sym_strategy_config.update(deepcopy(ctx.strategy_overrides))
+
+            params = sym_strategy_config.setdefault("params", {})
+            if not isinstance(params, dict):
+                raise ValueError(f"Strategy parameters for {sym} must be an object")
+            params["symbol"] = sym
+            sym_strategy_config["timeframe"] = ctx.timeframe
+
+            strategy = factory.create(sym_strategy_config)
+            selector = _MultiSymbolStrategyAdapter(strategy, sym)
             self._strategy_selectors[sym] = selector
-            logger.info(f"  Strategy selector for {sym}: {len(selector.strategies)} strategies")
+            dynamic_selector = getattr(strategy, "selector", None)
+            strategy_count = len(getattr(dynamic_selector, "strategies", {})) or 1
+            logger.info(f"  Strategy selector for {sym}: {strategy_count} strategies")
     
     async def run(self):
         """Main multi-symbol trading loop."""
@@ -222,14 +333,26 @@ class MultiSymbolOrchestrator:
     
     async def _init_daily_tracking(self):
         """Initialize daily P&L tracking."""
+        self._daily_date = datetime.now(timezone.utc).date()
+        self._daily_start_equity = 0.0
+        self._daily_loss_halt = True
         try:
             acct = self.components.mt5_connector.get_account_info()
-            self._daily_start_balance = acct.get('balance', 0)
-            self._daily_date = datetime.now(timezone.utc).date()
+            if not isinstance(acct, dict):
+                raise RuntimeError("Account information is unavailable")
+            start_equity = acct.get("equity")
+            if start_equity is None:
+                start_equity = acct.get("balance")
+            start_equity = float(start_equity)
+            if not math.isfinite(start_equity) or start_equity <= 0:
+                raise ValueError("Starting account equity must be positive and finite")
+            self._daily_start_equity = start_equity
             self._daily_loss_halt = False
-            logger.info(f"Daily tracking initialized: start_balance=${self._daily_start_balance:.2f}")
+            logger.info("Daily tracking initialized: start_equity=$%.2f", start_equity)
+            return True
         except Exception as e:
-            logger.warning(f"Failed to init daily tracking: {e}")
+            logger.exception("Failed to initialize daily tracking: %s", e)
+            return False
     
     async def _check_daily_limits(self) -> bool:
         """Check if daily loss limit has been hit. Returns True if trading is OK."""
@@ -239,31 +362,43 @@ class MultiSymbolOrchestrator:
         
         # Reset on new day
         if today != self._daily_date:
-            await self._init_daily_tracking()
-            return True
+            return await self._init_daily_tracking()
         
         if self._daily_loss_halt:
             return False
         
         try:
             acct = self.components.mt5_connector.get_account_info()
-            current_balance = acct.get('equity', acct.get('balance', 0))
-            
-            if self._daily_start_balance > 0:
-                daily_pnl_pct = ((current_balance - self._daily_start_balance) 
-                                / self._daily_start_balance * 100)
-                
-                if daily_pnl_pct <= -self.max_daily_loss_pct:
-                    self._daily_loss_halt = True
-                    logger.warning(f"🛑 DAILY LOSS LIMIT HIT: {daily_pnl_pct:.1f}% "
-                                  f"(limit: -{self.max_daily_loss_pct}%). "
-                                  f"No new trades until tomorrow.")
-                    return False
-            
+            if not isinstance(acct, dict):
+                raise RuntimeError("Account information is unavailable")
+            current_equity = acct.get("equity")
+            if current_equity is None:
+                current_equity = acct.get("balance")
+            current_equity = float(current_equity)
+            if not math.isfinite(current_equity) or current_equity <= 0:
+                raise ValueError("Current account equity must be positive and finite")
+            if not math.isfinite(self._daily_start_equity) or self._daily_start_equity <= 0:
+                raise ValueError("Daily starting equity is unavailable")
+
+            daily_pnl_pct = (
+                (current_equity - self._daily_start_equity)
+                / self._daily_start_equity
+                * 100
+            )
+            if daily_pnl_pct <= -self.max_daily_loss_pct:
+                self._daily_loss_halt = True
+                logger.warning(
+                    "DAILY LOSS LIMIT HIT: %.1f%% (limit: -%.1f%%). "
+                    "No new trades until tomorrow.",
+                    daily_pnl_pct,
+                    self.max_daily_loss_pct,
+                )
+                return False
             return True
         except Exception as e:
-            logger.warning(f"Daily limit check failed: {e}")
-            return True  # Fail open (allow trading if check fails)
+            self._daily_loss_halt = True
+            logger.exception("Daily limit check failed; blocking new trades: %s", e)
+            return False
     
     async def _execute_cycle(self):
         """Execute one full multi-symbol analysis + trade cycle."""
@@ -292,6 +427,17 @@ class MultiSymbolOrchestrator:
             await self._evaluate_all_exits()
             if self._loop_count % 20 == 0:
                 logger.info(f"[Cycle {self._loop_count}] Daily loss halt active — managing positions only")
+            return
+
+        if self._execution_halt_reason:
+            await self._manage_all_positions()
+            await self._evaluate_all_exits()
+            if self._loop_count % 20 == 0:
+                logger.critical(
+                    "[Cycle %s] Trading halted: %s",
+                    self._loop_count,
+                    self._execution_halt_reason,
+                )
             return
         
         # Phase 1: Scan all symbols
@@ -393,26 +539,30 @@ class MultiSymbolOrchestrator:
         
         ctx.market_data = data
         
+        selector = self._strategy_selectors.get(sym)
+        if selector is None:
+            logger.error("%s: No strategy selector was initialized", sym)
+            return None
+
         # Calculate indicators
-        indicators = await self._calculate_indicators(data)
+        indicators = await self._calculate_indicators(data, selector)
         ctx.indicators = indicators
         
         # Update regime (every 5 min per symbol)
         now = time.time()
         if now - ctx.last_regime_update > 300:
             ctx.last_regime_update = now
-            try:
-                ctx.regime = self.components.regime_classifier.classify(
+            regime_classifier = getattr(self.components, "regime_classifier", None)
+            if regime_classifier is not None:
+                try:
+                    ctx.regime = regime_classifier.classify(
                     indicators=indicators, market_data=data
-                )
-            except Exception:
-                ctx.regime = 'unknown'
+                    )
+                except Exception as exc:
+                    logger.debug("%s: Regime classification failed: %s", sym, exc)
+                    ctx.regime = 'unknown'
         
         # Generate signal via this symbol's strategy selector
-        selector = self._strategy_selectors.get(sym)
-        if not selector:
-            return None
-        
         signal = selector.generate_signal(
             data=data, indicators=indicators, regime=ctx.regime
         )
@@ -420,14 +570,29 @@ class MultiSymbolOrchestrator:
         if signal is None:
             self._publish_legacy_context(sym, ctx, data, indicators, None)
             return None
+        if not isinstance(signal, dict):
+            logger.error("%s: Strategy selector returned an invalid signal", sym)
+            return None
         
         # Ensure symbol is set correctly
         signal['symbol'] = sym
+        raw_direction = signal.get('direction') or signal.get('side')
+        if hasattr(raw_direction, 'value'):
+            raw_direction = raw_direction.value
+        direction = str(raw_direction or "").strip().lower()
+        if direction in {"buy", "long"}:
+            signal["direction"] = "buy"
+        elif direction in {"sell", "short"}:
+            signal["direction"] = "sell"
+        else:
+            logger.error("%s: Strategy signal has no valid direction", sym)
+            return None
         
         # Apply confluence filter
-        if self.components.entry_confluence:
+        entry_confluence = getattr(self.components, "entry_confluence", None)
+        if entry_confluence:
             try:
-                confluence = self.components.entry_confluence.analyze(
+                confluence = entry_confluence.analyze(
                     signal=signal, data=data, indicators=indicators
                 )
                 
@@ -498,6 +663,7 @@ class MultiSymbolOrchestrator:
         ) * loss_penalty * macro_multiplier * session_multiplier
 
         self._publish_legacy_context(sym, ctx, data, indicators, signal, score=combined_score)
+        self._notify_signal(signal, ctx, indicators)
         
         return ScoredSignal(
             signal=signal,
@@ -507,6 +673,106 @@ class MultiSymbolOrchestrator:
             strategy=signal.get('strategy', 'unknown'),
             timestamp=time.time()
         )
+
+    def _notify_signal(
+        self,
+        signal: Dict[str, Any],
+        ctx: SymbolContext,
+        indicators: Dict[str, Any],
+    ) -> None:
+        discord_config = self.config.get("discord", {})
+        if not isinstance(discord_config, dict):
+            return
+        if not discord_config.get("enabled", True) or not discord_config.get(
+            "alert_on_signals", True
+        ):
+            return
+
+        try:
+            from integrations.discord_notifier import (
+                NotificationChannel,
+                get_discord_notifier,
+            )
+
+            notifier = get_discord_notifier()
+            if (
+                not notifier.enabled
+                or not notifier.webhooks.get(NotificationChannel.SIGNALS)
+            ):
+                return
+
+            now = time.time()
+            if (
+                self.signal_cooldown_seconds > 0
+                and now - ctx.last_signal_time < self.signal_cooldown_seconds
+            ):
+                return
+
+            confidence_value = signal.get("confidence")
+            confidence = (
+                0.5 if confidence_value is None else float(confidence_value)
+            )
+            if not math.isfinite(confidence):
+                logger.error(
+                    "%s: Signal confidence is invalid; Discord notification skipped",
+                    ctx.symbol,
+                )
+                return
+
+            quality = signal.get("confluence_quality")
+            if hasattr(quality, "value"):
+                quality = quality.value
+            if quality is not None:
+                quality = str(quality)
+
+            confluence_reasons = signal.get("confluence_reasons")
+            if not isinstance(confluence_reasons, list):
+                confluence_reasons = None
+
+            notification_indicators = {}
+            for name, value in indicators.items():
+                try:
+                    numeric_value = float(value)
+                except (TypeError, ValueError, OverflowError):
+                    continue
+                if math.isfinite(numeric_value):
+                    notification_indicators[str(name).upper()] = numeric_value
+                    if len(notification_indicators) == 4:
+                        break
+
+            queued = notifier.notify_signal_quality(
+                symbol=ctx.symbol,
+                direction=str(signal.get("direction", "")).upper(),
+                confidence=confidence,
+                strategy=str(signal.get("strategy") or "unknown"),
+                indicators=notification_indicators,
+                confluence_quality=quality,
+                confluence_score=(
+                    signal.get("confluence_score")
+                    if quality is not None
+                    else None
+                ),
+                confluence_reasons=(
+                    confluence_reasons if quality is not None else None
+                ),
+                entry_price=signal.get("price") or signal.get("entry_price"),
+                stop_loss=signal.get("stop_loss"),
+                take_profit=signal.get("take_profit"),
+                risk_reward=signal.get("risk_reward"),
+                timeframe=str(ctx.timeframe),
+            )
+            if not queued:
+                logger.warning(
+                    "%s: Discord signal notification could not be queued",
+                    ctx.symbol,
+                )
+                return
+            ctx.last_signal_time = now
+        except Exception:
+            logger.exception(
+                "%s: Failed to queue Discord signal notification",
+                ctx.symbol,
+            )
 
     @staticmethod
     def _publish_legacy_context(sym, ctx, data, indicators, signal, score=None, rejection=""):
@@ -532,13 +798,7 @@ class MultiSymbolOrchestrator:
 
     def _fetch_symbol_data(self, symbol: str, ctx: SymbolContext):
         """Fetch MT5 rates and normalize them using the shared Legacy data layer."""
-        from cthulu.connector.mt5_connector import mt5
-
-        timeframe = ctx.timeframe
-        if isinstance(timeframe, str):
-            timeframe = getattr(mt5, f"TIMEFRAME_{timeframe.upper()}", None)
-        if timeframe is None:
-            raise ValueError(f"Unsupported timeframe for {symbol}: {ctx.timeframe}")
+        timeframe = _resolve_mt5_timeframe(ctx.timeframe)
 
         rates = self.components.mt5_connector.get_rates(
             symbol=symbol,
@@ -549,45 +809,203 @@ class MultiSymbolOrchestrator:
             return None
         return self.components.data_layer.normalize_rates(rates, symbol=symbol)
     
-    async def _calculate_indicators(self, data) -> Dict[str, Any]:
-        """Calculate indicators for a given dataset."""
-        indicators = {}
-        
-        try:
-            from indicators.rsi import calculate_rsi
-            from indicators.adx import calculate_adx
-            from indicators.atr import calculate_atr
-            from indicators.macd import calculate_macd
-            from indicators.bollinger import calculate_bollinger
-            
-            close = data['close'].values
-            high = data['high'].values
-            low = data['low'].values
-            
-            indicators['RSI'] = calculate_rsi(close, period=14)
-            indicators['ADX'] = calculate_adx(high, low, close, period=14)
-            indicators['ATR'] = calculate_atr(high, low, close, period=14)
-            indicators['MACD'] = calculate_macd(close)
-            indicators['BB'] = calculate_bollinger(close, period=20, std_dev=2.0)
-            
-            indicators['SMA_10'] = close[-10:].mean() if len(close) >= 10 else close[-1]
-            indicators['SMA_30'] = close[-30:].mean() if len(close) >= 30 else close[-1]
-            
-            multiplier_12 = 2 / 13
-            ema_12 = close[:12].mean()
-            for p in close[12:]:
-                ema_12 = (p - ema_12) * multiplier_12 + ema_12
-            indicators['EMA_12'] = ema_12
-            
-            multiplier_26 = 2 / 27
-            ema_26 = close[:26].mean()
-            for p in close[26:]:
-                ema_26 = (p - ema_26) * multiplier_26 + ema_26
-            indicators['EMA_26'] = ema_26
-            
-        except Exception as e:
-            logger.error(f"Indicator calculation error: {e}")
-        
+    async def _calculate_indicators(
+        self,
+        data,
+        selector: Optional[_MultiSymbolStrategyAdapter] = None,
+    ) -> Dict[str, Any]:
+        """Calculate indicators and add the columns required by each strategy."""
+        if data is None or data.empty:
+            return {}
+
+        from indicators.adx import calculate_adx
+        from indicators.atr import calculate_atr
+        from indicators.bollinger import calculate_bollinger_bands
+        from indicators.macd import calculate_macd
+        from indicators.rsi import calculate_rsi
+
+        if "volume" not in data.columns and "tick_volume" in data.columns:
+            data["volume"] = data["tick_volume"]
+
+        strategy = getattr(selector, "strategy", selector)
+        dynamic_selector = getattr(strategy, "selector", None)
+        children = getattr(dynamic_selector, "strategies", {})
+        strategies = list(children.values()) if isinstance(children, dict) else [strategy]
+
+        def add_period(periods, value):
+            try:
+                period = int(value)
+            except (TypeError, ValueError):
+                return
+            if period > 0:
+                periods.add(period)
+
+        sma_periods = {20, 50}
+        ema_periods = {5, 10, 12, 20, 26}
+        rsi_periods = {14}
+        adx_periods = {14}
+        atr_periods = {14}
+        lookback_periods = {20}
+        bollinger_specs = {(20, 2.0)}
+        macd_specs = []
+
+        for child in strategies:
+            for attribute in ("short_window", "long_window", "fast_ma", "slow_ma"):
+                value = getattr(child, attribute, None)
+                if value is not None:
+                    add_period(sma_periods, value)
+            for attribute in (
+                "fast_period",
+                "slow_period",
+                "fast_ema",
+                "slow_ema",
+                "fast_ma",
+                "slow_ma",
+            ):
+                value = getattr(child, attribute, None)
+                if value is not None:
+                    add_period(ema_periods, value)
+
+            add_period(rsi_periods, getattr(child, "rsi_period", None))
+            add_period(adx_periods, getattr(child, "adx_period", None))
+            add_period(atr_periods, getattr(child, "atr_period", None))
+            add_period(lookback_periods, getattr(child, "lookback_period", None))
+
+            bb_period = getattr(child, "ma_period", None)
+            bb_std = getattr(child, "bb_std", None)
+            if bb_period is not None and bb_std is not None:
+                try:
+                    bollinger_specs.add((int(bb_period), float(bb_std)))
+                except (TypeError, ValueError):
+                    pass
+
+        configured_indicators = self.config.get("indicators", [])
+        if isinstance(configured_indicators, dict):
+            configured_indicators = [
+                {"type": indicator_type, "params": params}
+                for indicator_type, params in configured_indicators.items()
+            ]
+        if not isinstance(configured_indicators, list):
+            configured_indicators = []
+
+        for indicator_config in configured_indicators:
+            if not isinstance(indicator_config, dict):
+                continue
+            indicator_type = str(indicator_config.get("type", "")).lower()
+            params = indicator_config.get("params", {})
+            if not isinstance(params, dict):
+                continue
+            if indicator_type == "rsi":
+                add_period(rsi_periods, params.get("period", 14))
+            elif indicator_type == "adx":
+                add_period(adx_periods, params.get("period", 14))
+            elif indicator_type == "atr":
+                add_period(atr_periods, params.get("period", 14))
+            elif indicator_type in {"bollinger", "bollingerbands"}:
+                try:
+                    bollinger_specs.add(
+                        (int(params.get("period", 20)), float(params.get("std_dev", 2.0)))
+                    )
+                except (TypeError, ValueError):
+                    pass
+            elif indicator_type == "macd":
+                try:
+                    spec = (
+                        int(params.get("fast_period", 12)),
+                        int(params.get("slow_period", 26)),
+                        int(params.get("signal_period", 9)),
+                    )
+                except (TypeError, ValueError):
+                    continue
+                if all(period > 0 for period in spec) and spec not in macd_specs:
+                    macd_specs.append(spec)
+
+        for period in sorted(sma_periods):
+            data[f"sma_{period}"] = data["close"].rolling(window=period).mean()
+        for period in sorted(ema_periods):
+            data[f"ema_{period}"] = data["close"].ewm(span=period, adjust=False).mean()
+        for period in sorted(lookback_periods):
+            data[f"high_{period}"] = data["high"].rolling(window=period).max()
+            data[f"low_{period}"] = data["low"].rolling(window=period).min()
+            if "volume" in data.columns:
+                data[f"volume_avg_{period}"] = data["volume"].rolling(window=period).mean()
+
+        for period in sorted(rsi_periods):
+            rsi = calculate_rsi(data, period=period)
+            column = "rsi" if period == 14 else f"rsi_{period}"
+            data[column] = rsi
+            data[f"rsi_{period}"] = rsi
+        for period in sorted(adx_periods):
+            adx = calculate_adx(data, period=period)
+            column = "adx" if period == 14 else f"adx_{period}"
+            data[column] = adx
+            data[f"adx_{period}"] = adx
+        for period in sorted(atr_periods):
+            atr = calculate_atr(data, period=period)
+            column = "atr" if period == 14 else f"atr_{period}"
+            data[column] = atr
+            data[f"atr_{period}"] = atr
+
+        if not macd_specs:
+            macd_specs.append((12, 26, 9))
+        for index, (fast_period, slow_period, signal_period) in enumerate(macd_specs):
+            macd, macd_signal, macd_histogram = calculate_macd(
+                data,
+                fast=fast_period,
+                slow=slow_period,
+                signal_period=signal_period,
+            )
+            if index == 0:
+                data["macd"] = macd
+                data["macd_signal"] = macd_signal
+                data["signal"] = macd_signal
+                data["macd_histogram"] = macd_histogram
+
+        for period, std_dev in sorted(bollinger_specs):
+            upper, middle, lower = calculate_bollinger_bands(
+                data,
+                period=period,
+                std_dev=std_dev,
+            )
+            suffix = f"{period}_{std_dev}"
+            data[f"bb_upper_{suffix}"] = upper
+            data[f"bb_middle_{period}"] = middle
+            data[f"bb_lower_{suffix}"] = lower
+            if period == 20 and std_dev == 2.0:
+                data["bb_upper"] = upper
+                data["bb_middle"] = middle
+                data["bb_lower"] = lower
+
+        def latest(column):
+            return float(data[column].iloc[-1])
+
+        indicators = {
+            "RSI": latest("rsi"),
+            "rsi": latest("rsi"),
+            "ADX": latest("adx"),
+            "adx": latest("adx"),
+            "ATR": latest("atr"),
+            "atr": latest("atr"),
+            "MACD": (
+                latest("macd"),
+                latest("macd_signal"),
+                latest("macd_histogram"),
+            ),
+            "macd": latest("macd"),
+            "BB": (
+                latest("bb_upper"),
+                latest("bb_middle"),
+                latest("bb_lower"),
+            ),
+            "bb_upper": latest("bb_upper"),
+            "bb_middle": latest("bb_middle"),
+            "bb_lower": latest("bb_lower"),
+        }
+        for period in sorted(sma_periods):
+            indicators[f"SMA_{period}"] = latest(f"sma_{period}")
+        for period in sorted(ema_periods):
+            indicators[f"EMA_{period}"] = latest(f"ema_{period}")
+
         return indicators
     
     async def _can_open_position(self, symbol: str) -> bool:
@@ -672,6 +1090,41 @@ class MultiSymbolOrchestrator:
             return macro.forex_eur_bias
         # Unknown — no bias
         return 0.0
+
+    @staticmethod
+    def _normalize_risk_capped_lot_size(
+        candidate_size: float,
+        risk_approved_size: float,
+        symbol_info: Optional[Dict[str, Any]],
+    ) -> tuple[float, str]:
+        if not isinstance(symbol_info, dict):
+            return 0.0, "broker volume specifications are unavailable"
+
+        try:
+            candidate = float(candidate_size)
+            approved = float(risk_approved_size)
+            min_lot = float(symbol_info.get("volume_min") or 0.0)
+            volume_step = float(symbol_info.get("volume_step") or min_lot)
+            max_lot = float(symbol_info.get("volume_max") or approved)
+        except (TypeError, ValueError):
+            return 0.0, "broker volume specifications are invalid"
+
+        values = (candidate, approved, min_lot, volume_step, max_lot)
+        if not all(math.isfinite(value) for value in values):
+            return 0.0, "position size or broker volume specifications are not finite"
+        if candidate <= 0 or approved <= 0:
+            return 0.0, "position size is not positive"
+        if min_lot <= 0 or volume_step <= 0 or max_lot <= 0:
+            return 0.0, "broker minimum, step, and maximum volumes must be positive"
+
+        volume = min(candidate, approved, max_lot)
+        volume = math.floor((volume + 1e-12) / volume_step) * volume_step
+        volume = round(volume, 8)
+        if volume + 1e-12 < min_lot:
+            return 0.0, (
+                f"risk-adjusted volume is below broker minimum {min_lot:g}"
+            )
+        return volume, ""
     
     async def _execute_signal(self, scored: ScoredSignal) -> bool:
         """Execute a scored signal with portfolio-aware risk sizing."""
@@ -681,61 +1134,178 @@ class MultiSymbolOrchestrator:
             # Risk evaluation
             risk_result = self.components.risk_evaluator.evaluate(signal)
             
-            if not risk_result['approved']:
-                logger.info(f"{scored.symbol}: Risk rejected: {risk_result['reason']}")
+            if not isinstance(risk_result, dict):
+                logger.error("%s: Risk evaluator returned an invalid result", scored.symbol)
                 return False
-            
-            lot_size = risk_result['lot_size']
+
+            if not risk_result.get('approved'):
+                logger.info(
+                    "%s: Risk rejected: %s",
+                    scored.symbol,
+                    risk_result.get('reason', 'no reason provided'),
+                )
+                return False
+
+            try:
+                risk_approved_size = float(risk_result['lot_size'])
+            except (KeyError, TypeError, ValueError):
+                logger.error(
+                    "%s: Risk evaluator returned an invalid approved lot size",
+                    scored.symbol,
+                )
+                return False
+            if not math.isfinite(risk_approved_size) or risk_approved_size <= 0:
+                logger.error(
+                    "%s: Risk evaluator approved a non-positive or invalid lot size",
+                    scored.symbol,
+                )
+                return False
+            try:
+                session_multiplier = float(signal.get('session_multiplier', 1.0))
+            except (TypeError, ValueError):
+                logger.error("%s: Invalid session size multiplier", scored.symbol)
+                return False
+            if not math.isfinite(session_multiplier) or session_multiplier < 0:
+                logger.error("%s: Invalid session size multiplier", scored.symbol)
+                return False
+            if session_multiplier == 0:
+                logger.info("%s: Session sizing multiplier is zero; skipping trade", scored.symbol)
+                return False
+
+            lot_size = risk_approved_size
+            account_info = None
+            account_balance = None
+            account_equity = None
+            drawdown_manager = getattr(self.components, "adaptive_drawdown_manager", None)
+            if self._sizer or drawdown_manager:
+                try:
+                    account_info = self.components.mt5_connector.get_account_info()
+                    if not isinstance(account_info, dict):
+                        raise ValueError("account information is unavailable")
+                    account_balance = float(account_info.get("balance") or 0.0)
+                    account_equity = float(account_info.get("equity") or 0.0)
+                    if (
+                        not math.isfinite(account_balance)
+                        or not math.isfinite(account_equity)
+                        or account_balance <= 0
+                        or account_equity <= 0
+                    ):
+                        raise ValueError("account balance and equity must be positive")
+                except Exception:
+                    logger.exception(
+                        "%s: Cannot retrieve valid account equity for risk sizing",
+                        scored.symbol,
+                    )
+                    return False
             
             # Intelligent sizing (Phase 4) — replaces simple lot_size_override
             if self._sizer:
+                sym_ctx = self.symbols.get(scored.symbol)
+                atr = sym_ctx.indicators.get('ATR', 0) if sym_ctx else 0
+                macro_conf = (
+                    self._current_macro_snapshot.confidence
+                    if self._current_macro_snapshot
+                    else 0.5
+                )
                 try:
-                    acct = self.components.mt5_connector.get_account_info()
-                    sym_ctx = self.symbols.get(scored.symbol)
-                    atr = sym_ctx.indicators.get('ATR', 0) if sym_ctx else 0
-                    macro_conf = (self._current_macro_snapshot.confidence 
-                                 if self._current_macro_snapshot else 0.5)
-                    session_mult = signal.get('session_multiplier', 1.0)
-                    
-                    lot_size = self._sizer.calculate_lot_size(
+                    candidate_size = self._sizer.calculate_lot_size(
                         symbol=scored.symbol,
-                        account_balance=acct.get('balance', 0),
+                        account_balance=account_equity,
                         atr=atr,
                         signal_confidence=signal.get('confidence', 0.5),
-                        session_multiplier=session_mult,
+                        session_multiplier=session_multiplier,
                         macro_confidence=macro_conf,
-                        leverage=acct.get('leverage', 1000),
+                        leverage=account_info.get('leverage', 1000),
                     )
-                except Exception as e:
-                    logger.debug(f"Intelligent sizing failed, using risk evaluator size: {e}")
-                    # Fall back to per-symbol override
+                    candidate_size = float(candidate_size)
+                    if not math.isfinite(candidate_size) or candidate_size <= 0:
+                        logger.error(
+                            "%s: Intelligent sizer returned an invalid lot size",
+                            scored.symbol,
+                        )
+                        return False
+                    lot_size = min(lot_size, candidate_size)
+                except Exception:
+                    logger.exception(
+                        "%s: Intelligent sizing failed; retaining the risk-approved size",
+                        scored.symbol,
+                    )
                     sym_ctx = self.symbols.get(scored.symbol)
-                    if sym_ctx and sym_ctx.lot_size_override:
-                        lot_size = sym_ctx.lot_size_override
+                    if sym_ctx and sym_ctx.lot_size_override is not None:
+                        try:
+                            override = float(sym_ctx.lot_size_override)
+                        except (TypeError, ValueError):
+                            logger.error(
+                                "%s: Invalid per-symbol lot size override",
+                                scored.symbol,
+                            )
+                            return False
+                        if not math.isfinite(override) or override < 0:
+                            logger.error(
+                                "%s: Invalid per-symbol lot size override",
+                                scored.symbol,
+                            )
+                            return False
+                        if override > 0:
+                            lot_size = min(lot_size, override)
+                    lot_size = min(lot_size, lot_size * session_multiplier)
             else:
                 # Fallback: per-symbol lot size override
                 sym_ctx = self.symbols.get(scored.symbol)
-                if sym_ctx and sym_ctx.lot_size_override:
-                    lot_size = sym_ctx.lot_size_override
-                
-                # Session-based size adjustment (Phase 3 fallback)
-                session_mult = signal.get('session_multiplier', 1.0)
-                if session_mult < 1.0:
-                    lot_size = max(0.01, lot_size * session_mult)
+                if sym_ctx and sym_ctx.lot_size_override is not None:
+                    try:
+                        override = float(sym_ctx.lot_size_override)
+                    except (TypeError, ValueError):
+                        logger.error("%s: Invalid per-symbol lot size override", scored.symbol)
+                        return False
+                    if not math.isfinite(override) or override < 0:
+                        logger.error("%s: Invalid per-symbol lot size override", scored.symbol)
+                        return False
+                    if override > 0:
+                        lot_size = min(lot_size, override)
+                lot_size = min(lot_size, lot_size * session_multiplier)
             
             # Adaptive drawdown adjustment (always applies as final safety)
-            if self.components.adaptive_drawdown_manager:
+            if drawdown_manager:
                 try:
-                    acct = self.components.mt5_connector.get_account_info()
-                    balance = acct.get('balance', 0) or acct.get('equity', 0)
-                    if balance > 0:
-                        dd_state = self.components.adaptive_drawdown_manager.update(balance)
-                        if dd_state.get('recommendation') == 'REDUCE_RISK':
-                            lot_size = self.components.adaptive_drawdown_manager.get_adjusted_lot_size(
-                                lot_size, balance
-                            )
+                    dd_settings = drawdown_manager.update(
+                        account_balance, account_equity
+                    )
+                    if not dd_settings.allow_new_trades:
+                        logger.info(
+                            "%s: Adaptive drawdown manager blocked new trades",
+                            scored.symbol,
+                        )
+                        return False
+                    dd_multiplier = float(dd_settings.position_size_multiplier)
+                    if not math.isfinite(dd_multiplier) or dd_multiplier < 0:
+                        logger.error(
+                            "%s: Adaptive drawdown manager returned an invalid size multiplier",
+                            scored.symbol,
+                        )
+                        return False
+                    lot_size = min(lot_size, lot_size * dd_multiplier)
                 except Exception:
-                    pass
+                    logger.exception(
+                        "%s: Adaptive drawdown sizing failed; rejecting the trade",
+                        scored.symbol,
+                    )
+                    return False
+
+            try:
+                symbol_info = self.components.mt5_connector.get_symbol_info(scored.symbol)
+            except Exception:
+                logger.exception(
+                    "%s: Cannot retrieve broker volume specifications",
+                    scored.symbol,
+                )
+                return False
+            lot_size, sizing_error = self._normalize_risk_capped_lot_size(
+                lot_size, risk_approved_size, symbol_info
+            )
+            if lot_size <= 0:
+                logger.info("%s: Risk sizing rejected trade: %s", scored.symbol, sizing_error)
+                return False
             
             logger.info(f"🎯 EXECUTING: {signal.get('direction','?').upper()} {scored.symbol} "
                        f"| lots={lot_size:.2f} | score={scored.score:.2f} "
@@ -751,9 +1321,19 @@ class MultiSymbolOrchestrator:
                            f"Price: {result['price']} | Volume: {result['volume']}")
                 
                 # Register trade
-                self.components.trade_manager.register_trade(
+                registered = self.components.trade_manager.register_trade(
                     ticket=result['ticket'], signal=signal, result=result
                 )
+                if registered is False:
+                    self._execution_halt_reason = (
+                        f"Filled position {result['ticket']} could not be tracked"
+                    )
+                    logger.critical(
+                        "%s: %s; halting new trades",
+                        scored.symbol,
+                        self._execution_halt_reason,
+                    )
+                    return False
                 
                 # Apply initial SL/TP
                 await self._apply_sltp(result['ticket'], signal, scored.symbol)
@@ -926,13 +1506,7 @@ class MultiSymbolOrchestrator:
             except (TypeError, ValueError):
                 pass
 
-        from cthulu.connector.mt5_connector import mt5
-
-        timeframe = self.timeframe
-        if isinstance(timeframe, str):
-            timeframe = getattr(mt5, f"TIMEFRAME_{timeframe.upper()}", None)
-        if timeframe is None:
-            raise ValueError(f"Unsupported timeframe for position {position.ticket}: {self.timeframe}")
+        timeframe = _resolve_mt5_timeframe(self.timeframe)
         rates = self.components.connector.get_rates(position.symbol, timeframe, 200)
         if not rates:
             return None
@@ -949,6 +1523,10 @@ class MultiSymbolOrchestrator:
         """Evaluate exit conditions for ALL positions."""
         try:
             positions = self.components.trade_manager.get_all_positions()
+            exit_coordinator = getattr(self.components, "exit_coordinator", None)
+            if exit_coordinator is None:
+                logger.error("Exit coordinator is unavailable; skipping strategy exits")
+                return
             
             for position in positions:
                 ctx = self._get_symbol_context(position.symbol)
@@ -956,36 +1534,62 @@ class MultiSymbolOrchestrator:
                     current_price = ctx.market_data['close'].iloc[-1]
                     indicators = ctx.indicators
                 else:
-                    current_price = position.price_open  # Fallback
+                    current_price = (
+                        getattr(position, "current_price", None)
+                        or getattr(position, "open_price", None)
+                        or getattr(position, "price_open", 0.0)
+                    )
                     indicators = {}
                 
-                exit_signal = self.components.exit_coordinator.evaluate(
+                exit_signal = exit_coordinator.evaluate(
                     position=position,
                     current_price=current_price,
                     indicators=indicators
                 )
                 
+                if exit_signal is None:
+                    continue
                 if exit_signal.should_exit:
                     logger.info(f"🚪 Exit signal for {position.symbol} #{position.ticket}: {exit_signal.reason}")
-                    self.components.execution_engine.close_position(
+                    closed = self.components.execution_engine.close_position(
                         ticket=position.ticket, reason=exit_signal.reason
                     )
-                    self.components.dynamic_sltp_manager.cleanup_position(position.ticket)
+                    if not closed:
+                        continue
+                    dynamic_sltp_manager = getattr(self.components, "dynamic_sltp_manager", None)
+                    if dynamic_sltp_manager:
+                        dynamic_sltp_manager.cleanup_position(position.ticket)
                     
                     # Update consecutive loss tracking
                     sym_ctx = self._get_symbol_context(position.symbol)
+                    profit = self._position_profit(position)
                     if sym_ctx:
-                        if position.profit < 0:
+                        if profit < 0:
                             sym_ctx.consecutive_losses += 1
                         else:
                             sym_ctx.consecutive_losses = 0
                     
                     # Record trade result for intelligent sizing (Phase 4)
                     if self._sizer:
-                        self._sizer.record_trade_result(position.symbol, position.profit)
+                        self._sizer.record_trade_result(position.symbol, profit)
                     
         except Exception as e:
             logger.error(f"Exit evaluation error: {e}")
+
+    @staticmethod
+    def _position_profit(position) -> float:
+        profit = getattr(position, "profit", None)
+        if profit is None:
+            profit = getattr(position, "unrealized_pnl", None)
+        if profit is None:
+            calculate_profit = getattr(position, "calculate_unrealized_pnl", None)
+            if callable(calculate_profit):
+                profit = calculate_profit()
+        try:
+            value = float(profit or 0.0)
+            return value if math.isfinite(value) else 0.0
+        except (TypeError, ValueError):
+            return 0.0
     
     async def _scan_adoptions(self):
         """Scan for and adopt external trades."""
@@ -1002,12 +1606,12 @@ class MultiSymbolOrchestrator:
             acct = self.components.mt5_connector.get_account_info()
             positions = self.components.trade_manager.get_all_positions()
             
-            total_pnl = sum(p.profit for p in positions)
+            total_pnl = sum(self._position_profit(position) for position in positions)
             symbols_traded = set(p.symbol for p in positions)
             
             daily_pnl = 0
-            if self._daily_start_balance > 0:
-                daily_pnl = acct.get('equity', 0) - self._daily_start_balance
+            if self._daily_start_equity > 0:
+                daily_pnl = acct.get('equity', 0) - self._daily_start_equity
             
             macro_str = ""
             if self._current_macro_snapshot:

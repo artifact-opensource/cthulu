@@ -7,7 +7,7 @@ $projectRoot = [System.IO.Path]::GetFullPath($PSScriptRoot)
 $killSwitchPath = Join-Path $projectRoot '.cthulu.killswitch'
 $lockPath = Join-Path $projectRoot 'cthulu.lock'
 $venvPython = [System.IO.Path]::GetFullPath((Join-Path $projectRoot '.venv\Scripts\python.exe'))
-$legacyPattern = '(?i)(?:^|\s)-m\s+cthulu(?:\s|$)'
+$legacyPattern = '(?i)(?:(?:^|\s)-m\s+cthulu(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
 $agentPattern = '(?i)(?:^|\s)-m\s+cthulu_agent(?:\s|$)'
 
 function Get-ProcessOwner([object]$Process) {

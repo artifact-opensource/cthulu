@@ -23,6 +23,10 @@ version: 6.0.0
 - **Momentum-Aware Scaling**: Profit scaler detects momentum to let winners run
 - **Drawdown Halt**: Automatic trading halt at configurable drawdown threshold
 
+### Small-balance floor
+
+The default $10 minimum-balance/free-margin floor activates only after an MT5 account first reaches a $10 balance. The activation is persisted per server/login; once active, a balance or free margin below the threshold blocks new trades. Non-positive balance, equity, or free margin always blocks new trades. Trading below $10 still depends on the configured risk budget and the broker's minimum volume.
+
 ### Configuration
 
 Key configuration entries (in `config.json` under `risk`):

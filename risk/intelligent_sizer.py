@@ -172,9 +172,9 @@ class IntelligentSizer:
         sizer.record_trade_result('GOLDm#', pnl=3.50)
     """
 
-    # ── Balance → max-lot table (linear interpolation between tiers) ──
-    _BALANCE_TIERS = [
-        #  (balance_usd, max_lot)
+    # ── Equity → max-lot table (linear interpolation between tiers) ──
+    _EQUITY_TIERS = [
+        #  (equity_usd, max_lot)
         (0,    0.01),
         (50,   0.05),
         (100,  0.10),
@@ -229,10 +229,11 @@ class IntelligentSizer:
             leverage:           Account leverage ratio
 
         Returns:
-            Lot size (float, ≥ min_lot, ≤ balance-scaled max)
+            Lot size (float, ≥ min_lot, ≤ equity-scaled max)
         """
         perf = self._performance.get(symbol)
-        max_lot = self._max_lot_for_balance(account_balance)
+        account_equity = account_balance
+        max_lot = self._max_lot_for_equity(account_equity)
 
         # ── Step 1: Anti-martingale guard ─────────────────────────────
         if perf and perf.consecutive_losses >= self.anti_martingale_streak:
@@ -243,7 +244,7 @@ class IntelligentSizer:
 
         # ── Step 2: Base risk amount ─────────────────────────────────
         risk_pct = self.base_risk_pct / 100.0
-        risk_amount = account_balance * risk_pct
+        risk_amount = account_equity * risk_pct
 
         # ── Step 3: Kelly multiplier (if enough history) ─────────────
         kelly_mult = 1.0
@@ -274,13 +275,13 @@ class IntelligentSizer:
         )
 
         # ── Step 6: Convert risk → lot size ──────────────────────────
-        if atr > 0 and account_balance > 0:
+        if atr > 0 and account_equity > 0:
             # SL ≈ 2 × ATR; risk_per_lot ≈ sl_distance
             sl_distance = atr * 2.0
             lot_size = adjusted_risk / max(sl_distance, 0.01)
         else:
-            # Fallback: fraction of balance / 1000 (micro-lot land)
-            lot_size = adjusted_risk / max(account_balance * 0.1, 1.0)
+            # Fallback: fraction of equity / 1000 (micro-lot land)
+            lot_size = adjusted_risk / max(account_equity * 0.1, 1.0)
 
         # ── Step 7: Clamp ────────────────────────────────────────────
         lot_size = max(self.min_lot, min(max_lot, lot_size))
@@ -332,30 +333,34 @@ class IntelligentSizer:
         f = (p * avg_win - q * avg_loss) / avg_win
         return f
 
-    # ── Balance-scaled max lot ───────────────────────────────────────
+    # ── Equity-scaled max lot ────────────────────────────────────────
 
     @classmethod
-    def _max_lot_for_balance(cls, balance: float) -> float:
+    def _max_lot_for_equity(cls, equity: float) -> float:
         """
-        Interpolate max lot from the balance tier table.
+        Interpolate max lot from the equity tier table.
 
         $50 → 0.05, $100 → 0.10, $500 → 0.50, etc.
         Below $50 → 0.01.
         """
-        tiers = cls._BALANCE_TIERS
-        if balance <= 0:
+        tiers = cls._EQUITY_TIERS
+        if equity <= 0:
             return 0.01
 
         # Below first tier
-        if balance <= tiers[0][0]:
+        if equity <= tiers[0][0]:
             return tiers[0][1]
 
         # Linear interpolation
         for i in range(1, len(tiers)):
-            lo_bal, lo_lot = tiers[i - 1]
-            hi_bal, hi_lot = tiers[i]
-            if balance <= hi_bal:
-                frac = (balance - lo_bal) / (hi_bal - lo_bal) if hi_bal != lo_bal else 0
+            lo_equity, lo_lot = tiers[i - 1]
+            hi_equity, hi_lot = tiers[i]
+            if equity <= hi_equity:
+                frac = (
+                    (equity - lo_equity) / (hi_equity - lo_equity)
+                    if hi_equity != lo_equity
+                    else 0
+                )
                 return round(lo_lot + frac * (hi_lot - lo_lot), 2)
 
         # Above last tier — cap at last entry

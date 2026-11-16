@@ -52,7 +52,7 @@ The wizard requires an MT5 account number, password, and broker server. An MT5 t
 
 Risk inputs are percentages of account equity. The defaults are **0.5% maximum risk per trade**, **2% daily-loss stop**, **10% drawdown halt**, and **3 maximum simultaneous positions**. A daily-loss or drawdown value of `0` disables that stop.
 
-The Agent LLM overlay is optional. When enabled, enter a Cloudflare account ID, AI Gateway ID (defaults to `default`), API token, and model. The default model is `@cf/qwen/qwen3-30b-a3b-fp8`; the base URL may be left blank. Model availability and pricing can change; check [Cloudflare Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/).
+The Agent LLM overlay is optional. When enabled, enter a Cloudflare account ID, AI Gateway ID (defaults to `default`), API token, and model. The default model is `@cf/ibm-granite/granite-4.0-h-micro`, currently listed at $0.017/M input and $0.112/M output tokens; the base URL may be left blank. Workers AI's 10,000-Neuron daily free allocation is shared across the account and can be exhausted. Model availability and pricing can change; check [Cloudflare Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/).
 
 Setup writes `config.json`, `config_multi.json`, the root `.env`, and `cthulu_agent\.env.agent`. The environment files contain secrets and are ACL-restricted to the current Windows user and LocalSystem; they are not encrypted. Never commit or share them.
 
@@ -77,10 +77,12 @@ Double-click `Cthulu Launcher.bat` (or the installed **Cthulu Launcher** shortcu
 | Choice | Configuration and behavior |
 |---|---|
 | **Single** | Uses `config.json`. |
-| **Multi** | Uses `config_multi.json`; the Legacy engine uses its configured ultra-aggressive mindset for this launcher mode. |
+| **Multi** | Uses `config_multi.json` and its configured portfolio/risk limits; the launcher does not apply an ultra-aggressive mindset override. |
 | **HFT** | Uses `config.json`, M1 data, and broker-universe scanning. HFT runs only after a safety preflight. It is available under either execution choice: select **Agentic**, then **HFT**, to enable Agent trading in HFT mode. |
 
 **HFT is a live-account mode in the current launcher:** preflight requires a real MT5 account with trading enabled, tradable symbols, protected existing positions/orders, no more than 10 active orders, and calculated aggregate stop risk at or below 5%. A demo account is rejected by this preflight. The HFT Agent profile caps risk at 1% per entry, 5% aggregate open risk, and 10 active orders; configured risk limits may be stricter. HFT does not disable the configured Agent daily-loss or drawdown halts.
+
+By default, the $10 minimum-balance/free-margin floor activates only after an MT5 account first reaches a $10 balance. Activation is persisted per server/login; after activation, a balance or free margin below the threshold blocks new trades. Non-positive balance, equity, or free margin always blocks new trades, and sub-$10 trading still depends on configured risk sizing and the broker's minimum volume.
 
 ## Dashboard, restart, and kill switch
 

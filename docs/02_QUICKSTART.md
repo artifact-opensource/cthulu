@@ -63,7 +63,7 @@ The Agent LLM overlay is optional. To configure it during setup, enable the Clou
 - Cloudflare account ID
 - AI Gateway ID (default: `default`)
 - Cloudflare API token
-- Model (default: `@cf/qwen/qwen3-30b-a3b-fp8`)
+- Model (default: `@cf/ibm-granite/granite-4.0-h-micro`)
 - Optional base URL override (leave blank to use the account default)
 
 The wizard stores Legacy settings in `config.json`, `config_multi.json`, and the root `.env`; Agent settings and the optional LLM key are stored in `cthulu_agent\.env.agent`. Windows ACLs restrict those environment files to the current user and LocalSystem, but the values are not encrypted. Do not commit or share them.
@@ -84,7 +84,7 @@ The two menu choices are independent:
 | Execution | **Agentic** | Starts the Legacy engine and Agent runtime together. Both may act under their separate risk checks. |
 | Execution | **Legacy** | Legacy is the active trading owner. The Agent dashboard runtime starts, but Agent order placement and management are blocked. |
 | Trading | **Single** | Uses `config.json`. |
-| Trading | **Multi** | Uses `config_multi.json`; the Legacy engine uses the configured ultra-aggressive mindset for this launcher mode. |
+| Trading | **Multi** | Uses `config_multi.json` and its configured portfolio/risk limits; the launcher does not apply an ultra-aggressive mindset override. |
 | Trading | **HFT** | Uses `config.json`, M1 data, and broker-universe scanning after a safety preflight. Choose Agentic first if Agent trading should be active in HFT. |
 
 ### HFT preflight and risk

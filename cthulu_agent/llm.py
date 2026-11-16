@@ -1,7 +1,7 @@
 """Provider-agnostic LLM layer.
 
 Providers (all configurable from the dashboard, persisted to .env, hot-swappable):
-  cloudflare  Cloudflare AI Gateway (Workers AI), the default (model: @cf/qwen/qwen3-30b-a3b-fp8)
+  cloudflare  Cloudflare AI Gateway (Workers AI), the default (Granite 4.0 H-Micro)
   openrouter  OpenAI-style API
   openai      any OpenAI-compatible endpoint (OpenAI, Ollama, LM Studio, Together, Groq...)
   anthropic   Anthropic Messages API (or a compatible proxy)
@@ -31,10 +31,10 @@ from . import envfile
 
 PROVIDERS: Dict[str, Dict[str, str]] = {
     "cloudflare": {"label": "Cloudflare AI Gateway", "kind": "openai", "base_url": "",
-                   "model": "@cf/qwen/qwen3-30b-a3b-fp8", "key_env": "CLOUDFLARE_API_KEY",
+                   "model": "@cf/ibm-granite/granite-4.0-h-micro", "key_env": "CLOUDFLARE_API_KEY",
                    "base_env": "CLOUDFLARE_BASE_URL", "model_env": "CLOUDFLARE_MODEL",
                    "account_env": "CLOUDFLARE_ACCOUNT_ID", "gateway_env": "CLOUDFLARE_AI_GATEWAY_ID",
-                   "hint": "Workers AI via AI Gateway. Qwen3 30B-A3B is a low-cost agentic option."},
+                   "hint": "Workers AI via AI Gateway. Granite 4.0 H-Micro is a low-cost agentic option."},
     "openrouter": {"label": "OpenRouter", "kind": "openai", "base_url": "https://openrouter.ai/api/v1",
                    "model": "openrouter/free", "key_env": "OPENROUTER_API_KEY", "base_env": "OPENROUTER_BASE_URL",
                    "model_env": "OPENROUTER_MODEL", "hint": "One key, hundreds of models. Free tier works without credits."},

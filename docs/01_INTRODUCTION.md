@@ -30,7 +30,7 @@ The Agent may manage broker positions beyond those it opened, including position
 | Choice | Configuration | Behavior |
 |---|---|---|
 | **Single** | `config.json` | Runs the standard single-symbol configuration. |
-| **Multi** | `config_multi.json` | Runs the multi-symbol configuration; the launcher selects the configured ultra-aggressive Legacy mindset. |
+| **Multi** | `config_multi.json` | Runs the multi-symbol configuration with its configured portfolio and risk limits; the launcher does not override the mindset. |
 | **HFT** | `config.json` | Uses M1 data and broker-universe scanning after an HFT safety preflight. |
 
 Current HFT preflight requires a real MT5 account with trading enabled, tradable symbols, stop protection on existing positions and orders, no more than 10 active orders, and calculated aggregate stop risk at or below 5%. The preflight rejects demo accounts. The HFT Agent profile caps risk at 1% per entry, 5% aggregate open risk, and 10 active orders; configured limits may be stricter. Configured daily-loss and drawdown halts remain active.
@@ -49,7 +49,7 @@ The setup wizard requires an MT5 account number, password, and broker server. It
 
 Default risk values are 0.5% maximum risk per trade, 2% daily-loss stop, 10% drawdown halt, and 3 maximum simultaneous positions. Daily-loss and drawdown values of `0` disable the corresponding stop.
 
-The optional Agent LLM integration uses Cloudflare AI Gateway. The default model is `@cf/qwen/qwen3-30b-a3b-fp8`; the account ID, gateway ID, API token, model, and optional base URL are entered in the wizard or Agent Settings.
+The optional Agent LLM integration uses Cloudflare AI Gateway. The default model is `@cf/ibm-granite/granite-4.0-h-micro`; the account ID, gateway ID, API token, model, and optional base URL are entered in the wizard or Agent Settings.
 
 The wizard writes `LIVE_RUN_CONFIRM=1` into the Agent environment. Agent autonomy defaults to `autonomous`; therefore, a later Agentic launch can place live orders without a separate per-order confirmation. Use a demo account for Single/Multi testing and change the autonomy/confirmation settings if autonomous live order placement is not intended. Current HFT preflight requires a real account.
 

@@ -14,8 +14,8 @@ $lockPath = Join-Path $projectRoot 'cthulu.lock'
 $venvPython = [System.IO.Path]::GetFullPath(
     (Join-Path $projectRoot '.venv\Scripts\python.exe')
 )
-$modulePattern = '(?i)(?:^|\s)-m\s+cthulu(?:\s|$)'
-$managedModulePattern = '(?i)(?:^|\s)-m\s+(?:cthulu|cthulu_agent)(?:\s|$)'
+$modulePattern = '(?i)(?:(?:^|\s)-m\s+cthulu(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
+$managedModulePattern = '(?i)(?:(?:^|\s)-m\s+(?:cthulu|cthulu_agent)(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
 
 if ($Stop) {
     & (Join-Path $projectRoot 'cthulu_killswitch.ps1') -Preview:$Preview
@@ -241,9 +241,10 @@ if ($Mode) {
     $engineErr = Join-Path $logsDirectory "Cthulu_$timestamp.err.log"
     $supervisor = Join-Path $projectRoot 'cthulu_agent_supervisor.ps1'
 
-    $engineArguments = @('-u', '-m', 'cthulu', '--config', "`"$configPath`"", '--skip-setup')
     if ($Config -eq 'config_multi.json') {
-        $engineArguments += @('--mindset', 'ultra_aggressive')
+        $engineArguments = @('-u', 'main_multi.py', '--config', "`"$configPath`"")
+    } else {
+        $engineArguments = @('-u', '-m', 'cthulu', '--config', "`"$configPath`"", '--skip-setup')
     }
     $previousExecutionModeFile = [Environment]::GetEnvironmentVariable('CTHULU_EXECUTION_MODE_FILE', 'Process')
     [Environment]::SetEnvironmentVariable('CTHULU_EXECUTION_MODE_FILE', $rootEnvPath, 'Process')
@@ -259,6 +260,11 @@ if ($Mode) {
             -RedirectStandardOutput $engineOut `
             -RedirectStandardError $engineErr `
             -PassThru
+
+        Start-Sleep -Seconds 2
+        if (-not (Get-Process -Id $engine.Id -ErrorAction SilentlyContinue)) {
+            throw "Cthulu engine exited during startup. Check '$engineErr' for details."
+        }
 
         $supervisorArguments = @(
             '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$supervisor`"",

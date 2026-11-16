@@ -34,7 +34,7 @@ Select **Agentic** or **Legacy** first, then **Single**, **Multi**, or **HFT**:
 - **Agentic** runs the Legacy engine and Agent runtime together. Each has its own risk checks.
 - **Legacy** keeps the Legacy engine as the trader. The Agent dashboard starts, but Agent order placement and management are blocked.
 - **Single** uses `config.json`.
-- **Multi** uses `config_multi.json` and the configured ultra-aggressive Legacy mindset.
+- **Multi** uses `config_multi.json` and its configured portfolio/risk limits without a launcher-imposed mindset override.
 - **HFT** uses `config.json`, M1 data, and broker-universe scanning after a safety preflight. It can be selected under either execution mode.
 
 The current HFT preflight is live-account-only. It requires trading permission, available tradable symbols, stop protection on existing orders and positions, at most 10 active orders, and aggregate stop risk no higher than 5%. The HFT Agent profile caps risk at 1% per entry, 5% aggregate open risk, and 10 active orders; configured limits may be stricter. Configured Agent daily-loss and drawdown halts are not disabled by HFT. HFT is not a demo-account test mode.

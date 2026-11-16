@@ -816,7 +816,12 @@ class CthuluBootstrap:
         # Initialize higher-level position manager used by trading loop monitoring
         position_manager = self.initialize_position_manager(connector, execution_engine, context_symbol=trading_symbol)
         # Now we can construct the risk evaluator with the connector and position tracker
-        risk_manager = RiskEvaluator(connector, position_tracker, limits=risk_limits)
+        risk_manager = RiskEvaluator(
+            connector,
+            position_tracker,
+            limits=risk_limits,
+            state_store=database,
+        )
         self.logger.info('RiskEvaluator initialized with runtime dependencies')
         
         position_lifecycle = self.initialize_position_lifecycle(connector, execution_engine, position_tracker, database)

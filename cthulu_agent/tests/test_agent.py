@@ -62,7 +62,7 @@ class LLMTests(unittest.TestCase):
             self.assertEqual(self.m.active_provider(), "cloudflare")
             c = self.m.provider_config("cloudflare")
             self.assertEqual(c["base_url"], "")
-            self.assertEqual(c["model"], "@cf/qwen/qwen3-30b-a3b-fp8")
+            self.assertEqual(c["model"], "@cf/ibm-granite/granite-4.0-h-micro")
         finally:
             os.environ.update({k: v for k, v in saved.items() if v is not None})
 

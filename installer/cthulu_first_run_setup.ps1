@@ -491,7 +491,7 @@ $script:LlmBaseUrlTextBox = New-FormTextBox -X 16 -Y 220 -Width 700
 $agentTab.Controls.Add($script:LlmBaseUrlTextBox)
 $agentTab.Controls.Add((New-FormLabel -Text 'Model *' -X 16 -Y 254 -Width 700))
 $script:LlmModelTextBox = New-FormTextBox -X 16 -Y 276 -Width 700
-$script:LlmModelTextBox.Text = '@cf/qwen/qwen3-30b-a3b-fp8'
+$script:LlmModelTextBox.Text = '@cf/ibm-granite/granite-4.0-h-micro'
 $agentTab.Controls.Add($script:LlmModelTextBox)
 
 $script:ConfigureLlmCheckBox.Add_CheckedChanged({

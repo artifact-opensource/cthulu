@@ -243,6 +243,7 @@ And/or in `config.json`:
 {
   "discord": {
     "enabled": true,
+    "alert_on_signals": true,
     "notify_trades": true,
     "notify_adoptions": true,
     "notify_risk": true,
@@ -267,12 +268,13 @@ And/or in `config.json`:
 
 #### Signals Channel
 - **Signal Quality**: High-confidence setups detected
+- **Multi-symbol signal candidates**: Strategy-generated candidates are queued when `discord.enabled` and `discord.alert_on_signals` are true; these alerts are not execution confirmations.
 - **Regime Change**: Market condition shifts (trending→ranging)
 - **Milestones**: Profit targets hit, new highs
 
 ### Event Bus Integration
 
-Discord notifications are automatically triggered via the `TradeEventBus`. When events occur:
+Trade lifecycle and risk notifications are triggered via the `TradeEventBus`. Signal candidates are queued by the active analysis loop, including Multi-symbol candidates when `discord.alert_on_signals` is enabled. When a bus event occurs:
 
 1. Event published to bus (e.g., `TRADE_CLOSED`)
 2. `DiscordEventSubscriber` receives event
