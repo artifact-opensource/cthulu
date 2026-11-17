@@ -11,6 +11,7 @@ import traceback
 import inspect
 import json
 import os
+import time
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -129,6 +130,7 @@ class ExecutionEngine:
     
     # Absolute hard cap - no configuration can exceed this
     MAX_CONFIGURABLE_SL_PCT = 0.15  # 15% absolute maximum (hard cap)
+    MARKET_CLOSED_RETRY_SECONDS = 120
     
     def __init__(self, connector, magic_number: int = None, slippage: int = 10, risk_config: Optional[Dict[str, Any]] = None, metrics=None, ml_collector=None, telemetry=None):
         """
@@ -158,6 +160,7 @@ class ExecutionEngine:
         self._submitted_orders: Dict[str, int] = {}
         # Max size to avoid unbounded growth; old entries will be pruned
         self._idempotency_max = 1000
+        self._market_closed_retry_until: Dict[int, float] = {}
         
         # Allow risk_config to override max SL percentage (but cap at hard limit)
         config_max_sl = self.risk_config.get('max_sl_pct', self.MAX_STOP_LOSS_PCT)
@@ -398,6 +401,16 @@ class ExecutionEngine:
             for k, v in request.items():
                 self.logger.debug(f"  {k}: {v} (type={type(v).__name__})")
 
+            if not self.connector.is_connected():
+                return ExecutionResult(
+                    order_id=None,
+                    status=OrderStatus.REJECTED,
+                    executed_price=None,
+                    executed_volume=None,
+                    timestamp=datetime.now(),
+                    error="MT5 connection or configured account identity check failed",
+                )
+
             # Submit order directly - MT5 Python API is NOT thread-safe
             # ThreadPoolExecutor causes "Unnamed arguments not allowed" error
             result = mt5.order_send(request)
@@ -621,6 +634,16 @@ class ExecutionEngine:
             )
 
         try:
+            if not self.connector.is_connected():
+                return ExecutionResult(
+                    order_id=None,
+                    status=OrderStatus.REJECTED,
+                    executed_price=None,
+                    executed_volume=None,
+                    timestamp=datetime.now(),
+                    error="MT5 connection or configured account identity check failed",
+                )
+
             # Get position
             position = mt5.positions_get(ticket=ticket)
             if not position:
@@ -661,6 +684,15 @@ class ExecutionEngine:
             }
             
             # Submit close order
+            if not self.connector.is_connected():
+                return ExecutionResult(
+                    order_id=None,
+                    status=OrderStatus.REJECTED,
+                    executed_price=None,
+                    executed_volume=None,
+                    timestamp=datetime.now(),
+                    error="MT5 connection or configured account identity check failed",
+                )
             result = mt5.order_send(request)
             
             if result and result.retcode == mt5.TRADE_RETCODE_DONE:
@@ -786,6 +818,16 @@ class ExecutionEngine:
             self.logger.error(f"Legacy execute_order failed: {e}", exc_info=True)
             return None
 
+    def is_market_closed_retry_deferred(self, ticket: int) -> bool:
+        """Return whether a market-closed position edit is still in its retry delay."""
+        retry_until = self._market_closed_retry_until.get(ticket)
+        if retry_until is None:
+            return False
+        if time.monotonic() >= retry_until:
+            self._market_closed_retry_until.pop(ticket, None)
+            return False
+        return True
+
     def modify_position(self, ticket: int, sl: Optional[float] = None, 
                        tp: Optional[float] = None) -> bool:
         """
@@ -808,7 +850,18 @@ class ExecutionEngine:
             self.logger.warning("Legacy position modification blocked by execution mode %s.", mode)
             return False
 
+        if self.is_market_closed_retry_deferred(ticket):
+            self.logger.debug(
+                "Skipping position modification for %s during market-closed retry delay",
+                ticket,
+            )
+            return False
+
         try:
+            if not self.connector.is_connected():
+                self.logger.error("MT5 connection or configured account identity check failed")
+                return False
+
             # Get position info
             position = mt5.positions_get(ticket=ticket)
             if not position:
@@ -871,6 +924,9 @@ class ExecutionEngine:
 
             # Submit modification
             self.logger.debug("MT5 modify request for %s: %s", ticket, request)
+            if not self.connector.is_connected():
+                self.logger.error("MT5 connection or configured account identity check failed")
+                return False
             result = mt5.order_send(request)
             # Log result details for diagnosis
             try:
@@ -890,11 +946,23 @@ class ExecutionEngine:
             
             # Consider 'DONE' or broker-specific 'No changes' retcode (10025) as success for idempotency
             if result.retcode == getattr(mt5, 'TRADE_RETCODE_DONE', None) or getattr(result, 'retcode', None) == 10025:
+                self._market_closed_retry_until.pop(ticket, None)
                 if getattr(result, 'retcode', None) == 10025:
                     self.logger.info(f"Position modification returned 'No changes' for {ticket} (retcode={result.retcode}), treating as success")
                 else:
                     self.logger.info(f"Position {ticket} modified: SL={new_sl}, TP={new_tp}")
                 return True
+            elif getattr(result, 'retcode', None) == getattr(mt5, 'TRADE_RETCODE_MARKET_CLOSED', 10018):
+                self._market_closed_retry_until[ticket] = (
+                    time.monotonic() + self.MARKET_CLOSED_RETRY_SECONDS
+                )
+                self.logger.warning(
+                    "MT5 rejected position modification for %s because the market is closed; "
+                    "retrying after %s seconds",
+                    ticket,
+                    self.MARKET_CLOSED_RETRY_SECONDS,
+                )
+                return False
             else:
                 self.logger.error(f"Position modification rejected for {ticket}: {result.retcode} - {getattr(result, 'comment', '')}")
                 return False

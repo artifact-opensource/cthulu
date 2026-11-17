@@ -27,6 +27,10 @@ The Docker, Linux, NSSM, Task Scheduler, and old `python -m Cthulu --no-prompt` 
 
 The wizard installs/checks dependencies and writes local configuration; it does **not** start Cthulu. The repository launcher by itself is not a replacement for the first-run wizard. Build the MSI only when needed; it requires the .NET 8 SDK and `.\installer\Build-Msi.ps1`.
 
+When `MT5_PATH` is set in the project `.env`, both the Legacy engine and Agent use that terminal. The root `.env` MT5 login and server are authoritative for the Agent overlay. If the live terminal account or server differs, broker operations are blocked rather than sent to the unexpected account.
+
+On terminal-health failures, Legacy and Multi retry the configured MT5 session no more often than every 30 seconds. A responsive terminal with an unverified or mismatched account is not automatically switched. Multi blocks new entries while account data is unavailable, retries its daily-limit check, and continues managing open positions.
+
 ## Choose modes
 
 Select **Agentic** or **Legacy** first, then **Single**, **Multi**, or **HFT**:

@@ -180,6 +180,8 @@ class MultiSymbolOrchestrator:
         self._daily_start_equity = 0.0
         self._daily_date = None
         self._daily_loss_halt = False
+        self._daily_tracking_initialized = False
+        self._last_daily_limit_failure = None
         self._execution_halt_reason = None
         
         # Market Intelligence (Phase 2)
@@ -335,7 +337,8 @@ class MultiSymbolOrchestrator:
         """Initialize daily P&L tracking."""
         self._daily_date = datetime.now(timezone.utc).date()
         self._daily_start_equity = 0.0
-        self._daily_loss_halt = True
+        self._daily_loss_halt = False
+        self._daily_tracking_initialized = False
         try:
             acct = self.components.mt5_connector.get_account_info()
             if not isinstance(acct, dict):
@@ -347,11 +350,18 @@ class MultiSymbolOrchestrator:
             if not math.isfinite(start_equity) or start_equity <= 0:
                 raise ValueError("Starting account equity must be positive and finite")
             self._daily_start_equity = start_equity
-            self._daily_loss_halt = False
+            self._daily_tracking_initialized = True
+            self._last_daily_limit_failure = None
             logger.info("Daily tracking initialized: start_equity=$%.2f", start_equity)
             return True
         except Exception as e:
-            logger.exception("Failed to initialize daily tracking: %s", e)
+            failure = str(e) or type(e).__name__
+            if failure != self._last_daily_limit_failure:
+                logger.warning(
+                    "Daily tracking unavailable; blocking new trades: %s",
+                    failure,
+                )
+            self._last_daily_limit_failure = failure
             return False
     
     async def _check_daily_limits(self) -> bool:
@@ -361,7 +371,7 @@ class MultiSymbolOrchestrator:
         today = datetime.now(timezone.utc).date()
         
         # Reset on new day
-        if today != self._daily_date:
+        if today != self._daily_date or not self._daily_tracking_initialized:
             return await self._init_daily_tracking()
         
         if self._daily_loss_halt:
@@ -380,6 +390,7 @@ class MultiSymbolOrchestrator:
             if not math.isfinite(self._daily_start_equity) or self._daily_start_equity <= 0:
                 raise ValueError("Daily starting equity is unavailable")
 
+            self._last_daily_limit_failure = None
             daily_pnl_pct = (
                 (current_equity - self._daily_start_equity)
                 / self._daily_start_equity
@@ -396,8 +407,13 @@ class MultiSymbolOrchestrator:
                 return False
             return True
         except Exception as e:
-            self._daily_loss_halt = True
-            logger.exception("Daily limit check failed; blocking new trades: %s", e)
+            failure = str(e) or type(e).__name__
+            if failure != self._last_daily_limit_failure:
+                logger.warning(
+                    "Daily limit data unavailable; blocking new trades: %s",
+                    failure,
+                )
+            self._last_daily_limit_failure = failure
             return False
     
     async def _execute_cycle(self):
@@ -1341,6 +1357,7 @@ class MultiSymbolOrchestrator:
                 return True
             else:
                 logger.error(f"❌ Order failed for {scored.symbol}: {result.get('error')}")
+                self.components.trade_manager.record_failed_order(scored.symbol)
                 return False
                 
         except Exception as e:

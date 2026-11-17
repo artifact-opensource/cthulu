@@ -12,6 +12,78 @@ import json
 
 class TestExecutionEngine(unittest.TestCase):
     @patch('cthulu.execution.engine.mt5')
+    def test_place_order_blocks_account_switch_before_send(self, mock_mt5):
+        mock_mt5.TRADE_ACTION_DEAL = 1
+        mock_mt5.ORDER_TYPE_BUY = 0
+        mock_mt5.ORDER_TYPE_SELL = 1
+        mock_mt5.ORDER_TIME_GTC = 0
+        mock_mt5.ORDER_FILLING_IOC = 1
+
+        connector = MagicMock()
+        connector.is_connected.side_effect = [True, False]
+        connector.get_min_lot.return_value = None
+        connector.get_symbol_info.return_value = {
+            'ask': 1.2346,
+            'bid': 1.2344,
+            'volume_min': 0.01,
+            'volume_max': 100.0,
+            'volume_step': 0.01,
+        }
+        connector.ensure_symbol_selected.return_value = 'EURUSD'
+        engine = ExecutionEngine(connector=connector)
+        order_req = OrderRequest(
+            signal_id='account-switch',
+            symbol='EURUSD',
+            side='BUY',
+            volume=0.1,
+            order_type=OrderType.MARKET,
+            sl=1.22,
+            tp=1.25,
+        )
+
+        with patch('cthulu.execution.engine.get_execution_mode', return_value='legacy'), \
+                patch('cthulu.execution.engine.legacy_execution_enabled', return_value=True), \
+                patch('cthulu.execution.engine.open', create=True):
+            result = engine.place_order(order_req)
+
+        self.assertEqual(result.status, OrderStatus.REJECTED)
+        self.assertEqual(result.error, "MT5 connection or configured account identity check failed")
+        mock_mt5.order_send.assert_not_called()
+
+    @patch('cthulu.execution.engine.mt5')
+    def test_market_closed_position_modification_is_deferred(self, mock_mt5):
+        mock_mt5.TRADE_ACTION_SLTP = 6
+        mock_mt5.TRADE_RETCODE_DONE = 10009
+        mock_mt5.TRADE_RETCODE_MARKET_CLOSED = 10018
+        mock_mt5.positions_get.return_value = [MagicMock(
+            symbol='OILCash',
+            sl=95.26,
+            tp=81.65,
+            type=1,
+            price_current=85.33,
+        )]
+        mock_result = MagicMock()
+        mock_result.retcode = 10018
+        mock_result.comment = 'Market closed'
+        mock_mt5.order_send.return_value = mock_result
+
+        connector = MagicMock()
+        connector.is_connected.return_value = True
+        connector.get_symbol_info.return_value = {
+            'point': 0.01,
+            'trade_stops_level': 0,
+        }
+        engine = ExecutionEngine(connector=connector)
+
+        with patch('cthulu.execution.engine.get_execution_mode', return_value='legacy'), \
+                patch('cthulu.execution.engine.legacy_execution_enabled', return_value=True):
+            self.assertFalse(engine.modify_position(123, sl=90.67, tp=81.65))
+            self.assertTrue(engine.is_market_closed_retry_deferred(123))
+            self.assertFalse(engine.modify_position(123, sl=90.67, tp=81.65))
+
+        mock_mt5.order_send.assert_called_once()
+
+    @patch('cthulu.execution.engine.mt5')
     def test_place_order_resolves_position_ticket(self, mock_mt5):
         # Mock MT5 constants
         mock_mt5.TRADE_RETCODE_DONE = 10009

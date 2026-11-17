@@ -16,15 +16,25 @@ from .settings import Settings
 from .world import WorldIntel
 
 
+def _load_selected_environment(selected_env: Optional[Path]) -> None:
+    envfile.load_env(selected_env)
+    if not selected_env:
+        return
+
+    root_env = Path(__file__).resolve().parent.parent / ".env"
+    root_values = envfile.read_env(root_env)
+    for key in ("CLOUDFLARE_API_KEY", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_AI_GATEWAY_ID"):
+        if key in root_values:
+            os.environ.setdefault(key, root_values[key])
+    for key in ("MT5_LOGIN", "MT5_PASSWORD", "MT5_SERVER", "MT5_PATH"):
+        if root_values.get(key):
+            os.environ[key] = root_values[key]
+
+
 class App:
     def __init__(self, db_path: Optional[str] = None, env_path: Optional[str] = None):
         selected_env = Path(env_path) if env_path else None
-        envfile.load_env(selected_env)
-        if selected_env:
-            root_env = Path(__file__).resolve().parent.parent / ".env"
-            for key, value in envfile.read_env(root_env).items():
-                if key in ("CLOUDFLARE_API_KEY", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_AI_GATEWAY_ID"):
-                    os.environ.setdefault(key, value)
+        _load_selected_environment(selected_env)
         self.bus = EventBus()
         self.settings = Settings()
         root = Path(__file__).resolve().parent.parent

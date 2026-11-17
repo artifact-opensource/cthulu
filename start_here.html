@@ -159,23 +159,23 @@
     <div class="sticky top-16 z-30 border-b border-cyan-500/15 bg-obsidian/95 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center gap-2">
             <span class="mr-1 text-[10px] font-mono font-semibold uppercase tracking-widest text-slate-500">Quick actions</span>
-            <button type="button" data-quick-action="install"
+            <a href="run_cthulu_startup.bat" target="_blank" rel="noopener"
                 class="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-mono font-semibold text-cyan-200 transition-colors hover:border-cyan-400/60 hover:bg-cyan-500/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                title="Download the Windows helper that creates .venv and installs requirements.txt">
+                title="Open the existing startup script. It installs requirements, then continues to the launcher menu.">
                 <span aria-hidden="true">01</span> Install requirements
-            </button>
-            <button type="button" data-quick-action="setup"
+            </a>
+            <a href="scripts/setup.ps1" target="_blank" rel="noopener"
                 class="inline-flex items-center gap-2 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-xs font-mono font-semibold text-purple-200 transition-colors hover:border-purple-400/60 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                title="Download the Windows helper that runs the full Cthulu setup">
+                title="Open the existing PowerShell script for the full Cthulu setup">
                 <span aria-hidden="true">02</span> Setup Cthulu
-            </button>
-            <button type="button" data-quick-action="launch"
+            </a>
+            <a href="Cthulu%20Launcher.bat" target="_blank" rel="noopener"
                 class="inline-flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-mono font-semibold text-emerald-200 transition-colors hover:border-emerald-400/60 hover:bg-emerald-500/20 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                title="Download the Windows launcher">
+                title="Open the existing Cthulu Windows launcher">
                 <span aria-hidden="true">03</span> Launch Cthulu
-            </button>
+            </a>
             <span id="quick-action-status" class="w-full text-[10px] font-mono text-slate-500 sm:w-auto sm:ml-auto" role="status" aria-live="polite">
-                Open this map from the Cthulu repo folder. Click a button to download its Windows helper, then open it from Downloads.
+                Shortcuts point to existing repository scripts. Browsers may prompt or download them; this page cannot run local scripts or create helper files.
             </span>
         </div>
     </div>
@@ -1301,101 +1301,6 @@
                 }
             });
         }
-
-        function downloadQuickAction(action) {
-            const status = document.getElementById('quick-action-status');
-            const pageUrl = new URL(window.location.href);
-            if (pageUrl.protocol !== 'file:') {
-                status.textContent = 'Open start_here.html directly from the Cthulu repo folder to download Windows helpers.';
-                return;
-            }
-
-            let sourcePath = decodeURIComponent(pageUrl.pathname);
-            if (pageUrl.host) {
-                sourcePath = `\\\\${pageUrl.host}${sourcePath.replace(/\//g, '\\')}`;
-            } else {
-                sourcePath = sourcePath.replace(/^\/([A-Za-z]:)/, '$1').replace(/\//g, '\\');
-            }
-
-            let projectRoot = sourcePath.replace(/[\\/][^\\/]*$/, '');
-            if (/^[A-Za-z]:$/.test(projectRoot)) {
-                projectRoot += '\\';
-            }
-            if (!/^[A-Za-z]:\\|^\\\\/.test(projectRoot)) {
-                status.textContent = 'Could not determine the Windows repo path. Open start_here.html from the repo folder.';
-                return;
-            }
-
-            const actions = {
-                install: {
-                    filename: 'Install Cthulu Requirements.bat',
-                    messages: [
-                        'echo [cthulu] Creating .venv and installing requirements...',
-                        'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%CT_DIR%\\scripts\\setup.ps1" -ForLauncher',
-                        'if errorlevel 1 (',
-                        '    echo [cthulu] Requirements installation failed. Resolve the error above and try again.',
-                        '    pause',
-                        '    exit /b 1',
-                        ')',
-                        'echo [cthulu] Requirements are installed.',
-                        'pause'
-                    ]
-                },
-                setup: {
-                    filename: 'Setup Cthulu.bat',
-                    messages: [
-                        'echo [cthulu] Running full Cthulu setup...',
-                        'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%CT_DIR%\\scripts\\setup.ps1"',
-                        'if errorlevel 1 (',
-                        '    echo [cthulu] Setup failed. Resolve the error above and try again.',
-                        '    pause',
-                        '    exit /b 1',
-                        ')',
-                        'echo [cthulu] Setup completed.',
-                        'pause'
-                    ]
-                },
-                launch: {
-                    filename: 'Launch Cthulu.bat',
-                    messages: [
-                        'if not exist "%CT_DIR%\\Cthulu Launcher.bat" (',
-                        '    echo [cthulu] Could not find Cthulu Launcher.bat in the repo folder.',
-                        '    pause',
-                        '    exit /b 1',
-                        ')',
-                        'call "%CT_DIR%\\Cthulu Launcher.bat"',
-                        'exit /b %errorlevel%'
-                    ]
-                }
-            };
-            const selectedAction = actions[action];
-            if (!selectedAction) {
-                status.textContent = 'Unknown quick action.';
-                return;
-            }
-
-            const escapedRoot = projectRoot.replace(/%/g, '%%');
-            const script = [
-                '@echo off',
-                'setlocal',
-                `set "CT_DIR=${escapedRoot}"`,
-                ...selectedAction.messages,
-                ''
-            ].join('\r\n');
-            const downloadUrl = URL.createObjectURL(new Blob([script], { type: 'application/octet-stream' }));
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = selectedAction.filename;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
-            status.textContent = `${selectedAction.filename} downloaded. Open it from your browser's Downloads list to run it.`;
-        }
-
-        document.querySelectorAll('[data-quick-action]').forEach(button => {
-            button.addEventListener('click', () => downloadQuickAction(button.dataset.quickAction));
-        });
 
         // Copy JSON Config using execCommand fallback for iFrame safety
         function copyConfig() {

@@ -14,8 +14,21 @@ $lockPath = Join-Path $projectRoot 'cthulu.lock'
 $venvPython = [System.IO.Path]::GetFullPath(
     (Join-Path $projectRoot '.venv\Scripts\python.exe')
 )
+$supervisorScriptPath = Join-Path $projectRoot 'cthulu_agent_supervisor.ps1'
 $modulePattern = '(?i)(?:(?:^|\s)-m\s+cthulu(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
 $managedModulePattern = '(?i)(?:(?:^|\s)-m\s+(?:cthulu|cthulu_agent)(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
+
+function Stop-ProcessIfRunning {
+    param([Parameter(Mandatory)][int]$ProcessId)
+
+    try {
+        Stop-Process -Id $ProcessId -Force -ErrorAction Stop
+    } catch {
+        if (Get-Process -Id $ProcessId -ErrorAction SilentlyContinue) {
+            throw
+        }
+    }
+}
 
 if ($Stop) {
     & (Join-Path $projectRoot 'cthulu_killswitch.ps1') -Preview:$Preview
@@ -82,9 +95,10 @@ if ($Mode -and -not $Preview) {
                 -WorkingDirectory $projectRoot `
                 -Verb RunAs `
                 -WindowStyle Hidden `
-                -Wait `
                 -PassThru `
                 -ErrorAction Stop
+            $elevatedProcess.WaitForExit()
+            $elevatedProcess.Refresh()
         } catch {
             throw "Elevated Cthulu startup was cancelled or failed. See '$startupLog' if available. $($_.Exception.Message)"
         }
@@ -103,6 +117,7 @@ foreach ($process in $processes) {
 }
 
 $targetIds = [System.Collections.Generic.HashSet[int]]::new()
+$supervisorIds = [System.Collections.Generic.HashSet[int]]::new()
 $lockOwnerId = $null
 
 if (Test-Path -LiteralPath $lockPath) {
@@ -178,6 +193,30 @@ foreach ($process in $processes) {
     }
 }
 
+foreach ($process in $processes) {
+    if ($process.Name -match '(?i)^(powershell|pwsh)\.exe$' -and
+        $process.CommandLine -and
+        $process.CommandLine.IndexOf(
+            $supervisorScriptPath,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -ge 0) {
+        [void]$supervisorIds.Add([int]$process.ProcessId)
+        [void]$targetIds.Add([int]$process.ProcessId)
+    }
+}
+
+$changed = $true
+while ($changed) {
+    $changed = $false
+    foreach ($process in $processes) {
+        if ($process.Name -match '(?i)^pythonw?\.exe$' -and
+            $targetIds.Contains([int]$process.ParentProcessId) -and
+            $targetIds.Add([int]$process.ProcessId)) {
+            $changed = $true
+        }
+    }
+}
+
 if ($Preview) {
     if ($targetIds.Count -eq 0) {
         Write-Output 'No previous Cthulu processes found; no changes made.'
@@ -190,16 +229,38 @@ if ($Preview) {
     exit 0
 }
 
+foreach ($processId in $supervisorIds) {
+    $currentProcess = Get-CimInstance Win32_Process -Filter "ProcessId=$processId" -ErrorAction SilentlyContinue
+    if (-not $currentProcess) {
+        continue
+    }
+    if (-not $currentProcess.CommandLine -or
+        $currentProcess.CommandLine.IndexOf(
+            $supervisorScriptPath,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -lt 0) {
+        throw "Agent supervisor process $processId changed identity during cleanup; refusing to stop it."
+    }
+    Write-Output "Stopping previous Cthulu Agent supervisor $processId."
+    Stop-ProcessIfRunning -ProcessId $processId
+}
+
 foreach ($processId in $targetIds) {
     $currentProcess = Get-CimInstance Win32_Process -Filter "ProcessId=$processId" -ErrorAction SilentlyContinue
     if (-not $currentProcess) {
         continue
     }
-    if ($currentProcess.CommandLine -notmatch $managedModulePattern) {
+    $isTrackedSupervisor = $supervisorIds.Contains($processId) -and
+        $currentProcess.CommandLine -and
+        $currentProcess.CommandLine.IndexOf(
+            $supervisorScriptPath,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -ge 0
+    if (-not $isTrackedSupervisor -and $currentProcess.CommandLine -notmatch $managedModulePattern) {
         throw "Process $processId changed identity during cleanup; refusing to stop it."
     }
     Write-Output "Stopping previous Cthulu process $processId."
-    Stop-Process -Id $processId -Force -ErrorAction Stop
+    Stop-ProcessIfRunning -ProcessId $processId
 }
 
 $deadline = [DateTime]::UtcNow.AddSeconds(15)

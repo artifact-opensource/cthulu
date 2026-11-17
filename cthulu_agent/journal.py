@@ -421,8 +421,25 @@ class Journal:
     def stats(self) -> Dict[str, Any]:
         t = self._q("SELECT * FROM trades WHERE status='closed' ORDER BY ts_close")
         n = len(t)
+        now = _now()
+        today_start = now - (now % 86400)
+        today_trades = [x for x in t if today_start <= (x["ts_close"] or 0) < today_start + 86400]
+        today_pnls = [x["pnl"] or 0 for x in today_trades]
+        today_n = len(today_trades)
+        today_wins = sum(1 for pnl in today_pnls if pnl > 0)
+        today_losses = sum(1 for pnl in today_pnls if pnl < 0)
+        today_gp = sum(pnl for pnl in today_pnls if pnl > 0)
+        today_gl = -sum(pnl for pnl in today_pnls if pnl < 0)
         out: Dict[str, Any] = {"trades": n, "wins": 0, "losses": 0, "win_rate": 0.0, "pnl": 0.0, "avg_r": 0.0,
-                               "profit_factor": 0.0, "best": 0.0, "worst": 0.0, "streak": 0, "by_symbol": {}, "by_skill": {}}
+                               "profit_factor": 0.0, "best": 0.0, "worst": 0.0, "streak": 0, "by_symbol": {}, "by_skill": {},
+                               "today": {
+                                   "date": time.strftime("%Y-%m-%d", time.gmtime(today_start)),
+                                   "trades": today_n, "wins": today_wins, "losses": today_losses,
+                                   "win_rate": round(today_wins / today_n, 3) if today_n else 0.0,
+                                   "pnl": round(sum(today_pnls), 2),
+                                   "avg_r": round(sum(x["r_multiple"] or 0 for x in today_trades) / today_n, 3) if today_n else 0.0,
+                                   "profit_factor": round(today_gp / today_gl, 2) if today_gl else (round(today_gp, 2) if today_gp else 0.0),
+                               }}
         if not n:
             return out
         gp = sum(x["pnl"] for x in t if (x["pnl"] or 0) > 0)

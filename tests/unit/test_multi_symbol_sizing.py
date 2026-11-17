@@ -287,20 +287,29 @@ class FakeSizer:
 class FakeExecutionEngine:
     def __init__(self):
         self.calls = []
-
-    def execute(self, signal, lot_size):
-        self.calls.append((signal, lot_size))
-        return {
+        self.result = {
             "success": True,
             "ticket": 7,
             "price": 100.0,
-            "volume": lot_size,
+            "volume": 0.1,
         }
+
+    def execute(self, signal, lot_size):
+        self.calls.append((signal, lot_size))
+        result = self.result.copy()
+        result["volume"] = lot_size
+        return result
 
 
 class FakeTradeManager:
+    def __init__(self):
+        self.failed_orders = []
+
     def register_trade(self, **kwargs):
         pass
+
+    def record_failed_order(self, symbol):
+        self.failed_orders.append(symbol)
 
 
 def make_orchestrator(
@@ -357,6 +366,16 @@ def test_sizer_uses_equity_and_cannot_exceed_risk_approved_size():
     assert executed
     assert sizer.kwargs["account_balance"] == 1250.0
     assert execution_engine.calls[0][1] == 0.1
+
+
+def test_failed_order_starts_symbol_cooldown():
+    orchestrator, scored, execution_engine = make_orchestrator()
+    execution_engine.result = {"success": False, "error": "broker rejected order"}
+
+    executed = asyncio.run(orchestrator._execute_signal(scored))
+
+    assert not executed
+    assert orchestrator.components.trade_manager.failed_orders == ["GOLD"]
 
 
 def test_candidate_below_broker_minimum_is_not_executed():
@@ -460,9 +479,54 @@ def test_daily_loss_check_fails_closed_when_account_information_is_missing():
     orchestrator._daily_date = datetime.now(timezone.utc).date()
     orchestrator._daily_start_equity = 1000.0
     orchestrator._daily_loss_halt = False
+    orchestrator._daily_tracking_initialized = True
+    orchestrator._last_daily_limit_failure = None
     orchestrator._execution_halt_reason = None
 
     allowed = asyncio.run(orchestrator._check_daily_limits())
 
     assert not allowed
-    assert orchestrator._daily_loss_halt
+    assert not orchestrator._daily_loss_halt
+
+
+def test_daily_limit_check_recovers_after_temporary_account_data_outage():
+    orchestrator = MultiSymbolOrchestrator.__new__(MultiSymbolOrchestrator)
+    connector = FakeConnector()
+    connector.account_info = None
+    orchestrator.components = SimpleNamespace(mt5_connector=connector)
+    orchestrator.max_daily_loss_pct = 5.0
+    orchestrator._daily_date = datetime.now(timezone.utc).date()
+    orchestrator._daily_start_equity = 1000.0
+    orchestrator._daily_loss_halt = False
+    orchestrator._daily_tracking_initialized = True
+    orchestrator._last_daily_limit_failure = None
+
+    assert not asyncio.run(orchestrator._check_daily_limits())
+    assert not orchestrator._daily_loss_halt
+
+    connector.account_info = {"balance": 970.0, "equity": 970.0}
+    assert asyncio.run(orchestrator._check_daily_limits())
+    assert orchestrator._daily_start_equity == 1000.0
+    assert not orchestrator._daily_loss_halt
+
+
+def test_daily_tracking_initialization_retries_after_account_data_recovers():
+    orchestrator = MultiSymbolOrchestrator.__new__(MultiSymbolOrchestrator)
+    connector = FakeConnector()
+    connector.account_info = None
+    orchestrator.components = SimpleNamespace(mt5_connector=connector)
+    orchestrator.max_daily_loss_pct = 5.0
+    orchestrator._daily_date = None
+    orchestrator._daily_start_equity = 0.0
+    orchestrator._daily_loss_halt = False
+    orchestrator._daily_tracking_initialized = False
+    orchestrator._last_daily_limit_failure = None
+
+    assert not asyncio.run(orchestrator._init_daily_tracking())
+    assert not orchestrator._daily_loss_halt
+    assert not orchestrator._daily_tracking_initialized
+
+    connector.account_info = {"balance": 1000.0, "equity": 1000.0}
+    assert asyncio.run(orchestrator._check_daily_limits())
+    assert orchestrator._daily_tracking_initialized
+    assert orchestrator._daily_start_equity == 1000.0

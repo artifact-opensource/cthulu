@@ -301,7 +301,16 @@ class WorldIntel:
         return last
 
     def _native_payload(self) -> Dict[str, Any]:
-        return {"source": "cthulu_native_public_feeds", "sources": self.native_feeds}
+        return {
+            "source": "cthulu_native_public_feeds",
+            "sources": {
+                feed_id: {
+                    **feed,
+                    "description": NATIVE_FEEDS[feed_id]["description"],
+                }
+                for feed_id, feed in self.native_feeds.items()
+            },
+        }
 
     def _fetch_native(self) -> tuple[bool, list[str]]:
         errors = []

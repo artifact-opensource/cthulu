@@ -115,7 +115,15 @@ class NativeWorldFeedTests(unittest.TestCase):
         payload = json.loads(world.payload_for_prompt())
         self.assertEqual(payload["source"], "cthulu_native_public_feeds")
         self.assertEqual(payload["sources"]["coingecko_bitcoin"]["data"]["usd"], 68000.0)
+        self.assertEqual(
+            payload["sources"]["coingecko_bitcoin"]["description"],
+            NATIVE_FEEDS["coingecko_bitcoin"]["description"],
+        )
         self.assertEqual(payload["sources"]["fred_dgs10"]["data"], {"date": "2026-11-03", "value": 4.25})
+        self.assertEqual(
+            payload["sources"]["fred_dgs10"]["description"],
+            NATIVE_FEEDS["fred_dgs10"]["description"],
+        )
         self.assertEqual(payload["sources"]["bbc_world"]["data"]["items"][0]["title"], "Oil supply risk rises")
         self.assertEqual(payload["sources"]["bbc_business"]["data"]["items"][0]["summary"], "Markets watch supply.")
         self.assertEqual(set(payload["sources"]), set(NATIVE_FEEDS))
@@ -132,6 +140,14 @@ class NativeWorldFeedTests(unittest.TestCase):
         self.assertIn("geopolitics", prompt[-1]["content"].lower())
         self.assertIn("energy supply", prompt[-1]["content"].lower())
         self.assertIn("headlines are context", prompt[-1]["content"].lower())
+        self.assertIn("fred_dgs10 is the us 10-year treasury yield, not unemployment", prompt[-1]["content"].lower())
+        self.assertIn("coingecko_bitcoin reports bitcoin, not a gold price", prompt[-1]["content"].lower())
+        self.assertIn("observation/publication dates from fetch time", prompt[-1]["content"].lower())
+
+        from cthulu_agent.prompts import world_brief_repair_prompt
+
+        repair_prompt = world_brief_repair_prompt("{}", {}, "invalid schema")
+        self.assertIn("fred_dgs10 is the us 10-year treasury yield, not unemployment", repair_prompt[-1]["content"].lower())
 
     def test_failed_refresh_keeps_last_good_value_and_reports_stale(self):
         journal = Journal(":memory:")

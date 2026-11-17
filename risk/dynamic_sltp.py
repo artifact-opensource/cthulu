@@ -454,7 +454,7 @@ class DynamicSLTPManager:
                 
                 # Only move if it's an improvement
                 if current_sl is None or new_sl > current_sl:
-                    logger.info(f"Position {ticket}: Moving SL to breakeven {new_sl:.5f}")
+                    logger.info(f"Position {ticket}: proposed breakeven SL {new_sl:.5f}")
                     return True, new_sl
         else:
             if current_price <= breakeven_level:
@@ -477,7 +477,7 @@ class DynamicSLTPManager:
                     new_sl = self._round_to_tick(new_sl, tick)
 
                 if current_sl is None or new_sl < current_sl:
-                    logger.info(f"Position {ticket}: Moving SL to breakeven {new_sl:.5f} (buffer={buffer:.5f})")
+                    logger.info(f"Position {ticket}: proposed breakeven SL {new_sl:.5f} (buffer={buffer:.5f})")
                     return True, new_sl
 
         return False, None

@@ -245,6 +245,23 @@ def test_multi_trade_manager_adapter_tracks_positions_with_current_component_typ
     lifecycle.persist_position.assert_called_once_with(tracked_position)
 
 
+def test_multi_trade_manager_adapter_tracks_failed_order_cooldowns(monkeypatch):
+    current_time = [100.0]
+    monkeypatch.setattr(main_multi.time, "monotonic", lambda: current_time[0])
+    adapter = main_multi._MultiTradeManagerAdapter(SimpleNamespace())
+
+    assert adapter.get_failed_symbol_remaining("GOLD") == 0.0
+
+    adapter.record_failed_order("GOLD")
+    assert adapter.get_failed_symbol_remaining("gold") == 1800.0
+
+    current_time[0] += 30.0
+    assert adapter.get_failed_symbol_remaining("GOLD") == 1770.0
+
+    current_time[0] += 1770.0
+    assert adapter.get_failed_symbol_remaining("GOLD") == 0.0
+
+
 def test_multi_risk_adapter_converts_signal_dict_for_shared_risk_evaluator():
     risk_manager = MagicMock()
     risk_manager.approve.return_value = (True, "approved", 0.02)

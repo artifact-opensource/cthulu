@@ -7,6 +7,13 @@ from typing import Any, Dict, List
 from .capabilities import system_notes
 from .settings import TUNABLES
 
+WORLD_GROUNDING_RULES = """Source-grounding rules:
+- A numeric value means only what its source description, unit, and observation date say; never guess from a short series ID.
+- For example, fred_dgs10 is the US 10-year Treasury yield, not unemployment. coingecko_bitcoin reports Bitcoin, not a gold price.
+- State an asset's price or price change only when the supplied data directly reports that asset. Do not infer gold or other asset moves from Bitcoin or macro data.
+- Treat stale or unavailable sources as historical or missing, not current evidence. Distinguish observation/publication dates from fetch time.
+- Cite the source and date/channel for specific facts where available. If the feed does not support a claim, omit it or state that the data is unavailable."""
+
 ACTION_SCHEMA = """Action objects (use only these "type" values):
   {"type":"place_limit","symbol":"XAUUSD","side":"buy|sell","entry":0.0,"sl":0.0,"tp":0.0,"risk_pct":0.5,"skills":["skill_name"],"thesis":"why","invalidation":"what proves it wrong","expires_minutes":180}
   {"type":"place_stop", ...same fields as place_limit (entry beyond price, breakout style)}
@@ -126,6 +133,7 @@ Return one JSON object with these keys:
 - stand_down: a boolean, true only for a genuine shock that makes new entries unwise right now.
 The JSON shape is {{"summary":"...","themes":[],"event_risk":[],"stand_down":false}}. Even one theme or event must be inside a one-item array, not a bare object. If a list is absent or null, use an empty array.
 Review all supplied sources, including international headlines, for geopolitics that could affect risk sentiment, energy supply, oil, gold, FX, or crypto. Distinguish reported facts from possible market transmission; headlines are context, not confirmation of price action. These field descriptions define the output format; do not copy them, output a schema, or use placeholder text. Base every claim on the supplied data; do not invent facts, values, or events.
+{WORLD_GROUNDING_RULES}
 
 <world_data>
 {raw}
@@ -137,6 +145,7 @@ def world_brief_repair_prompt(raw: str, brief: Any, validation_error: str) -> Li
     ask = f"""PHASE: WORLD BRIEF FORMAT REPAIR. Correct the supplied World Brief to satisfy its output schema.
 Validation issue: {validation_error}
 Keep claims grounded in the source data and preserve valid analysis. Return one complete JSON object with summary (string), themes (array), event_risk (array), and stand_down (JSON boolean literal true or false, never a string, number, or null). Set stand_down true only for a genuine shock that makes new entries unwise right now; otherwise set it false. Do not copy schema descriptions or add commentary.
+{WORLD_GROUNDING_RULES}
 
 <world_data>
 {raw}

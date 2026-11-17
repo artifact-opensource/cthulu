@@ -8,7 +8,7 @@ Also integrates with news events to pause trading during high-impact events.
 import threading
 import time
 import logging
-from typing import Optional, Any, Dict, List
+from typing import Optional, Any, List
 from datetime import datetime
 
 
@@ -97,23 +97,27 @@ class TradeMonitor:
         positions = self._get_positions()
 
         # Record position snapshots
-        for ticket, pos in positions.items():
+        for pos in positions:
             self._record_position_snapshot(pos)
             
-    def _get_positions(self) -> Dict[int, Any]:
-        """Get positions from position manager."""
+    def _get_positions(self) -> List[Any]:
+        """Return a stable snapshot of positions from the position manager."""
         if not self.position_manager:
-            return {}
+            return []
             
         # Try different position access methods
         if hasattr(self.position_manager, '_positions'):
-            return self.position_manager._positions
+            positions = self.position_manager._positions
         elif hasattr(self.position_manager, 'get_all_positions'):
-            return self.position_manager.get_all_positions()
+            positions = self.position_manager.get_all_positions()
         elif hasattr(self.position_manager, 'positions'):
-            return self.position_manager.positions
-            
-        return {}
+            positions = self.position_manager.positions
+        else:
+            return []
+
+        if isinstance(positions, dict):
+            return list(positions.copy().values())
+        return list(positions)
         
     def _record_position_snapshot(self, position: Any):
         """Record a position snapshot to ML collector."""

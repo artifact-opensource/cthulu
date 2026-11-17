@@ -28,6 +28,15 @@ const hhmm = (ts) => new Date(ts * 1000).toLocaleTimeString([], { hour: '2-digit
 const dayStr = (ts) => new Date(ts * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' });
 const rel = (ts) => { const s = Math.max(0, Date.now() / 1000 - ts); return s < 60 ? 'just now' : s < 3600 ? Math.round(s / 60) + ' min ago' : s < 86400 ? Math.round(s / 3600) + ' h ago' : dayStr(ts); };
 const short = (s, n = 24) => (s && s.length > n ? s.slice(0, n - 1) + '…' : s || '');
+const modelLabel = (model) => {
+  const id = String(model || '').trim();
+  const modelId = id.split('/').pop() || id;
+  if (/ibm-granite/i.test(id) && /^granite-/i.test(modelId)) {
+    const version = modelId.slice('granite-'.length).replace(/-/g, ' ').replace(/\bh micro$/i, 'H-Micro');
+    return `IBM Granite ${version}`;
+  }
+  return modelId;
+};
 
 const KIND = {
   plan: ['Plan', 'M12 3l8 9-8 9-8-9z'], reason: ['Reasoning', 'M12 3c.7 4.6 3.4 7.3 8 8-4.6.7-7.3 3.4-8 8-.7-4.6-3.4-7.3-8-8 4.6-.7 7.3-3.4 8-8z'],
@@ -39,8 +48,9 @@ const KIND = {
 const kicon = (k) => html`<span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${(KIND[k] || KIND.system)[1]}"/></svg></span>`;
 
 /* ------------------------------------------------------------------ store */
-const S = { state: null, config: null, equity: [], feed: [], live: false, route: 'overview', eye: null, llmBusy: false, chat: [], jf: { kind: 'all', q: '' }, jEntries: [], jMore: true, prov: null, models: {}, thinking: false };
+const S = { state: null, config: null, killSwitchActive: false, equity: [], feed: [], live: false, route: 'overview', eye: null, llmBusy: false, chat: [], jf: { kind: 'all', q: '' }, jEntries: [], jMore: true, prov: null, models: {}, thinking: false };
 const NAV = [['overview', 'Overview', 'overview'], ['loop', 'Loop', 'loop'], ['journal', 'Journal', 'journal'], ['playbook', 'Playbook', 'playbook'], ['chat', 'Chat', 'chat'], ['settings', 'Settings', 'settings']];
+const shell = $('#shell');
 const main = $('#main');
 
 /* ------------------------------------------------------------------ toasts & modal */
@@ -106,17 +116,37 @@ function paintShell() {
     const n = id === 'overview' ? (S.state?.proposals?.length || 0) : 0;
     return { id, label, icon, n };
   });
-  put($('#nav'), items.map((i) => html`<a href="#${i.id}" ${S.route === i.id ? raw0('aria-current="page"') : ''}>${ic(i.icon)}<span>${i.label}</span>${i.n ? html`<span class="dot">${i.n}</span>` : ''}</a>`));
-  put($('#tabbar'), items.map((i) => html`<a href="#${i.id}" ${S.route === i.id ? raw0('aria-current="page"') : ''}>${ic(i.icon)}<span>${i.label}</span>${i.n ? html`<span class="dot">${i.n}</span>` : ''}</a>`));
+  const navItem = (i) => html`<a href="#${i.id}" ${S.route === i.id ? raw0('aria-current="page"') : ''}>${ic(i.icon)}<span>${i.label}</span>${i.n ? html`<span class="dot">${i.n}</span>` : ''}</a>`;
+  put($('#nav'), items.map(navItem));
+  put($('#tabbar'), html`${items.map(navItem)}${controlButtons('mobile-action')}`);
   paintRailFoot();
 }
 const raw0 = (s) => new Safe(s);
+function controlButtons(className) {
+  const st = S.state?.status;
+  const paused = Boolean(st?.paused);
+  const killSwitchActive = S.killSwitchActive || Boolean(S.config?.system?.kill_switch_active);
+  return html`
+    <button class="${className} ${paused ? 'paused' : ''}" type="button" data-act="pause"
+      aria-label="${paused ? 'Resume trading agent' : 'Pause trading agent'}"
+      title="${paused ? 'Resume trading agent' : 'Pause trading agent'}" ${st?.running === true ? '' : 'disabled'}>
+      ${ic(paused ? 'play' : 'pause')}
+    </button>
+    <button class="${className} danger" type="button" data-act="system-kill"
+      aria-label="${killSwitchActive ? 'Kill switch active' : 'Engage kill switch'}"
+      title="${killSwitchActive ? 'Kill switch active' : 'Kill switch'}" ${killSwitchActive ? 'disabled' : ''}>
+      ${ic('stop')}
+    </button>`;
+}
 function paintRailFoot() {
   const st = S.state?.status;
   put($('#railFoot'), html`
     <div><span class="status-dot ${S.live ? 'ok' : 'bad'}"></span>${S.live ? 'Live' : 'Reconnecting…'}</div>
-    ${st ? html`<div>Broker <b>${st.broker === 'paper' ? 'Paper' : 'MetaTrader 5'}</b>${st.real_account ? html` <span class="amber">· live account</span>` : ''}</div>
-    <div>Model <b>${st.llm.provider}</b><br><span class="small">${short(st.llm.model, 28)}</span></div>` : ''}`);
+    ${st ? html`<div>Broker <b>${st.broker === 'paper' ? 'Paper' : 'MetaTrader 5'}</b></div>
+    ${st.llm?.model ? html`<div>Model <b>${modelLabel(st.llm.model)}</b></div>` : ''}` : ''}
+    <div class="rail-actions" role="group" aria-label="Trading controls">
+      ${controlButtons('rail-action')}
+    </div>`);
 }
 
 /* ------------------------------------------------------------------ data */
@@ -164,19 +194,17 @@ function viewOverview() {
       <div class="status-line" id="chips"></div>
       <h1 id="heroTitle" aria-live="polite"></h1>
       <p class="thought" id="thought"></p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px" id="heroBtns"></div>
+      <div class="hero-actions" id="heroBtns"></div>
     </div>
   </section>
   <div id="kpis"></div>
-  <section class="sec" id="worldBrief"></section>
-  <section class="sec" id="legacyAnalysis"></section>
+  <section class="sec"><div class="sec-h"><h2>Markets</h2><span class="mute small">Liquidity, sweeps and structure</span></div><div class="tape" id="tape"></div></section>
   <section class="sec"><div class="sec-h"><h2>Equity</h2><span class="mute small" id="eqmeta"></span></div>
     <div class="chart-box"><canvas id="eq" role="img" aria-label="Equity over time"></canvas><div class="chart-tip" id="tip"></div></div></section>
+  <section class="sec" id="worldBrief"></section>
+  <section class="sec" id="legacyAnalysis"></section>
   <div class="cols">
-    <div>
-      <section class="sec"><div class="sec-h"><h2>Open book</h2><span class="mute small" id="bookmeta"></span></div><div id="book" class="rows"></div></section>
-      <section class="sec"><div class="sec-h"><h2>Markets</h2><span class="mute small">Liquidity, sweeps and structure</span></div><div class="tape" id="tape"></div></section>
-    </div>
+    <section class="sec"><div class="sec-h"><h2>Open book</h2><span class="mute small" id="bookmeta"></span></div><div id="book" class="rows"></div></section>
     <section class="sec"><div class="sec-h"><h2>What it has been doing</h2><a href="#journal" class="mute small">Full journal</a></div><div class="feed" id="feed"></div></section>
   </div>`;
 }
@@ -194,12 +222,14 @@ function paintLive(first) {
   S.eye && S.eye.set({ phase: st.phase, busy: S.llmBusy || ['plan', 'reason', 'adjust', 'reflect', 'review', 'meta review', 'world'].includes(st.phase), paused: st.paused, halted: !!r?.halted, waiting: st.phase === 'waiting' });
   put($('#chips'), html`
     <span class="chip ${st.autonomy === 'autonomous' ? 'lumen' : st.autonomy === 'approval' ? 'amber' : ''}">${{ autonomous: 'Autonomous', approval: 'Asks before trading', observe: 'Observing only' }[st.autonomy] || st.autonomy}</span>
-    <span class="chip ${st.real_account ? 'amber' : ''}">${st.broker === 'paper' ? 'Paper account' : st.real_account ? 'Live account' : 'Demo account'}</span>
-    ${st.llm?.model ? html`<span class="chip squid">${st.llm.provider} · ${short(st.llm.model, 22)}</span>` : ''}
+    ${st.llm?.model ? html`<span class="chip squid">${modelLabel(st.llm.model)}</span>` : ''}
     ${r ? html`<span class="chip">${r.tier} tier</span>` : ''}${r?.halted ? html`<span class="chip loss">Halted: ${r.halt_reason}</span>` : ''}${st.stand_down ? html`<span class="chip amber">World stand-down</span>` : ''}`);
-  put($('#heroBtns'), st.running === false && st.phase === 'offline'
+  const heroActions = $('#heroBtns');
+  const showReconnect = st.running === false && st.phase === 'offline';
+  put(heroActions, showReconnect
     ? html`<button class="btn primary" data-act="reconnect">Connect broker</button><a class="btn" href="#settings">Open settings</a>`
-    : html`<button class="btn" data-act="think">Think now</button><button class="btn ${st.paused ? 'primary' : ''}" data-act="pause">${ic(st.paused ? 'play' : 'pause')}${st.paused ? 'Resume' : 'Pause'}</button>`);
+    : '');
+  if (heroActions) heroActions.hidden = !showReconnect;
   // banners
   const bn = [];
   if (st.running === false && st.phase === 'offline') bn.push(html`<div class="banner bad"><span class="grow"><b>The trading loop is not connected.</b> Check broker settings or reconnect.</span></div>`);
@@ -210,15 +240,39 @@ function paintLive(first) {
   put($('#approvals'), (S.state.proposals || []).map((p) => html`<div class="banner"><span class="grow"><b>Awaiting your approval:</b> ${p.summary}${p.volume ? html` · ${p.volume} lots · ${p.risk_pct}% risk` : ''}<br><span class="mute small">${short(p.thesis, 160)}</span></span><button class="btn sm primary" data-act="approve" data-id="${p.id}">Approve</button><button class="btn sm" data-act="reject" data-id="${p.id}">Reject</button></div>`));
   if (a) {
     const stt = S.state.stats;
+    const today = stt.today;
+    const todayReady = Boolean(today && today.date && typeof today.pnl === 'number');
+    const todayDate = todayReady ? today.date : new Date().toISOString().slice(0, 10);
+    const positions = S.state.positions || [];
+    const floating = positions.reduce((total, position) => total + (Number(position.profit) || 0), 0);
+    const profitFactor = stt.losses ? num(stt.profit_factor) : stt.wins ? '∞' : '–';
+    const streak = stt.streak > 0 ? `${stt.streak} win${stt.streak === 1 ? '' : 's'}`
+      : stt.streak < 0 ? `${Math.abs(stt.streak)} loss${stt.streak === -1 ? '' : 'es'}` : '–';
     put($('#kpis'), html`<div class="kpis">
       <div class="kpi"><b id="kEq" data-v="${a.equity}">${num(a.equity)}</b><span>Equity ${a.currency}</span></div>
-      <div class="kpi"><b class="${cls(r.daily_pnl)}">${sgn(r.daily_pnl)}</b><span>Today</span></div>
+      <div class="kpi"><b class="${todayReady ? cls(today.pnl) : ''}">${todayReady ? sgn(today.pnl) : '–'}</b><span>Realized today · ${todayDate} UTC · ${a.currency}</span>
+        <small class="kpi-detail">${!todayReady ? 'Restart Agent to load dated trade statistics' : today.trades ? `${today.trades} closed · ${today.wins} wins · ${today.losses} losses · ${num(today.win_rate * 100, 1)}% win rate` : 'No closed trades today'}</small></div>
+      <div class="kpi"><b class="${cls(floating)}">${sgn(floating)}</b><span>Floating P&amp;L · ${positions.length} open · ${a.currency}</span></div>
+      <div class="kpi" title="The risk guard can include realized trades since its reset and current open losses.">
+        <b class="${cls(r.daily_pnl)}">${sgn(r.daily_pnl)}</b><span>Risk guard P&amp;L · ${a.currency}</span>
+        <small class="kpi-detail">${r.daily_loss_limit_enabled ? `Daily limit −${num(r.daily_limit)} ${a.currency}` : 'Daily loss guard disabled'}</small></div>
       <div class="kpi"><b class="${r.drawdown_pct > 0 ? 'amber' : ''}">${num(r.drawdown_pct)}%</b><span>Drawdown from peak</span></div>
       <div class="kpi"><b>${num(r.open_risk_pct)}%</b><span>Open risk · cap ${r.max_open_risk_pct}%</span></div>
-      <div class="kpi"><b>${stt.wins}–${stt.losses}</b><span>${stt.trades ? num(stt.avg_r) + 'R average' : 'No closed trades yet'}</span></div>
     </div>
     <div style="margin-top:14px"><div class="ladder" title="Scaling ladder">${r.ladder.map((t, i) => { const ci = r.ladder.findIndex((x) => x.name === r.tier); const nxt = r.ladder[ci + 1]; const p = nxt ? Math.max(4, Math.min(100, ((a.equity - r.ladder[ci].min_equity) / (nxt.min_equity - r.ladder[ci].min_equity)) * 100)) : 100; return html`<i class="${i < ci ? 'on' : i === ci ? 'cur' : ''}" style="--p:${p}%"></i>`; })}</div>
-    <div class="mute small" style="margin-top:8px">${r.next_tier ? html`Tier <b>${r.tier}</b> risks ${r.risk_pct}% per trade. ${num(r.next_tier_at - a.equity, 0)} to <b>${r.next_tier}</b>.` : html`Top tier: <b>${r.tier}</b>.`} Growth since start ${sgn(r.growth_pct)}%.</div></div>`);
+    <div class="mute small" style="margin-top:8px">${r.next_tier ? html`Tier <b>${r.tier}</b> risks ${r.risk_pct}% per trade. ${num(r.next_tier_at - a.equity, 0)} to <b>${r.next_tier}</b>.` : html`Top tier: <b>${r.tier}</b>.`} Growth since start ${sgn(r.growth_pct)}%.</div></div>
+    <section class="sec system-performance"><div class="sec-h"><h2>System performance</h2><span class="mute small">Closed trades · all time</span></div>
+      <div class="performance-grid">
+        <div class="performance-item"><span>Net realized · ${a.currency}</span><b class="${cls(stt.pnl)}">${sgn(stt.pnl)}</b><small>${stt.trades} closed trades</small></div>
+        <div class="performance-item"><span>Win / loss count</span><b>${stt.wins} / ${stt.losses}</b><small>${stt.trades} total closes</small></div>
+        <div class="performance-item"><span>Win rate</span><b>${stt.trades ? `${num(stt.win_rate * 100, 1)}%` : '–'}</b><small>Wins / closed trades</small></div>
+        <div class="performance-item"><span>Profit factor</span><b>${profitFactor}</b><small>Gross profit / gross loss</small></div>
+        <div class="performance-item"><span>Expectancy</span><b class="${cls(stt.avg_r)}">${stt.trades ? `${sgn(stt.avg_r)}R` : '–'}</b><small>Average R per closed trade</small></div>
+        <div class="performance-item"><span>Current streak</span><b class="${cls(stt.streak)}">${streak}</b><small>Consecutive outcomes</small></div>
+        <div class="performance-item"><span>Best trade · ${a.currency}</span><b class="gain">${stt.trades ? sgn(stt.best) : '–'}</b><small>Largest closed gain</small></div>
+        <div class="performance-item"><span>Worst trade · ${a.currency}</span><b class="loss">${stt.trades ? sgn(stt.worst) : '–'}</b><small>Largest closed loss</small></div>
+      </div>
+    </section>`);
     const kv = $('#kEq'); if (kv && first !== true) animateNum(kv, a.equity);
   }
   paintWorld();
@@ -253,11 +307,11 @@ function bookRows() {
 function tape() {
   const M = S.state.markets || {}; const keys = Object.keys(M);
   if (!keys.length) return html`<div class="empty"><span>Waiting for the first market read…</span></div>`;
-  return keys.map((k) => { const m = M[k]; if (m.unavailable) return html`<div class="tick"><b>${k}</b><span class="mute small">Market data temporarily unavailable.</span></div>`;
+  return keys.map((k) => { const m = M[k]; if (m.unavailable) return html`<div class="tick unavailable"><b>${k}</b><span class="mute small">Market data temporarily unavailable.</span></div>`;
     const sw = (m.sweeps || [])[0];
     const dir = m.trend?.dir === 'up' ? ['Uptrend', 'gain'] : m.trend?.dir === 'down' ? ['Downtrend', 'loss'] : ['Mixed', ''];
-    return html`<div class="tick"><b>${k}</b><span class="px">${px(m.price)}</span>
-      <div class="meta" style="grid-column:1/3"><span class="chip ${dir[1]}">${dir[0]}</span><span class="chip">${m.regime}</span><span class="chip">${(m.session || '').replace('_', ' ')}</span>
+    return html`<div class="tick"><b class="symbol-name">${k}</b><span class="px">${px(m.price)}</span>
+      <div class="meta"><span class="chip ${dir[1]}">${dir[0]}</span>${m.regime ? html`<span class="chip">${m.regime}</span>` : ''}${m.session ? html`<span class="chip">${m.session.replace(/_/g, ' ')}</span>` : ''}
       ${sw ? html`<span class="chip amber pulse" title="Level ${sw.level}">${sw.bias === 'bullish' ? 'Sell-side swept' : 'Buy-side swept'} · ${sw.bars_ago} bar${sw.bars_ago === 1 ? '' : 's'} ago</span>` : ''}</div>
       <svg class="spark" viewBox="0 0 220 34" preserveAspectRatio="none" aria-hidden="true"><path d="${sparkPath(m.candles)}" fill="none" stroke="${dir[1] === 'loss' ? 'var(--loss)' : 'var(--lumen)'}" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></div>`; });
 }
@@ -422,7 +476,8 @@ function tune(k) {
 }
 function viewSettings() { return html`<div class="page-h"><div><h1>Settings</h1><p>Most changes take effect immediately. Dashboard network access changes require a restart.</p></div></div><div id="setBody"></div>`; }
 async function mountSettings() {
-  try { S.config = await api('/api/config'); } catch (e) { toast(e.message, 'bad'); return put($('#setBody'), html`<div class="banner bad">Settings are temporarily unavailable.</div>`); }
+  try { S.config = await api('/api/config'); S.killSwitchActive = Boolean(S.config.system.kill_switch_active); } catch (e) { toast(e.message, 'bad'); return put($('#setBody'), html`<div class="banner bad">Settings are temporarily unavailable.</div>`); }
+  paintShell();
   S.prov = S.prov || S.config.llm.active; paintSettings();
 }
 function paintSettings() {
@@ -541,7 +596,13 @@ const ACTIONS = {
   'system-kill': async () => {
     if (!(await ask('Stop Cthulu and the Agent?', 'The persistent kill switch stops both trading services and prevents automatic restarts. Open positions are not closed; broker-side stops remain in effect.', 'Kill and stay down', true))) return;
     const r = await guard(() => api('/api/system/kill', {}));
-    if (r) { toast('Kill switch engaged. Cthulu services are stopping.', 'ok'); S.config = await api('/api/config'); paintSettings(); }
+    if (r) {
+      toast('Kill switch engaged. Cthulu services are stopping.', 'ok');
+      S.killSwitchActive = true;
+      if (S.config?.system) S.config.system.kill_switch_active = true;
+      paintShell();
+      if (S.route === 'settings') paintSettings();
+    }
   },
   'system-restart': async () => {
     if (!(await ask('Restart Cthulu services?', 'This restarts the Legacy engine and Agent dashboard using the saved mode. The agent may resume autonomous order actions; HFT runs its safety preflight first.', 'Restart services', true))) return;
@@ -579,7 +640,7 @@ const ACTIONS = {
   live: async (b) => { if (b.dataset.v === '1' && !(await ask('Allow autonomous trading with real money?', 'Only enable this after the agent has proved itself on paper or a demo account. It will place and close orders without asking.', 'Allow', true))) return; S.config = await api('/api/config/broker', { live_confirm: b.dataset.v === '1' }); paintSettings(); },
   'bk-save': async () => { const kind = S.bk || S.config.broker.broker; const body = { broker: kind }; if (kind === 'mt5') Object.assign(body, { mt5_login: val$('mLogin'), mt5_server: val$('mServer'), mt5_path: val$('mPath') }, val$('mPass') ? { mt5_password: val$('mPass') } : {}); else { const bal = $('[data-key=PAPER_BALANCE]'), sp = $('[data-key=PAPER_SPEED]'); await guard(() => api('/api/config/agent', { PAPER_BALANCE: bal.value, PAPER_SPEED: sp.value })); } await guard(() => api('/api/config/broker', body)); const r = await guard(() => api('/api/control', { action: 'reconnect' })); if (r) { toast(r.ok ? 'Reconnected' : 'Could not connect: ' + r.error, r.ok ? 'ok' : 'bad'); S.config = await api('/api/config'); refreshState(true); paintSettings(); } },
 };
-main.addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b && ACTIONS[b.dataset.act]) { e.preventDefault(); ACTIONS[b.dataset.act](b); } });
+shell.addEventListener('click', (e) => { const b = e.target.closest('[data-act]'); if (b && ACTIONS[b.dataset.act]) { e.preventDefault(); ACTIONS[b.dataset.act](b); } });
 let jqT;
 main.addEventListener('input', (e) => {
   const t = e.target;
@@ -627,4 +688,8 @@ addEventListener('hashchange', route);
   await route();
   openStream(onEvent, (ok) => { S.live = ok; paintRailFoot(); if (ok) refreshState(true); });
   setInterval(() => { if (!S.live) refreshState(true); }, 12000);
+  setInterval(() => {
+    const statsDate = S.state?.stats?.today?.date;
+    if (statsDate && statsDate !== new Date().toISOString().slice(0, 10)) refreshState(true);
+  }, 60000);
 })();

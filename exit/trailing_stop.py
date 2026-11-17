@@ -104,7 +104,7 @@ class TrailingStop(ExitStrategy):
                 'last_update': datetime.now(),
                 'activated': True
             }
-            self.logger.info(f"Trailing stop activated for {ticket} at {current_price}")
+            self.logger.info(f"Trailing-stop monitor activated for {ticket} at {current_price}")
             
         state = self._trailing_stops[ticket]
         

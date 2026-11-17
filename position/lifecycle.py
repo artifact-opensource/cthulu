@@ -321,6 +321,10 @@ class PositionLifecycle:
     def close_positions_by_symbol(self, symbol: str) -> int:
         """Close all positions for a specific symbol."""
         return self.close_all_positions(symbol=symbol)
+
+    def _market_closed_retry_deferred(self, ticket: int) -> bool:
+        check = getattr(self.execution_engine, "is_market_closed_retry_deferred", None)
+        return callable(check) and check(ticket) is True
     
     def modify_position(self, ticket: int, sl: Optional[float] = None,
                        tp: Optional[float] = None) -> bool:
@@ -336,6 +340,9 @@ class PositionLifecycle:
             True if modified successfully, False otherwise
         """
         try:
+            if self._market_closed_retry_deferred(ticket):
+                return False
+
             position = self.tracker.get_position(ticket)
             # If position is not currently tracked, attempt to fetch live MT5 position
             if not position:
@@ -353,6 +360,8 @@ class PositionLifecycle:
                 # Try to apply modification directly to MT5 position
                 success = self.execution_engine.modify_position(ticket, sl, tp)
                 if not success:
+                    if self._market_closed_retry_deferred(ticket):
+                        return False
                     try:
                         mt5_pos = self.connector.get_position_by_ticket(ticket)
                     except Exception as e:
@@ -409,6 +418,8 @@ class PositionLifecycle:
                 logger.info(f"Modified position {ticket}: SL={sl}, TP={tp}")
                 return True
             else:
+                if self._market_closed_retry_deferred(ticket):
+                    return False
                 try:
                     mt5_pos = self.connector.get_position_by_ticket(ticket)
                 except Exception as e:

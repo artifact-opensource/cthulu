@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = [System.IO.Path]::GetFullPath($PSScriptRoot)
 $killSwitchPath = Join-Path $projectRoot '.cthulu.killswitch'
 $lockPath = Join-Path $projectRoot 'cthulu.lock'
+$supervisorScriptPath = Join-Path $projectRoot 'cthulu_agent_supervisor.ps1'
 $venvPython = [System.IO.Path]::GetFullPath((Join-Path $projectRoot '.venv\Scripts\python.exe'))
 $legacyPattern = '(?i)(?:(?:^|\s)-m\s+cthulu(?:\s|$)|(?:^|\s)main_multi\.py(?:\s|$))'
 $agentPattern = '(?i)(?:^|\s)-m\s+cthulu_agent(?:\s|$)'
@@ -85,6 +86,14 @@ function Get-CthuluTargets {
                 $projectRoot + '\', [System.StringComparison]::OrdinalIgnoreCase)) {
             [void]$targetIds.Add([int]$process.ProcessId)
         }
+        if ($process.Name -match '(?i)^(powershell|pwsh)\.exe$' -and
+            $process.CommandLine -and
+            $process.CommandLine.IndexOf(
+                $supervisorScriptPath,
+                [System.StringComparison]::OrdinalIgnoreCase
+            ) -ge 0) {
+            [void]$targetIds.Add([int]$process.ProcessId)
+        }
     }
 
     $changed = $true
@@ -121,7 +130,14 @@ foreach ($target in $targets) {
     [void]$targetIds.Add([int]$target.ProcessId)
 }
 
-foreach ($target in @($targets | Sort-Object { $_.ProcessId })) {
+foreach ($target in @($targets | Sort-Object `
+    @{ Expression = { if ($_.Name -match '(?i)^(powershell|pwsh)\.exe$' -and
+        $_.CommandLine -and
+        $_.CommandLine.IndexOf(
+            $supervisorScriptPath,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -ge 0) { 0 } else { 1 } }; Ascending = $true },
+    @{ Expression = { $_.ProcessId }; Ascending = $true })) {
     $processId = [int]$target.ProcessId
     $current = Get-CimInstance Win32_Process -Filter "ProcessId=$processId" -ErrorAction SilentlyContinue
     if (-not $current) {

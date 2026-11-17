@@ -84,3 +84,21 @@ def test_position_lifecycle_has_logger_attribute():
     db = DummyDB()
     lifecycle = PositionLifecycle(connector, exec_engine, tracker, db)
     assert hasattr(lifecycle, 'logger') and lifecycle.logger is not None
+
+
+def test_position_lifecycle_skips_market_closed_retry_delay():
+    class DeferredExecutionEngine:
+        def is_market_closed_retry_deferred(self, ticket):
+            return True
+
+        def modify_position(self, ticket, sl=None, tp=None):
+            raise AssertionError("deferred modification should not reach the engine")
+
+    lifecycle = PositionLifecycle(
+        connector=MagicMock(),
+        execution_engine=DeferredExecutionEngine(),
+        position_tracker=MagicMock(),
+        db_handler=DummyDB(),
+    )
+
+    assert lifecycle.modify_position(111, sl=1.05) is False

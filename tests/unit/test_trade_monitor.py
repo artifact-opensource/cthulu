@@ -5,6 +5,24 @@ from cthulu.ML_RL.instrumentation import MLDataCollector
 from unittest.mock import MagicMock
 
 
+def test_trade_monitor_scans_a_snapshot_when_positions_change():
+    pm = MagicMock()
+    first_position = MagicMock()
+    second_position = MagicMock()
+    pm._positions = {1: first_position}
+    monitor = TradeMonitor(pm)
+    scanned = []
+
+    def record_and_add_position(position):
+        scanned.append(position)
+        pm._positions[2] = second_position
+
+    monitor._record_position_snapshot = record_and_add_position
+    monitor._scan_and_record()
+
+    assert scanned == [first_position]
+
+
 def test_trade_monitor_records_snapshot():
     pm = MagicMock()
     # create a fake positions dict

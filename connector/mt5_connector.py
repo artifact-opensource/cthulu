@@ -61,6 +61,8 @@ class ConnectionConfig:
 
 
 class MT5Connector:
+    RECONNECT_COOLDOWN_SECONDS = 30
+
     _SYMBOL_ALIASES = {
         "WTI": ("OILCASH", "USOIL"),
         "GOLDM": ("GOLD", "XAUUSD"),
@@ -88,6 +90,9 @@ class MT5Connector:
         self.connected = False
         self.logger = logging.getLogger("cthulu.connector")
         self._lock = Lock()
+        self._reconnect_lock = Lock()
+        self._last_reconnect_attempt: Optional[float] = None
+        self._last_terminal_health_failure = None
         self._last_request_time = 0.0
         self._min_request_interval = 0.1  # 100ms between requests
         self._tradeable_symbols_cache: List[str] = []
@@ -179,12 +184,15 @@ class MT5Connector:
                     if credential_mode:
                         # Initialize MT5 with credentials directly (preferred when provided)
                         self.logger.info("Initializing MT5 with credentials...")
-                        init_result = mt5.initialize(
-                            login=self.config.login,
-                            password=self.config.password,
-                            server=self.config.server,
-                            timeout=self.config.timeout
-                        )
+                        init_kwargs = {
+                            "login": self.config.login,
+                            "password": self.config.password,
+                            "server": self.config.server,
+                            "timeout": self.config.timeout,
+                        }
+                        if self.config.path:
+                            init_kwargs["path"] = self.config.path
+                        init_result = mt5.initialize(**init_kwargs)
                     else:
                         # No credentials: attempt to attach to an already running terminal
                         self.logger.info('No account credentials provided (login==0); attempting to attach to running MT5 terminal...')
@@ -250,9 +258,16 @@ class MT5Connector:
                     if not account_info:
                         raise ConnectionError("Connected but cannot retrieve account info")
 
-                    if credential_mode and account_info.login != self.config.login:
-                        raise ConnectionError(f"Connected to wrong account: {account_info.login}")                    
+                    if credential_mode and str(account_info.login) != str(self.config.login):
+                        raise ConnectionError("Connected MT5 login does not match the configured login")
+                    if (
+                        credential_mode
+                        and self.config.server
+                        and str(account_info.server).casefold() != str(self.config.server).casefold()
+                    ):
+                        raise ConnectionError("Connected MT5 server does not match the configured server")
                     self.connected = True
+                    self._last_terminal_health_failure = None
                     # Mask account login in logs to avoid leaking full account numbers
                     acct_display = str(self.config.login)
                     acct_masked = acct_display if len(acct_display) <= 4 else f"****{acct_display[-4:]}"
@@ -317,11 +332,49 @@ class MT5Connector:
         try:
             # Test connection with terminal info request
             info = mt5.terminal_info()
-            return info is not None and info.connected
+            if info is None:
+                reason = "terminal_info is unavailable"
+            elif not info.connected:
+                reason = "terminal reports disconnected"
+            else:
+                reason = None
+
+            if reason:
+                if reason != self._last_terminal_health_failure:
+                    self.logger.warning("MT5 terminal health check failed: %s", reason)
+                self._last_terminal_health_failure = reason
+                return False
+
+            self._last_terminal_health_failure = None
+            return self._configured_account_matches()
         except Exception as e:
             self.logger.error(f"Connection check failed: {e}")
             self.connected = False
             return False
+
+    def _configured_account_matches(self) -> bool:
+        """Return whether the live MT5 session still matches the configured account."""
+        if not (self.config.login and self.config.login != 0):
+            return True
+        try:
+            account = mt5.account_info()
+        except Exception:
+            self.logger.exception("Failed to verify MT5 account identity")
+            return False
+        if account is None:
+            self.logger.error("MT5 account identity is unavailable; blocking broker operations")
+            return False
+        login_matches = str(account.login) == str(self.config.login)
+        server_matches = (
+            not self.config.server
+            or str(account.server).casefold() == str(self.config.server).casefold()
+        )
+        if not login_matches or not server_matches:
+            self.logger.error(
+                "MT5 login or server changed from the configured account; blocking broker operations"
+            )
+            return False
+        return True
             
     def reconnect(self) -> bool:
         """
@@ -330,10 +383,33 @@ class MT5Connector:
         Returns:
             True if reconnection successful
         """
-        self.logger.info("Attempting reconnection...")
-        self.disconnect()
-        time.sleep(2)
-        return self.connect()
+        with self._reconnect_lock:
+            if self.connected and self._last_terminal_health_failure is None:
+                return False
+
+            now = time.monotonic()
+            if (
+                self._last_reconnect_attempt is not None
+                and now - self._last_reconnect_attempt < self.RECONNECT_COOLDOWN_SECONDS
+            ):
+                return False
+
+            self._last_reconnect_attempt = now
+            self.logger.info("Attempting reconnection...")
+            try:
+                self.disconnect()
+                time.sleep(2)
+                return self.connect()
+            finally:
+                self._last_reconnect_attempt = time.monotonic()
+
+    def _ensure_connected(self) -> bool:
+        """Recover terminal-health failures without switching a responsive account."""
+        if self.is_connected():
+            return True
+        if self.connected and self._last_terminal_health_failure is None:
+            return False
+        return self.reconnect()
         
     def _rate_limit(self):
         """Apply rate limiting between requests."""
@@ -492,11 +568,9 @@ class MT5Connector:
         Returns:
             List of rate dictionaries or None on error
         """
-        if not self.is_connected():
-            # Try to connect first
-            if not self.connect():
-                self.logger.error("Not connected to MT5")
-                return None
+        if not self._ensure_connected():
+            self.logger.error("Not connected to MT5")
+            return None
             
         self._rate_limit()
         
@@ -541,7 +615,7 @@ class MT5Connector:
         Returns:
             Dictionary with account details or None
         """
-        if not self.is_connected():
+        if not self._ensure_connected():
             return None
             
         self._rate_limit()

@@ -7,6 +7,7 @@ import asyncio
 import logging
 import math
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -32,9 +33,9 @@ _________   __  .__          .__
  \\______  /|__| |___|  /____/|____/____/
         \\/           \\/
 
-    ─────────────────────────────
+    -----------------------------
      Cthulu v5.3.0 Multi-Symbol
-    ─────────────────────────────
+    -----------------------------
     """
     print(banner)
 
@@ -146,8 +147,35 @@ class _MultiRiskEvaluatorAdapter:
 
 
 class _MultiTradeManagerAdapter:
+    FAILED_ORDER_COOLDOWN_SECONDS = 30 * 60
+
     def __init__(self, components):
         self.components = components
+        self._failed_symbol_retry_until = {}
+
+    @staticmethod
+    def _failed_symbol_key(symbol):
+        if not isinstance(symbol, str) or not symbol.strip():
+            raise ValueError("Failed-order cooldown requires a symbol")
+        return symbol.strip().casefold()
+
+    def get_failed_symbol_remaining(self, symbol):
+        symbol_key = self._failed_symbol_key(symbol)
+        retry_until = self._failed_symbol_retry_until.get(symbol_key)
+        if retry_until is None:
+            return 0.0
+
+        remaining = retry_until - time.monotonic()
+        if remaining <= 0:
+            self._failed_symbol_retry_until.pop(symbol_key, None)
+            return 0.0
+        return remaining
+
+    def record_failed_order(self, symbol):
+        symbol_key = self._failed_symbol_key(symbol)
+        self._failed_symbol_retry_until[symbol_key] = (
+            time.monotonic() + self.FAILED_ORDER_COOLDOWN_SECONDS
+        )
 
     def get_all_positions(self):
         return self.components.position_manager.monitor_positions()

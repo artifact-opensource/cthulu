@@ -372,6 +372,8 @@ class MT5Broker(Broker):
     def __init__(self):
         self.mt5 = None
         self._lock = threading.RLock()
+        self._expected_login: Optional[int] = None
+        self._expected_server: Optional[str] = None
         self._map: Dict[str, str] = {}
         self.demo = True
         self._universe_cache: List[str] = []
@@ -385,16 +387,42 @@ class MT5Broker(Broker):
             raise BrokerError("MetaTrader5 package not installed. Run: pip install MetaTrader5 (Windows only)")
         self.mt5 = mt5
         kw: Dict[str, Any] = {}
-        if os.environ.get("MT5_LOGIN"):
-            kw.update(login=int(os.environ["MT5_LOGIN"]), password=os.environ.get("MT5_PASSWORD", ""), server=os.environ.get("MT5_SERVER", ""))
+        raw_login = os.environ.get("MT5_LOGIN", "").strip()
+        self._expected_server = os.environ.get("MT5_SERVER", "").strip() or None
+        if raw_login:
+            try:
+                self._expected_login = int(raw_login)
+            except ValueError as exc:
+                raise BrokerError("MT5_LOGIN must be a numeric account number") from exc
+            kw.update(
+                login=self._expected_login,
+                password=os.environ.get("MT5_PASSWORD", ""),
+                server=self._expected_server or "",
+            )
         if os.environ.get("MT5_PATH"):
             kw["path"] = os.environ["MT5_PATH"]
         with self._lock:
             if not mt5.initialize(**kw):
                 raise BrokerError(f"MT5 initialize failed: {mt5.last_error()}")
-            info = mt5.account_info()
+            info = self._verified_account_info()
             self.demo = bool(info and info.trade_mode == getattr(mt5, "ACCOUNT_TRADE_MODE_DEMO", 0))
             self.is_real = not self.demo
+
+    def _verified_account_info(self):
+        if self.mt5 is None:
+            raise BrokerError("MT5 broker is not connected")
+        with self._lock:
+            info = self.mt5.account_info()
+        if info is None:
+            raise BrokerError(f"MT5 account_info failed: {self.mt5.last_error()}")
+        if self._expected_login is not None and str(info.login) != str(self._expected_login):
+            raise BrokerError("MT5 login differs from the configured account; refusing broker operations")
+        if (
+            self._expected_server
+            and str(info.server).casefold() != self._expected_server.casefold()
+        ):
+            raise BrokerError("MT5 server differs from the configured account; refusing broker operations")
+        return info
 
     def shutdown(self) -> None:
         if self.mt5:
@@ -432,21 +460,23 @@ class MT5Broker(Broker):
                 if not cands:
                     raise BrokerError(f"symbol {symbol} not found at this broker")
                 real = sorted(cands, key=len)[0]
-            m.symbol_select(real, True)
+            if not m.symbol_select(real, True):
+                raise BrokerError(f"MT5 could not select symbol {real}: {m.last_error()}")
         self._map[symbol] = real
         return real
 
     def account(self) -> Account:
-        with self._lock:
-            a = self.mt5.account_info()
-        if a is None:
-            raise BrokerError(f"account_info failed: {self.mt5.last_error()}")
+        a = self._verified_account_info()
         return Account(a.balance, a.equity, a.margin_free, a.currency, a.leverage, str(a.login), a.server, self.is_real)
 
     def symbol_info(self, symbol: str) -> SymbolInfo:
+        if self.mt5 is None:
+            raise BrokerError("MT5 broker is not connected")
         real = self._sym(symbol)
         with self._lock:
             i, t = self.mt5.symbol_info(real), self.mt5.symbol_info_tick(real)
+        if i is None:
+            raise BrokerError(f"MT5 symbol info unavailable for {real}: {self.mt5.last_error()}")
         tick = i.trade_tick_size or i.point
         return SymbolInfo(symbol, i.digits, i.point, tick, i.trade_tick_value or 1.0, i.trade_contract_size, i.volume_min,
                           i.volume_max, i.volume_step, (i.trade_stops_level or 0) * i.point, t.bid if t else 0.0, t.ask if t else 0.0)
@@ -523,6 +553,7 @@ class MT5Broker(Broker):
                  "close": float(r["close"]), "volume": float(r["tick_volume"])} for r in rates]
 
     def positions(self) -> List[Position]:
+        self._verified_account_info()
         with self._lock:
             rows = self.mt5.positions_get()
         if rows is None:
@@ -539,6 +570,7 @@ class MT5Broker(Broker):
             6: "buy_stop_limit",
             7: "sell_stop_limit",
         }
+        self._verified_account_info()
         with self._lock:
             rows = self.mt5.orders_get()
         if rows is None:
@@ -562,6 +594,7 @@ class MT5Broker(Broker):
     def _send(self, req: Dict[str, Any]) -> Dict[str, Any]:
         m = self.mt5
         with self._lock:
+            self._verified_account_info()
             res = m.order_send(req)
         if res is None:
             raise BrokerError(f"order_send returned None: {m.last_error()}")
@@ -633,6 +666,7 @@ class MT5Broker(Broker):
 
     def closed_deal(self, ticket) -> Optional[Dict[str, Any]]:
         m = self.mt5
+        self._verified_account_info()
         with self._lock:
             deals = m.history_deals_get(position=ticket)
         if not deals:

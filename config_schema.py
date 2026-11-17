@@ -298,16 +298,19 @@ class Config(BaseModel):
             # This approach will still yield a reasonable config for the app
             raise
 
-        # Allow environment variable overrides for sensitive fields (takes priority over config values)
+        # Allow environment variable overrides for MT5 connection settings.
         mt5_login = os.getenv('MT5_LOGIN')
         mt5_password = os.getenv('MT5_PASSWORD')
         mt5_server = os.getenv('MT5_SERVER')
+        mt5_path = os.getenv('MT5_PATH')
         if mt5_login:
             cfg.mt5.login = int(mt5_login)
         if mt5_password:
             cfg.mt5.password = mt5_password
         if mt5_server:
             cfg.mt5.server = mt5_server
+        if mt5_path:
+            cfg.mt5.path = mt5_path
 
         return cfg
 
